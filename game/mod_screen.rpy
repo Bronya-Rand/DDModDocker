@@ -255,8 +255,6 @@ style mods_return_button_text:
     hover_outlines [(4, "#bb4c96", 0, 0), (2, "#bb4c96", 2, 2)]
     insensitive_outlines [(4, "#f374c9", 0, 0), (2, "#f374c9", 2, 2)]
 
-style mods 
-
 label _mod_overlay:
 
     $ renpy.call_screen("mods")
