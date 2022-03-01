@@ -1,14 +1,12 @@
-## Mirrored from GanstaKingofSA/DDLCModTemplate2.0 (Version 3.0.1)
 ## Copyright 2019-2022 Azariel Del Carmen (GanstaKingofSA). All rights reserved.
-## This file may only be used if the author is credited in text by name or to
-## patch already released mods.
 
 ## renpy_patches.rpy
 
 # This file is not part of DDLC. This file is mainly designed to 
 # patch certain versions of Ren'Py that break DDLC/DDLC mods by
 # patching the Ren'Py engine at startup.
-### DO NOT MODIFY THIS FILE WHATSOEVER EXCEPT FOR 'enable_gl2'! ###
+
+### DO NOT MODIFY ANYTHING BEYOND THIS POINT ###
 
 ## Patches 'wmic' environment variables with 'powershell' instead.
 python early:
