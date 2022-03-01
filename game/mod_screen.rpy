@@ -1,3 +1,6 @@
+init 1 python:
+    gui.button_height = None
+    gui.navigation_spacing = -gui.navigation_spacing
 
 init python:
     import os
@@ -51,7 +54,6 @@ init python:
         os.mkdir(mod_dir)
     if not os.path.exists(config.basedir + "/game/MLSaves"):
         os.makedirs(config.basedir + "/game/MLSaves")
-    #config.atl_start_on_show = False
 
     def restart():
         renpy.quit(relaunch=True)
@@ -79,7 +81,11 @@ init python:
     def loadMod(x, folderName):
         isRPA = False
 
-        for root, dirs, files in os.walk(x):
+        if not os.path.exists(x + "/game"):
+            renpy.show_screen("dialog", message="We were unable to load this mod as this mods' game folder\nis missing in it's directory. Make sure all files are inside a\ngame folder in the mod folder and try again.", ok_action=Hide("dialog"))
+            return
+
+        for root, dirs, files in os.walk(x + "/game"):
             for f in files:
                 if f.endswith(".rpa"):
                     isRPA = True
@@ -125,67 +131,60 @@ init python:
 
 screen mods():
     zorder 100
+    
     fixed at ml_overlay_effect:
         style_prefix "mods"
-
-        add "menu_bg"
-
-        vbox:
-            xsize 365
-            yfill True
-            add Transform("#000", alpha=0.8)
+        
+        add "game_menu_bg"
+        add Transform("#000", alpha=0.8) xsize 365
+        add Transform("#202020", alpha=0.5) xpos 0.28
 
         vbox:
-            xpos 0.28
-            yfill True
-            add Transform("#202020", alpha=0.5)
+            label _("Select a Mod")
 
-        label "Select a Mod"
+            side "c":
+                xpos 50
+                xsize 250
+                ysize 450
 
-        side "c":
+                viewport id "mlvp":
+                    mousewheel True
+                    has vbox
 
-            viewport id "mlvp":
-                mousewheel True
-                scrollbars True
-                area (50, 100, 280, 800)
-                has vbox
-                spacing 3
+                    spacing 6
 
-                if renpy.version_tuple == (6, 99, 12, 4, 2187):
-                    textbutton "DDLC":
-                        action [Function(clearMod), SensitiveIf(selectedMod != "DDLC")]
-                else:
-                    textbutton "Stock":
-                        action [Function(clearMod), SensitiveIf(selectedMod != "DDLC")]
-                
-                null height 12
+                    if renpy.version_tuple == (6, 99, 12, 4, 2187):
+                        textbutton "DDLC":
+                            action [Function(clearMod), SensitiveIf(selectedMod != "DDLC")]
+                    else:
+                        textbutton "Stock":
+                            action [Function(clearMod), SensitiveIf(selectedMod != "DDLC")]
 
-                python:
-                    global current_mod_list
-                    current_mod_list = get_mod_list()
+                    python:
+                        global current_mod_list
+                        current_mod_list = get_mod_list()
 
-                for x in current_mod_list:
-                    textbutton "[x.modFolderName!q]":
-                        action [SetVariable("selectedMod", x.modFolderName), SensitiveIf(x.modFolderName != selectedMod)]
+                    for x in current_mod_list:
+                        textbutton "[x.modFolderName!q]":
+                            action [SetVariable("selectedMod", x.modFolderName), SensitiveIf(x.modFolderName != selectedMod)]
 
-                    null height 12
         hbox:
             style "mods_return_button"
             vbox:
                 textbutton _("Return"):
                     action [Return(0), With(Dissolve(0.5))]
             vbox:
-                #xoffset 50
                 textbutton _("Restart"):
                     action Function(restart)
 
         vbox:
             hbox:
                 viewport id "modinfoname":
-                    area (450, 50, 800, 150)
+                    xpos 450
+                    ypos 50
+                    xsize 700
                     label "[selectedMod]"
-
-                bar value XScrollValue("modinfoname") xsize 800 xpos 0.3 ypos 1.1
+                bar value XScrollValue("modinfoname")
 
         vbox:
             xpos 0.31
@@ -197,7 +196,13 @@ screen mods():
                 textbutton "Open Save Directory" action Function(open_save_dir)
                 textbutton "Open Game Directory" action Function(open_dir, config.gamedir)
                 textbutton "Open DDML Game Directory" action Function(open_dir, config.basedir + "/game")
-            
+
+                if not config.gl2:
+                    textbutton "Enable OpenGL 2":
+                        action Show("confirm", message="Are you sure you want to enable OpenGL 2?\nSome mods may suffer from broken affects if this setting is on.\n\n{b}A restart is required to load OpenGL 2{/b}", yes_action=[SetField(config, "gl2", True), Function(restart)] , no_action=Hide("confirm"))
+                else:
+                    textbutton "Disable OpenGL 2":
+                        action Show("confirm", message="Are you sure you want to disable OpenGL 2?\nSome mods may not have certain effects if this setting is off.\n\n{b}A restart is required to load OpenGL 2{/b}", yes_action=[SetField(config, "gl2", False), Function(restart), Hide("confirm")] , no_action=Hide("confirm"))
         vbox:
             xpos 0.9
             ypos 0.9
@@ -219,7 +224,6 @@ style mods_button:
     activate_sound gui.activate_sound
 
 style mods_label_text:
-    properties gui.button_properties("navigation_button")
     font "gui/font/RifficFree-Bold.ttf"
     size gui.title_text_size
     color "#fff"
@@ -235,12 +239,9 @@ style mods_info_label:
 style mods_button_text:
     font "gui/font/RifficFree-Bold.ttf"
     color "#fff"
-    size 22
     outlines [(4, "#803366", 0, 0), (2, "#803366", 2, 2)]
     hover_outlines [(4, "#bb4c96", 0, 0), (2, "#bb4c96", 2, 2)]
     insensitive_outlines [(4, "#f374c9", 0, 0), (2, "#f374c9", 2, 2)]
-    line_spacing -16
-    line_leading 20
 
 style mods_return_button is gui_button
 style mods_return_button_text is gui_button_text
