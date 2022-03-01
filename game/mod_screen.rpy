@@ -12,6 +12,7 @@ init python:
 
     current_mod_list = []
     selectedMod = None
+    versionNumber = "1.0.0"
 
     config.keymap['mod_overlay'] = ['K_F9']
     config.underlay.append(
@@ -207,6 +208,8 @@ screen mods():
             xpos 0.9
             ypos 0.9
             textbutton "Select" action Function(loadMod, config.basedir + "/game/mods/" + selectedMod, selectedMod)
+        
+        text "[versionNumber]" style "mods_version_text" xpos 0.96 ypos 0.97
 
 style mods_viewport is gui_viewport
 style mods_button is gui_button
@@ -255,6 +258,11 @@ style mods_return_button_text:
     outlines [(4, "#803366", 0, 0), (2, "#803366", 2, 2)]
     hover_outlines [(4, "#bb4c96", 0, 0), (2, "#bb4c96", 2, 2)]
     insensitive_outlines [(4, "#f374c9", 0, 0), (2, "#f374c9", 2, 2)]
+
+style mods_version_text is gui_text:
+    color "#000"
+    size 18
+    outlines []
 
 label _mod_overlay:
 
