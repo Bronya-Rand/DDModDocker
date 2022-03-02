@@ -209,7 +209,7 @@ screen mods():
             ypos 0.9
             textbutton "Select" action Function(loadMod, config.basedir + "/game/mods/" + selectedMod, selectedMod)
         
-        text "[versionNumber]" style "mods_version_text" xpos 0.96 ypos 0.97
+        text "DDML [versionNumber]" style "mods_version_text" xpos 0.92 ypos 0.97
 
 style mods_viewport is gui_viewport
 style mods_button is gui_button
