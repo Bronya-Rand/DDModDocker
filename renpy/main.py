@@ -475,7 +475,10 @@ def main():
     # Start auto-loading.
     renpy.loader.auto_init()
 
-    log_clock("Loader init")
+    if j and j["isRPA"]:
+        log_clock("Loading %s needed RPAs" % j["modName"])
+    else:
+        log_clock("Loading Stock/DDLC RPAs")
 
     # Initialize the log.
     game.log = renpy.python.RollbackLog()
@@ -583,7 +586,10 @@ def main():
     # raise Exception(renpy.game.script.script_files)
     # Load all .rpy files.
     renpy.game.script.load_script()  # sets renpy.game.script.
-    log_clock("Loading script")
+    if j:
+        log_clock("Loading %s needed RPYC/RPYs" % j["modName"])
+    else:
+        log_clock("Loading Stock/DDLC RPYC/RPYs")
 
     if renpy.game.args.command == "load-test":  # @UndefinedVariable
         start = time.time()
