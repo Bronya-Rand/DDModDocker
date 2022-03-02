@@ -400,12 +400,15 @@ def main():
     if j:
 
         for x in renpy.game.script.script_files[:]:
+
+            if "mod_screen" in x[0] or "saves" in x[0]:
+                mods_list.append(x)
+                continue
                 
-            if not x[1] and not j['isRPA']:
+            elif not x[1] and not j['isRPA']:
                 continue
 
-            if "mod_screen" in x[0] or "saves" in x[0] or "mods/" + j['modName'] in x[0]:
-                             
+            elif "mods/" + j['modName'] + "/" in x[0]:        
                 mods_list.append(x)
                 continue
 
