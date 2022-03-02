@@ -1,3 +1,4 @@
+
 init 1 python:
     gui.button_height = None
     gui.navigation_spacing = -gui.navigation_spacing
@@ -12,7 +13,6 @@ init python:
 
     current_mod_list = []
     selectedMod = None
-    versionNumber = "1.0.0"
 
     config.keymap['mod_overlay'] = ['K_F9']
     config.underlay.append(
@@ -41,20 +41,19 @@ init python:
             self.show_notif()
 
     start_overlay = SteamLikeOverlay()
-
+    
     try:
-        with open(config.basedir + "/selectedmod.json", "r") as s:
+        with open(persistent.ddml_basedir + "/selectedmod.json", "r") as s:
             j = json.load(s)
             selectedMod = j['modName']
     except:
         selectedMod = "DDLC"
 
-    mod_dir = os.path.join(config.basedir, "game/mods")
-    
-    if not os.path.exists(mod_dir):
-        os.mkdir(mod_dir)
-    if not os.path.exists(config.basedir + "/game/MLSaves"):
-        os.makedirs(config.basedir + "/game/MLSaves")
+    if "DDML.exe" in os.listdir(config.gamedir):
+        if not os.path.exists(persistent.ddml_basedir + "/game/mods"):
+            os.makedirs(persistent.ddml_basedir + "/game/mods")
+        if not os.path.exists(persistent.ddml_basedir + "/game/MLSaves"):
+            os.makedirs(persistent.ddml_basedir + "/game/MLSaves")
 
     def restart():
         renpy.quit(relaunch=True)
@@ -62,11 +61,11 @@ init python:
     def get_mod_list():
         global selectedMod
         templist = []
-        for modfolder in os.listdir(config.basedir + "/game/mods"):
-            if os.path.exists(config.basedir + "/game/mods/" + modfolder + "/game"):
-                modfolderpath = config.basedir + "/game/mods/" + modfolder + "/game"
+        for modfolder in os.listdir(persistent.ddml_basedir + "/game/mods"):
+            if os.path.exists(persistent.ddml_basedir + "/game/mods/" + modfolder + "/game"):
+                modfolderpath = persistent.ddml_basedir + "/game/mods/" + modfolder + "/game"
             else:
-                modfolderpath = config.basedir + "/game/mods/" + modfolder
+                modfolderpath = persistent.ddml_basedir + "/game/mods/" + modfolder
 
             ddlcMod = False
             for x in os.listdir(modfolderpath):
@@ -96,7 +95,7 @@ init python:
             "isRPA": isRPA,
         }
 
-        with open(config.basedir + "/selectedmod.json", "w") as j:
+        with open(persistent.ddml_basedir + "/selectedmod.json", "w") as j:
             json.dump(mod_dict, j)
         
         renpy.show_screen("dialog", message="Successfully selected " + folderName + " as\nthe loadable mod.\nYou must restart DDLC in order to load the mod.", ok_action=Hide("dialog"))
@@ -104,7 +103,7 @@ init python:
     def clearMod():
         global selectedMod
 
-        s = open(config.basedir + "/selectedmod.json", "w")
+        s = open(persistent.ddml_basedir + "/selectedmod.json", "w")
         s.close()
 
         selectedMod = "DDLC"
@@ -116,11 +115,11 @@ init python:
 
     def open_save_dir():
         if renpy.windows:
-            os.startfile(config.basedir + "/game/MLSaves")
+            os.startfile(persistent.ddml_basedir + "/game/MLSaves")
         elif renpy.macintosh:
-            subprocess.Popen([ "open", config.basedir + "/game/MLSaves" ])
+            subprocess.Popen([ "open", persistent.ddml_basedir + "/game/MLSaves" ])
         else:
-            subprocess.Popen([ "xdg-open", config.basedir + "/game/MLSaves" ])
+            subprocess.Popen([ "xdg-open", persistent.ddml_basedir + "/game/MLSaves" ])
     
     def open_dir(path):
         if renpy.windows:
@@ -196,7 +195,7 @@ screen mods():
                 yoffset -20
                 textbutton "Open Save Directory" action Function(open_save_dir)
                 textbutton "Open Game Directory" action Function(open_dir, config.gamedir)
-                textbutton "Open DDML Game Directory" action Function(open_dir, config.basedir + "/game")
+                textbutton "Open DDML Game Directory" action Function(open_dir, persistent.ddml_basedir + "/game")
 
                 if not config.gl2:
                     textbutton "Enable OpenGL 2":
@@ -207,9 +206,7 @@ screen mods():
         vbox:
             xpos 0.9
             ypos 0.9
-            textbutton "Select" action Function(loadMod, config.basedir + "/game/mods/" + selectedMod, selectedMod)
-        
-        text "DDML [versionNumber]" style "mods_version_text" xpos 0.92 ypos 0.97
+            textbutton "Select" action Function(loadMod, persistent.ddml_basedir + "/game/mods/" + selectedMod, selectedMod)
 
 style mods_viewport is gui_viewport
 style mods_button is gui_button
@@ -258,11 +255,6 @@ style mods_return_button_text:
     outlines [(4, "#803366", 0, 0), (2, "#803366", 2, 2)]
     hover_outlines [(4, "#bb4c96", 0, 0), (2, "#bb4c96", 2, 2)]
     insensitive_outlines [(4, "#f374c9", 0, 0), (2, "#f374c9", 2, 2)]
-
-style mods_version_text is gui_text:
-    color "#000"
-    size 18
-    outlines []
 
 label _mod_overlay:
 

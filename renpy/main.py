@@ -546,7 +546,7 @@ def main():
 
         for x in renpy.game.script.script_files[:]:
 
-            if "mod_screen" in x[0] or "saves" in x[0]:
+            if "mod_screen" in x[0] or "saves" in x[0] or "ml_patches" in x[0]:
                 mods_list.append(x)
                 continue
 
@@ -644,6 +644,10 @@ def main():
         renpy.store.persistent = game.persistent
         renpy.store._preferences = game.preferences
         renpy.store._test = renpy.test.testast._test
+
+        renpy.store.persistent.ddml_basedir = renpy.config.basedir
+        if j:
+            renpy.config.basedir = renpy.config.basedir + "/game/mods/" + j["modName"]
 
         if renpy.parser.report_parse_errors():
             raise renpy.game.ParseErrorException()
