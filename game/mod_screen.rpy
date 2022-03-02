@@ -49,7 +49,7 @@ init python:
     except:
         selectedMod = "DDLC"
 
-    if "DDML.exe" in os.listdir(config.gamedir):
+    if "DDML.exe" in os.listdir(persistent.ddml_basedir):
         if not os.path.exists(persistent.ddml_basedir + "/game/mods"):
             os.makedirs(persistent.ddml_basedir + "/game/mods")
         if not os.path.exists(persistent.ddml_basedir + "/game/MLSaves"):
