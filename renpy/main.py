@@ -383,21 +383,25 @@ def main():
     # Note the game directory.
     old_gamedir = renpy.config.gamedir
 
-    if os.path.exists(renpy.config.basedir + "/selectedmod.json"):
-        import json
+    def init_load_json():
+        if os.path.exists(renpy.config.basedir + "/selectedmod.json"):
+            import json
 
-        try:
-            with open(renpy.config.basedir + "/selectedmod.json", "r") as f:
-                j = json.load(f)
-        except:
-            j = None
-    else:
-        j = None
+            try:
+                with open(renpy.config.basedir + "/selectedmod.json", "r") as mod_json:
+                    temp = json.load(mod_json)
+                    return temp
+            except:
+                return None
+        else:
+            return None
 
-    if j:
-        if os.path.exists(renpy.config.gamedir + "/mods/" + j["modName"] + "/game"):
+    temp = init_load_json()
+
+    if temp:
+        if os.path.exists(renpy.config.gamedir + "/mods/" + temp["modName"] + "/game"):
             renpy.config.gamedir = (
-                renpy.config.gamedir + "/mods/" + j["modName"] + "/game"
+                renpy.config.gamedir + "/mods/" + temp["modName"] + "/game"
             )
         else:
             renpy.config.gamedir = old_gamedir
@@ -451,7 +455,7 @@ def main():
 
         renpy.config.archives.append(base)
 
-    if j and j["isRPA"]:
+    if temp and temp["isRPA"]:
 
         for i in sorted(os.listdir(renpy.config.gamedir)):
             base, ext = os.path.splitext(i)
@@ -475,8 +479,8 @@ def main():
     # Start auto-loading.
     renpy.loader.auto_init()
 
-    if j and j["isRPA"]:
-        log_clock("Loading %s needed RPAs" % j["modName"])
+    if temp and temp["isRPA"]:
+        log_clock("Loading %s needed RPAs" % temp["modName"])
     else:
         log_clock("Loading Stock/DDLC RPAs")
 
@@ -545,22 +549,26 @@ def main():
 
     mods_list = []
 
-    if j:
+    if temp:
 
         for x in renpy.game.script.script_files[:]:
 
-            if "mod_screen" in x[0] or "saves" in x[0] or "ml_patches" in x[0]:
+            if (
+                ("mod_screen" in x[0] and x[1])
+                or "saves" in x[0]
+                or "ml_patches" in x[0]
+            ):
                 mods_list.append(x)
                 continue
 
-            elif not x[1] and not j["isRPA"]:
+            elif not x[1] and not temp["isRPA"]:
                 continue
 
-            elif "mods/" + j["modName"] + "/" in x[0]:
+            elif "mods/" + temp["modName"] + "/" in x[0]:
                 mods_list.append(x)
                 continue
 
-            elif (j["isRPA"] and not x[1]) or "renpy" in x[1]:
+            elif (temp["isRPA"] and not x[1]) or "renpy" in x[1]:
                 rpycDeclared = False
                 for y in mods_list[:]:
 
@@ -586,8 +594,8 @@ def main():
     # raise Exception(renpy.game.script.script_files)
     # Load all .rpy files.
     renpy.game.script.load_script()  # sets renpy.game.script.
-    if j:
-        log_clock("Loading %s needed RPYC/RPYs" % j["modName"])
+    if temp:
+        log_clock("Loading %s needed RPYC/RPYs" % temp["modName"])
     else:
         log_clock("Loading Stock/DDLC RPYC/RPYs")
 
@@ -652,8 +660,12 @@ def main():
         renpy.store._test = renpy.test.testast._test
 
         renpy.store.persistent.ddml_basedir = renpy.config.basedir
-        if j:
-            renpy.config.basedir = renpy.config.basedir + "/game/mods/" + j["modName"]
+        if temp:
+            renpy.config.basedir = (
+                renpy.config.basedir + "/game/mods/" + temp["modName"]
+            )
+
+        del temp
 
         if renpy.parser.report_parse_errors():
             raise renpy.game.ParseErrorException()
