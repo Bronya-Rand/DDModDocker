@@ -1,5 +1,6 @@
 
 init 1 python:
+    #config.developer = True
     gui.button_height = None
     gui.navigation_spacing = -gui.navigation_spacing
 
@@ -25,13 +26,13 @@ init python:
         def __init__(self, modFolderName, path):
             self.modFolderName = modFolderName
             self.path = path
-    
-    class SteamLikeOverlay():
 
+    class SteamLikeOverlay():
+        
         def __init__(self):
             thread = threading.Thread(target=self.run)
             thread.start()
-
+        
         def show_notif(self):
             renpy.display.screen.hide_screen("steam_like_overlay")
             renpy.display.screen.show_screen("steam_like_overlay", "Access the DDML menu while playing.\n\n\t\t\t\t\t\t\tPress: "+ config.keymap['mod_overlay'][0].replace("K_", ""))
@@ -41,13 +42,16 @@ init python:
             self.show_notif()
 
     start_overlay = SteamLikeOverlay()
-    
-    try:
-        with open(persistent.ddml_basedir + "/selectedmod.json", "r") as s:
-            j = json.load(s)
-            selectedMod = j['modName']
-    except:
-        selectedMod = "DDLC"
+
+    def load_json():
+        try:
+            with open(persistent.ddml_basedir + "/selectedmod.json", "r") as mod_json:
+                temp = json.load(mod_json)
+                return temp['modName']
+        except:
+            return "DDLC"
+
+    selectedMod = load_json()
 
     if "DDML.exe" in os.listdir(persistent.ddml_basedir):
         if not os.path.exists(persistent.ddml_basedir + "/game/mods"):
@@ -66,12 +70,12 @@ init python:
                 modfolderpath = persistent.ddml_basedir + "/game/mods/" + modfolder + "/game"
             else:
                 modfolderpath = persistent.ddml_basedir + "/game/mods/" + modfolder
-
+            
             ddlcMod = False
             for x in os.listdir(modfolderpath):
                 if x.endswith((".rpa", ".rpyc", ".rpy")):
                     ddlcMod = True
-
+            
             if ddlcMod:
                 temp = Mod(modfolder, modfolderpath)
                 templist.append(temp)
@@ -80,21 +84,21 @@ init python:
 
     def loadMod(x, folderName):
         isRPA = False
-
+        
         if not os.path.exists(x + "/game"):
             renpy.show_screen("dialog", message="We were unable to load this mod as this mods' game folder\nis missing in it's directory. Make sure all files are inside a\ngame folder in the mod folder and try again.", ok_action=Hide("dialog"))
             return
-
+        
         for root, dirs, files in os.walk(x + "/game"):
             for f in files:
                 if f.endswith(".rpa"):
                     isRPA = True
-
+        
         mod_dict = {
             "modName": folderName,
             "isRPA": isRPA,
         }
-
+        
         with open(persistent.ddml_basedir + "/selectedmod.json", "w") as j:
             json.dump(mod_dict, j)
         
@@ -102,10 +106,9 @@ init python:
 
     def clearMod():
         global selectedMod
-
-        s = open(persistent.ddml_basedir + "/selectedmod.json", "w")
-        s.close()
-
+        
+        os.remove(persistent.ddml_basedir + "/selectedmod.json")
+        
         selectedMod = "DDLC"
         
         if renpy.version_tuple == (6, 99, 12, 4, 2187):
@@ -120,7 +123,7 @@ init python:
             subprocess.Popen([ "open", persistent.ddml_basedir + "/game/MLSaves" ])
         else:
             subprocess.Popen([ "xdg-open", persistent.ddml_basedir + "/game/MLSaves" ])
-    
+
     def open_dir(path):
         if renpy.windows:
             os.startfile(path)
@@ -131,10 +134,10 @@ init python:
 
 screen mods():
     zorder 100
-    
+
     fixed at ml_overlay_effect:
         style_prefix "mods"
-        
+
         add "game_menu_bg"
         add Transform("#000", alpha=0.8) xsize 365
         add Transform("#202020", alpha=0.5) xpos 0.28
@@ -149,9 +152,9 @@ screen mods():
 
                 viewport id "mlvp":
                     mousewheel True
-                    has vbox
+                    has vbox:
 
-                    spacing 6
+                        spacing 6
 
                     if renpy.version_tuple == (6, 99, 12, 4, 2187):
                         textbutton "DDLC":
@@ -183,13 +186,16 @@ screen mods():
                     xpos 450
                     ypos 50
                     xsize 700
-                    label "[selectedMod]"
+                    if selectedMod == "DDLC" and renpy.version_tuple > (6, 99, 12, 4, 2187):
+                        label "Stock"
+                    else:
+                        label "[selectedMod]"
                 bar value XScrollValue("modinfoname")
 
         vbox:
             xpos 0.31
             ypos 0.25
-            label "Options" 
+            label "Options"
             vbox:
                 xpos 0.2
                 yoffset -20
@@ -235,7 +241,7 @@ style mods_info_label_text is mods_label_text
 
 style mods_info_label:
     ypos 0.5
-    
+
 style mods_button_text:
     font "gui/font/RifficFree-Bold.ttf"
     color "#fff"
@@ -278,10 +284,10 @@ init -1:
             xalign 1.0
             yalign 1.0
 
-            vbox:
+            has vbox:
                 xalign 0.5
                 yalign 0.5
-                text message size 16 
+            text message size 16
 
         timer 3.25 action Hide('steam_like_overlay')
 
