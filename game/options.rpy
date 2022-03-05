@@ -7,7 +7,7 @@
 # This file customizes what your mod is and and how it starts and builds!
 
 # This controls what your mod is called.
-define config.name = "Doki Doki Mod Launcher (DDML)"
+define config.name = "Doki Doki Mod Docker"
 
 # This controls whether you want your mod name to show in the main menu.
 # If your mod name is big, it is suggested to turn this off.
@@ -25,7 +25,7 @@ define gui.about = _("")
 # Note:
 #   The build name is ASCII only so no numbers, spaces, or semicolons.
 #   Example: Doki Doki Yuri Time to DokiDokiYuriTime
-define build.name = "DDML"
+define build.name = "DokiDokiModDocker"
 
 # This configures whether your mod has sound effects.
 define config.has_sound = True
@@ -82,7 +82,7 @@ default preferences.sfx_volume = 0.75
 #   Windows: %AppData%/RenPy/
 #   macOS: $HOME/Library/RenPy/ (Un-hide the Library Folder)
 #   Linux: $HOME/.renpy/
-define config.save_directory = "DDLCModTemplateTwo"
+define config.save_directory = "DD-ModDocker"
 # define config.save_directory = "DDMLIntegrated"
 
 # This controls the window logo of your mod.
@@ -176,25 +176,14 @@ init python:
 
     # These variables declare the packages to build your mod that is Team Salvato
     # IPG compliant. Do not mess with these variables whatsoever.
-    build.package(build.directory_name + "Mod",'zip','mod',description="Ren'Py 6 DDLC Compliant Mod")
-    build.package(build.directory_name + "Renpy7Mod",'zip','windows linux mac renpy mod',description="Ren'Py 7 DDLC Compliant Mod")
+    build.package("DDMD6",'zip','mod',description="Ren'Py 6 DDMD Build (Alpha)")
+    build.package("DDMD7",'zip','windows linux mac renpy mod all',description="Ren'Py 7 DDMD Build: All")
+    #build.package("DDML7-pc",'zip','windows linux renpy mod all',description="R'Py 7 DDML Build: Windows and Linux")
+    #build.package("DDML7-mac", "app-zip app-dmg", "mac mod renpy all", "R'Py 7 DDML Build: macOS")
 
     # These variables declare the archives that will be made to your packaged mod.
     # To add another archive, make a build.archive variable like in this example:
-    build.archive("ddml", 'mod all')
-
-    # Do not touch these lines. This is so Ren'Py can add your mods' py file
-    # and a special launcher for Linux and macOS to run your mod. 
-    try: 
-        build.renpy_patterns.remove(('renpy.py', ['all']))
-        build.classify_renpy("renpy.py", "renpy all")
-    except: pass
-    
-    try:
-        build.early_base_patterns.remove(('*.sh', None))
-        build.classify("LinuxLauncher.sh", "linux") ## Linux Launcher Script
-        build.classify("*.sh", None)
-    except: pass
+    build.archive("ddml", 'mod')
     
     #############################################################
     # These variables classify packages for PC and Android platforms.
@@ -202,10 +191,14 @@ init python:
     # to build your mod on Android like in this example.
     #   Example: build.classify("game/**.pdf", "scripts all")
     
-    build.classify("game/**.rpyc", "ddml all")
-    build.classify("game/mod_assets/**", "ddml all")
-    build.classify("game/python-packages/**", "mod") ## Backwards Compatibility
+    build.classify("game/**.rpyc", "ddml")
+    build.classify("game/**.chr", "ddml")
+    build.classify("game/**.txt", "ddml")
+    build.classify("game/python-packages/**", "mod")
+    build.classify("How to use DDMD.txt", "mod")
 
+    build.classify("game/MLSaves/**", None)
+    build.classify("game/mods/**", None)
     build.classify('**~', None)
     build.classify('**.bak', None)
     build.classify('**/.**', None)
@@ -220,8 +213,6 @@ init python:
     build.classify('/game/10', None)
     build.classify('/game/cache/*.*', None)
     build.classify('**.rpa', None)
-    build.classify('README.html','mod all')
-    build.classify('README.linux', 'linux')
    
     # This sets' README.html as documentation
     build.documentation('README.html')

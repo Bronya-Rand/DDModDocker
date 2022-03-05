@@ -383,6 +383,7 @@ def main():
     # Note the game directory.
     old_gamedir = renpy.config.gamedir
 
+    # Load the selected mod info or stock/DDLC
     def init_load_json():
         if os.path.exists(renpy.config.basedir + "/selectedmod.json"):
             import json
@@ -399,12 +400,19 @@ def main():
     temp = init_load_json()
 
     if temp:
-        if os.path.exists(renpy.config.gamedir + "/mods/" + temp["modName"] + "/game"):
-            renpy.config.gamedir = (
-                renpy.config.gamedir + "/mods/" + temp["modName"] + "/game"
-            )
+        # Redefine game directory to mod directory
+        if os.path.exists(os.path.join(renpy.config.gamedir, "mods", temp["modName"], "game")):
+            renpy.config.gamedir = os.path.join(renpy.config.gamedir, "mods", temp["modName"], "game").replace("\\", "/")
         else:
-            renpy.config.gamedir = old_gamedir
+            raise Exception("'game' folder could not be found in %s." % os.path.join(renpy.config.gamedir, "mods", temp["modName"]).replace("\\", "/"))
+
+        # Get that advanced_scripts folder out of there!
+        if os.path.exists(renpy.config.gamedir + "/advanced_scripts"):
+            for src, dirs, files in os.walk(renpy.config.gamedir + "/advanced_scripts"):
+                dst = src.replace(renpy.config.gamedir + "/advanced_scripts", renpy.config.gamedir)
+                for f in files:
+                    os.rename(os.path.join(src, f), os.path.join(dst, f))
+            os.rmdir(renpy.config.gamedir + "/advanced_scripts")
 
     game.basepath = renpy.config.gamedir
     if renpy.config.gamedir != old_gamedir:
@@ -465,7 +473,7 @@ def main():
                 continue
 
             renpy.config.archives.append(
-                renpy.config.gamedir.replace("\\", "/") + "/" + base
+                renpy.config.gamedir + "/" + base
             )
 
     if "ddml" not in renpy.config.archives:
@@ -659,12 +667,9 @@ def main():
         renpy.store._preferences = game.preferences
         renpy.store._test = renpy.test.testast._test
 
-        renpy.store.persistent.ddml_basedir = renpy.config.basedir
+        renpy.store.persistent.ddml_basedir = renpy.config.basedir.replace("\\", "/")
         if temp:
-            renpy.config.basedir = (
-                renpy.config.basedir + "/game/mods/" + temp["modName"]
-            )
-
+            renpy.config.basedir = os.path.join(renpy.config.basedir, "game/mods", temp["modName"]).replace("\\", "/")
         del temp
 
         if renpy.parser.report_parse_errors():

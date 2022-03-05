@@ -10,7 +10,6 @@ init python:
     import threading
     from time import sleep
     import subprocess
-    import shutil
 
     current_mod_list = []
     selectedMod = None
@@ -28,14 +27,12 @@ init python:
             self.path = path
 
     class SteamLikeOverlay():
-        
         def __init__(self):
             thread = threading.Thread(target=self.run)
             thread.start()
         
         def show_notif(self):
-            renpy.display.screen.hide_screen("steam_like_overlay")
-            renpy.display.screen.show_screen("steam_like_overlay", "Access the DDML menu while playing.\n\n\t\t\t\t\t\t\tPress: "+ config.keymap['mod_overlay'][0].replace("K_", ""))
+            renpy.display.screen.show_screen("steam_like_overlay", "Access the Mod Docker menu while playing.\n\n\t\t\t\t\t\t\tPress: "+ config.keymap['mod_overlay'][0].replace("K_", ""))
         
         def run(self):
             sleep(1.5)
@@ -53,24 +50,14 @@ init python:
 
     selectedMod = load_json()
 
-    if "DDML.exe" in os.listdir(persistent.ddml_basedir):
-        if not os.path.exists(persistent.ddml_basedir + "/game/mods"):
-            os.makedirs(persistent.ddml_basedir + "/game/mods")
-        if not os.path.exists(persistent.ddml_basedir + "/game/MLSaves"):
-            os.makedirs(persistent.ddml_basedir + "/game/MLSaves")
-
-    def restart():
-        renpy.quit(relaunch=True)
-
     def get_mod_list():
-        global selectedMod
         templist = []
         for modfolder in os.listdir(persistent.ddml_basedir + "/game/mods"):
-            if os.path.exists(persistent.ddml_basedir + "/game/mods/" + modfolder + "/game"):
-                modfolderpath = persistent.ddml_basedir + "/game/mods/" + modfolder + "/game"
-            else:
-                modfolderpath = persistent.ddml_basedir + "/game/mods/" + modfolder
-            
+            if not os.path.exists(persistent.ddml_basedir + "/game/mods/" + modfolder + "/game"):
+                continue
+                
+            modfolderpath = persistent.ddml_basedir + "/game/mods/" + modfolder + "/game"
+
             ddlcMod = False
             for x in os.listdir(modfolderpath):
                 if x.endswith((".rpa", ".rpyc", ".rpy")):
@@ -85,10 +72,6 @@ init python:
     def loadMod(x, folderName):
         isRPA = False
         
-        if not os.path.exists(x + "/game"):
-            renpy.show_screen("dialog", message="We were unable to load this mod as this mods' game folder\nis missing in it's directory. Make sure all files are inside a\ngame folder in the mod folder and try again.", ok_action=Hide("dialog"))
-            return
-        
         for root, dirs, files in os.walk(x + "/game"):
             for f in files:
                 if f.endswith(".rpa"):
@@ -102,19 +85,18 @@ init python:
         with open(persistent.ddml_basedir + "/selectedmod.json", "w") as j:
             json.dump(mod_dict, j)
         
-        renpy.show_screen("dialog", message="Successfully selected " + folderName + " as\nthe loadable mod.\nYou must restart DDLC in order to load the mod.", ok_action=Hide("dialog"))
+        renpy.show_screen("dialog", message="Selected %s\nas the loadable mod. You must restart Mod Docker in order to load the mod." % folderName, ok_action=Hide("dialog"))
 
     def clearMod():
         global selectedMod
         
         os.remove(persistent.ddml_basedir + "/selectedmod.json")
-        
         selectedMod = "DDLC"
         
         if renpy.version_tuple == (6, 99, 12, 4, 2187):
-            renpy.show_screen("dialog", message="Successfully selected DDLC as the loadable mod.\nYou must restart DDLC in order to load the mod.", ok_action=Hide("dialog"))
+            renpy.show_screen("dialog", message="Returned to DDLC mode.\nYou must restart Mod Docker in order to load the mod.", ok_action=Hide("dialog"))
         else:
-            renpy.show_screen("dialog", message="Returned to stock settings.\nYou must restart DDLC in order to apply these settings.", ok_action=Hide("dialog"))
+            renpy.show_screen("dialog", message="Returned to stock mode.\nYou must restart Mod Docker in order to apply these settings.", ok_action=Hide("dialog"))
 
     def open_save_dir():
         if renpy.windows:
@@ -157,10 +139,10 @@ screen mods():
                         spacing 6
 
                     if renpy.version_tuple == (6, 99, 12, 4, 2187):
-                        textbutton "DDLC":
+                        textbutton "DDLC Mode":
                             action [Function(clearMod), SensitiveIf(selectedMod != "DDLC")]
                     else:
-                        textbutton "Stock":
+                        textbutton "Stock Mode":
                             action [Function(clearMod), SensitiveIf(selectedMod != "DDLC")]
 
                     python:
@@ -178,7 +160,7 @@ screen mods():
                     action [Return(0), With(Dissolve(0.5))]
             vbox:
                 textbutton _("Restart"):
-                    action Function(restart)
+                    action Quit()
 
         vbox:
             hbox:
@@ -187,7 +169,9 @@ screen mods():
                     ypos 50
                     xsize 700
                     if selectedMod == "DDLC" and renpy.version_tuple > (6, 99, 12, 4, 2187):
-                        label "Stock"
+                        label "Stock Mode"
+                    elif selectedMod == "DDLC" and renpy.version_tuple == (6, 99, 12, 4, 2187):
+                        label "DDLC Mode"
                     else:
                         label "[selectedMod]"
                 bar value XScrollValue("modinfoname")
@@ -201,18 +185,21 @@ screen mods():
                 yoffset -20
                 textbutton "Open Save Directory" action Function(open_save_dir)
                 textbutton "Open Game Directory" action Function(open_dir, config.gamedir)
-                textbutton "Open DDML Game Directory" action Function(open_dir, persistent.ddml_basedir + "/game")
+                textbutton "Open Mod Docker Game Directory" action Function(open_dir, persistent.ddml_basedir + "/game")
 
                 if not config.gl2:
                     textbutton "Enable OpenGL 2":
-                        action Show("confirm", message="Are you sure you want to enable OpenGL 2?\nSome mods may suffer from broken affects if this setting is on.\n\n{b}A restart is required to load OpenGL 2{/b}", yes_action=[SetField(config, "gl2", True), Function(restart)] , no_action=Hide("confirm"))
+                        action Show("confirm", message="Are you sure you want to enable OpenGL 2?\nSome mods may suffer from broken affects if this setting is on.\n\n{b}A restart is required to load OpenGL 2{/b}", yes_action=[SetField(config, "gl2", True), Quit()] , no_action=Hide("confirm"))
                 else:
                     textbutton "Disable OpenGL 2":
-                        action Show("confirm", message="Are you sure you want to disable OpenGL 2?\nSome mods may not have certain effects if this setting is off.\n\n{b}A restart is required to load OpenGL 2{/b}", yes_action=[SetField(config, "gl2", False), Function(restart), Hide("confirm")] , no_action=Hide("confirm"))
+                        action Show("confirm", message="Are you sure you want to disable OpenGL 2?\nSome mods may not have certain effects if this setting is off.\n\n{b}A restart is required to load OpenGL 2{/b}", yes_action=[SetField(config, "gl2", False), Quit(), Hide("confirm")] , no_action=Hide("confirm"))
         vbox:
             xpos 0.9
             ypos 0.9
-            textbutton "Select" action Function(loadMod, persistent.ddml_basedir + "/game/mods/" + selectedMod, selectedMod)
+            if selectedMod != "DDLC":
+                textbutton "Select" action Function(loadMod, persistent.ddml_basedir + "/game/mods/" + selectedMod, selectedMod)
+
+    key "K_ESCAPE" action Return(0)
 
 style mods_viewport is gui_viewport
 style mods_button is gui_button
