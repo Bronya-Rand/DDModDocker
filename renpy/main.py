@@ -401,15 +401,26 @@ def main():
 
     if temp:
         # Redefine game directory to mod directory
-        if os.path.exists(os.path.join(renpy.config.gamedir, "mods", temp["modName"], "game")):
-            renpy.config.gamedir = os.path.join(renpy.config.gamedir, "mods", temp["modName"], "game").replace("\\", "/")
+        if os.path.exists(
+            os.path.join(renpy.config.gamedir, "mods", temp["modName"], "game")
+        ):
+            renpy.config.gamedir = os.path.join(
+                renpy.config.gamedir, "mods", temp["modName"], "game"
+            ).replace("\\", "/")
         else:
-            raise Exception("'game' folder could not be found in %s." % os.path.join(renpy.config.gamedir, "mods", temp["modName"]).replace("\\", "/"))
+            raise Exception(
+                "'game' folder could not be found in %s."
+                % os.path.join(renpy.config.gamedir, "mods", temp["modName"]).replace(
+                    "\\", "/"
+                )
+            )
 
-        # Get that advanced_scripts folder out of there!
+        # Get that advanced_scripts folder out of there! (if RPYC/RPY mode)
         if os.path.exists(renpy.config.gamedir + "/advanced_scripts"):
             for src, dirs, files in os.walk(renpy.config.gamedir + "/advanced_scripts"):
-                dst = src.replace(renpy.config.gamedir + "/advanced_scripts", renpy.config.gamedir)
+                dst = src.replace(
+                    renpy.config.gamedir + "/advanced_scripts", renpy.config.gamedir
+                )
                 for f in files:
                     os.rename(os.path.join(src, f), os.path.join(dst, f))
             os.rmdir(renpy.config.gamedir + "/advanced_scripts")
@@ -453,36 +464,44 @@ def main():
             if not (ext in archive_extensions):
                 archive_extensions.append(ext)
 
-    # Find archives.
-    for i in sorted(os.listdir(old_gamedir)):
-        base, ext = os.path.splitext(i)
-
-        # Check if the archive does not have any of the extensions in archive_extensions
-        if not (ext in archive_extensions):
-            continue
-
-        renpy.config.archives.append(base)
-
-    if temp and temp["isRPA"]:
-
-        for i in sorted(os.listdir(renpy.config.gamedir)):
+    def find_archives(temp, masTemplate=False):
+        # Find archives.
+        for i in sorted(os.listdir(old_gamedir)):
             base, ext = os.path.splitext(i)
 
             # Check if the archive does not have any of the extensions in archive_extensions
             if not (ext in archive_extensions):
                 continue
 
-            renpy.config.archives.append(
-                renpy.config.gamedir + "/" + base
-            )
+            if not masTemplate or (masTemplate and base != "scripts"):
+                renpy.config.archives.append(base)
 
-    if "ddml" not in renpy.config.archives:
-        renpy.config.archives.append("ddml")
+        if temp and temp["isRPA"]:
 
-    renpy.config.archives.reverse()
+            for i in sorted(os.listdir(renpy.config.gamedir)):
+                base, ext = os.path.splitext(i)
 
-    # Initialize archives.
-    renpy.loader.index_archives()
+                # Check if the archive does not have any of the extensions in archive_extensions
+                if not (ext in archive_extensions):
+                    continue
+
+                renpy.config.archives.append(renpy.config.gamedir + "/" + base)
+
+        if "ddml" not in renpy.config.archives:
+            renpy.config.archives.append("ddml")
+
+        renpy.config.archives.reverse()
+
+        # Initialize archives.
+        renpy.loader.index_archives()
+
+    find_archives(temp)
+
+    # The MAS fix (hopefully) (curse you advanced_scripts!)
+    for x in renpy.loader.listdirfiles():
+        if "advanced_scripts" in x:
+            renpy.config.archives = []
+            find_archives(temp, True)
 
     # Start auto-loading.
     renpy.loader.auto_init()
@@ -580,7 +599,7 @@ def main():
                 rpycDeclared = False
                 for y in mods_list[:]:
 
-                    if y[0].endswith(x[0]):
+                    if y[0].split("/")[-1] == x[0]:
                         rpycDeclared = True
                         break
 
@@ -589,7 +608,6 @@ def main():
                     mods_list.append(x)
                     continue
 
-        # raise Exception(mods_list)
         renpy.game.script.script_files = mods_list
 
     else:
@@ -669,7 +687,9 @@ def main():
 
         renpy.store.persistent.ddml_basedir = renpy.config.basedir.replace("\\", "/")
         if temp:
-            renpy.config.basedir = os.path.join(renpy.config.basedir, "game/mods", temp["modName"]).replace("\\", "/")
+            renpy.config.basedir = os.path.join(
+                renpy.config.basedir, "game/mods", temp["modName"]
+            ).replace("\\", "/")
         del temp
 
         if renpy.parser.report_parse_errors():
