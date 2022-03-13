@@ -198,6 +198,7 @@ init python:
     build.classify("game/python-packages/**", "mod")
     build.classify("game/ddmc.json", "mod")
     build.classify("How to use DDMD.txt", "mod")
+    build.classify("ddmd_settings.json", "mod")
 
     build.classify("game/MLSaves/**", None)
     build.classify("game/mods/**", None)

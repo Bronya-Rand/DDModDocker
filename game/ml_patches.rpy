@@ -1,7 +1,4 @@
 
-init -100:
-    default persistent.enable_gl2 = False
-
 init -100 python:
     import hashlib
 
@@ -21,8 +18,6 @@ init -100 python:
         os.makedirs(persistent.ddml_basedir + "/game/MLSaves")
     if not os.path.exists(config.basedir + "/characters"):
         os.makedirs(config.basedir + "/characters")
-    
-    config.gl2 = persistent.enable_gl2
 
 init 1 python:
 

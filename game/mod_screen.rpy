@@ -9,6 +9,7 @@ init python:
     current_mod_list = []
     selectedMod = None
     confirmedMod = None
+    loadedMod = None
 
     config.keymap['mod_overlay'] = ['K_F9']
     config.underlay.append(
@@ -37,7 +38,7 @@ init python:
 
     start_overlay = SteamLikeOverlay()
 
-    def load_json():
+    def get_mod_json():
         try:
             with open(persistent.ddml_basedir + "/selectedmod.json", "r") as mod_json:
                 temp = json.load(mod_json)
@@ -45,8 +46,9 @@ init python:
         except:
             return "DDLC"
 
-    selectedMod = load_json()
-    confirmedMod = load_json()
+    selectedMod = get_mod_json()
+    confirmedMod = selectedMod
+    loadedMod = selectedMod
 
     def get_ddmc_modlist():
         with renpy.file("ddmc.json") as mod_json:
@@ -130,6 +132,15 @@ init python:
             subprocess.Popen([ "open", path ])
         else:
             subprocess.Popen([ "xdg-open", path ])
+
+    def set_settings_json():
+        temp = [
+            {
+            "config_gl2": config.gl2
+            }
+        ]
+        with open(persistent.ddml_basedir + "/ddmd_settings.json", "w") as ddmd_settings:
+            json.dump(temp, ddmd_settings)
 
 screen mods():
     zorder 100
@@ -221,22 +232,23 @@ screen mods():
                 textbutton "Open Save Directory" action Function(open_save_dir)
                 textbutton "Open Game Directory" action Function(open_dir, config.gamedir)
                 textbutton "Open [[REDACTED] Game Directory" action Function(open_dir, persistent.ddml_basedir + "/game")
-                imagebutton:
-                    idle ConditionSwitch("config.gl2", Composite((250, 50), (0, 0), "ddmd_toggle_on",
-                        (55, 7), Text("Enable OpenGL 2", style="mods_text")), "True",
-                        Composite((250, 50), (0, 0), "ddmd_toggle_off", (55, 7), 
-                        Text("Enable OpenGL 2", style="mods_text")))
-                    hover ConditionSwitch("config.gl2", Composite((250, 50), (0, 0), "ddmd_toggle_on_hover",
-                        (55, 7), Text("Enable OpenGL 2", style="mods_text")), "True", 
-                        Composite((250, 50), (0, 0), "ddmd_toggle_off_hover", (55, 7), Text("Enable OpenGL 2", 
-                        style="mods_text")))
-                    action If(config.gl2, Show("ddmd_confirm", Dissolve(0.25), message="Disable OpenGL 2?", 
-                        message2="Some mods may not have certain effects if this setting is off. {b}A restart is required to load OpenGL 2{/b}.", 
-                        yes_action=[SetField(persistent, "enable_gl2", False)], no_action=Hide("ddmd_confirm", 
-                        Dissolve(0.25))), Show("ddmd_confirm", Dissolve(0.25), message="Enable OpenGL 2?", 
-                        message2="Some mods may suffer from broken affects if this setting is on. {b}A restart is required to load OpenGL 2{/b}.", 
-                        yes_action=[SetField(persistent, "enable_gl2", True), Quit()], no_action=Hide("ddmd_confirm", 
-                        Dissolve(0.25))))
+                if selectedMod == loadedMod and selectedMod != "DDLC":
+                    imagebutton:
+                        idle ConditionSwitch("config.gl2", Composite((250, 50), (0, 0), "ddmd_toggle_on",
+                            (55, 7), Text("Enable OpenGL 2", style="mods_text")), "True",
+                            Composite((250, 50), (0, 0), "ddmd_toggle_off", (55, 7), 
+                            Text("Enable OpenGL 2", style="mods_text")))
+                        hover ConditionSwitch("config.gl2", Composite((250, 50), (0, 0), "ddmd_toggle_on_hover",
+                            (55, 7), Text("Enable OpenGL 2", style="mods_text")), "True", 
+                            Composite((250, 50), (0, 0), "ddmd_toggle_off_hover", (55, 7), Text("Enable OpenGL 2", 
+                            style="mods_text")))
+                        action If(config.gl2, Show("ddmd_confirm", Dissolve(0.25), message="Disable OpenGL 2?", 
+                            message2="This mod may not have certain effects display if this setting is turned off. {b}A restart is required to load OpenGL 2{/b}.", 
+                            yes_action=[SetField(config, "gl2", False), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
+                            Dissolve(0.25))), Show("ddmd_confirm", Dissolve(0.25), message="Enable OpenGL 2?", 
+                            message2="This mod may suffer from broken affects if this setting is turned on. {b}A restart is required to load OpenGL 2{/b}.", 
+                            yes_action=[SetField(config, "gl2", True), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
+                            Dissolve(0.25))))
 
         vbox:
             xpos 0.9

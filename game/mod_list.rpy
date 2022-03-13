@@ -122,9 +122,6 @@ screen mod_list_info(mod):
                 xsize 740
                 ysize 420
 
-                python:
-                    ddmc_json = get_ddmc_modlist()
-
                 viewport id "mlv":
                     mousewheel True
                     draggable True
