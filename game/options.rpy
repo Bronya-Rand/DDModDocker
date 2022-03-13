@@ -194,6 +194,7 @@ init python:
     build.classify("game/**.rpyc", "ddml")
     build.classify("game/**.chr", "ddml")
     build.classify("game/**.txt", "ddml")
+    build.classify("game/sdc_system/**", "ddml")
     build.classify("game/python-packages/**", "mod")
     build.classify("How to use DDMD.txt", "mod")
 
