@@ -28,7 +28,8 @@ init python:
             thread.start()
         
         def show_notif(self):
-            renpy.display.screen.show_screen("steam_like_overlay", "Access the Mod Docker menu while playing.\n\n\t\t\t\t\t\t\tPress: "+ config.keymap['mod_overlay'][0].replace("K_", ""))
+            renpy.display.screen.show_screen("steam_like_overlay", "Access the Mod Docker menu while playing.", 
+                "Press: " + config.keymap['mod_overlay'][0].replace("K_", ""))
         
         def run(self):
             sleep(1.5)
@@ -250,7 +251,7 @@ label _mod_overlay:
     return
 
 init -1:
-    screen steam_like_overlay(message):
+    screen steam_like_overlay(message, message2):
 
         zorder 200
         style_prefix "steam"
@@ -260,17 +261,24 @@ init -1:
             ysize 100
             xalign 1.0
             yalign 1.0
-
-            has vbox:
+            
+            vbox:
                 xalign 0.5
-                yalign 0.5
-            text message size 16
+                yalign 0.15
+                text message size 16
+            vbox:
+                xalign 0.5
+                yalign 0.9
+                text message2 size 16
+                
 
         timer 3.25 action Hide('steam_like_overlay')
 
-    style steam_frame is frame
+    style steam_frame:
+        background Frame("sdc_system/ddmd_app/steam_frame.png", left=4, top=4, bottom=4, right=4, tile=False)
+
     style steam_text:
-        color "#000"
+        color "#fff"
         outlines []
 
     transform steam_effect:
