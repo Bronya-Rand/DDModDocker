@@ -196,10 +196,13 @@ init python:
     build.classify("game/**.txt", "ddml")
     build.classify("game/sdc_system/**", "ddml")
     build.classify("game/python-packages/**", "mod")
+    build.classify("game/ddmc.json", "mod")
     build.classify("How to use DDMD.txt", "mod")
 
     build.classify("game/MLSaves/**", None)
     build.classify("game/mods/**", None)
+    build.classify("game/docker_custom_image.png", None)
+    build.classify("game/firstrun", None)
     build.classify('**~', None)
     build.classify('**.bak', None)
     build.classify('**/.**', None)
