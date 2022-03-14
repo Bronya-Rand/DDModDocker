@@ -5,7 +5,7 @@ transform ml_overlay_effect:
         alpha 0.0
         linear 0.5 alpha 1.0
 
-## Confirm Transitons
+## Confirm Transitions
 transform android_like_overlay:
     on show:
         alpha 0.0
@@ -21,3 +21,13 @@ transform android_like_frame:
         easein 0.3 ycenter 620
     on hide:
         easein .75 ycenter 900 nearest True
+
+## Mod Hover Transition
+transform windows_like_effect:
+    on show:
+        alpha 0.0
+        pause 1.0
+        linear 0.25 alpha 1.0
+    on hide:
+        alpha 1.0
+        linear 0.25 alpha 0.0

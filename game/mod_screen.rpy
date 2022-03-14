@@ -5,10 +5,13 @@ init python:
     import threading
     from time import sleep
     import subprocess
+    import tempfile
+    from zipfile import ZipFile
+    import shutil
+    import sys
 
     current_mod_list = []
     selectedMod = None
-    confirmedMod = None
     loadedMod = None
 
     config.keymap['mod_overlay'] = ['K_F9']
@@ -47,7 +50,6 @@ init python:
             return "DDLC"
 
     selectedMod = get_mod_json()
-    confirmedMod = selectedMod
     loadedMod = selectedMod
 
     def get_ddmc_modlist():
@@ -74,7 +76,6 @@ init python:
         return templist
 
     def loadMod(x, folderName):
-        global confirmedMod
         isRPA = False
         
         for root, dirs, files in os.walk(x + "/game"):
@@ -86,36 +87,25 @@ init python:
             "modName": folderName,
             "isRPA": isRPA,
         }
-        confirmedMod = folderName
         
         with open(persistent.ddml_basedir + "/selectedmod.json", "w") as j:
             json.dump(mod_dict, j)
         
-        renpy.show_screen("ddmd_dialog", message="Selected %s as the loadable mod. You must restart Mod Docker in order to load the mod." % folderName, 
-            ok_action=Hide("ddmd_dialog", Dissolve(0.25)))
+        renpy.show_screen("ddmd_dialog", message="Selected %s as the loadable mod. You must restart Mod Docker in order to load the mod." % folderName)
 
     def clearMod():
-        global confirmedMod
-        
         if os.path.exists(persistent.ddml_basedir + "/selectedmod.json"):
             os.remove(persistent.ddml_basedir + "/selectedmod.json")
-
-            confirmedMod = "DDLC"
         
             if renpy.version_tuple == (6, 99, 12, 4, 2187):
-                renpy.show_screen("ddmd_dialog", message="Returned to DDLC mode. You must restart Mod Docker in order to load the mod.", 
-                    ok_action=Hide("ddmd_dialog", Dissolve(0.25)))
+                renpy.show_screen("ddmd_dialog", message="Returned to DDLC mode. You must restart Mod Docker in order to load the mod.")
             else:
-                renpy.show_screen("ddmd_dialog", message="Returned to stock mode. You must restart Mod Docker in order to apply these settings.", 
-                    ok_action=Hide("ddmd_dialog", Dissolve(0.25)))
+                renpy.show_screen("ddmd_dialog", message="Returned to stock mode. You must restart Mod Docker in order to apply these settings.")
         else:
             if renpy.version_tuple == (6, 99, 12, 4, 2187):
-                renpy.show_screen("ddmd_dialog", message="Error: You are already in DDLC Mode.", 
-                    ok_action=Hide("ddmd_dialog", Dissolve(0.25)))
+                renpy.show_screen("ddmd_dialog", message="Error: You are already in DDLC Mode.")
             else:
-                renpy.show_screen("ddmd_dialog", message="Error: You are already in stock mode.", 
-                    ok_action=Hide("ddmd_dialog", Dissolve(0.25)))
-        
+                renpy.show_screen("ddmd_dialog", message="Error: You are already in stock mode.")
 
     def open_save_dir():
         if renpy.windows:
@@ -141,6 +131,89 @@ init python:
         ]
         with open(persistent.ddml_basedir + "/ddmd_settings.json", "w") as ddmd_settings:
             json.dump(temp, ddmd_settings)
+
+    def valid_zip(filePath):
+        """
+        Returns whether the given ZIP file is a valid Ren'Py/DDLC mod ZIP file.
+
+            filePath - the direct path to the ZIP file.
+        """
+        zip_contents = []
+
+        with ZipFile(filePath, "r") as temp_zip:
+            zip_contents = temp_zip.namelist()
+
+        for x in zip_contents:
+            if x.endswith((".rpa", ".rpyc", ".rpy")):
+                del zip_contents
+                return True
+
+        return False
+
+    def install_mod(zipPath, copy=False):
+        global tempFolderName
+        if not tempFolderName:
+            renpy.show_screen("ddmd_dialog", message="Error: The folder name cannot be blank.")
+            return
+        elif tempFolderName.lower() in ("ddlc mode", "stock mode", "ddlc", "stock"):
+            tempFolderName = ""
+            renpy.show_screen("ddmd_dialog", message="Error: %s is a reserved folder name. Please try another folder name." % tempFolderName)
+            return
+        elif os.path.exists(os.path.join(persistent.ddml_basedir, "game/mods/" + tempFolderName)):
+            tempFolderName = ""
+            renpy.show_screen("ddmd_dialog", message="Error: This mod folder already exists. Please try another folder name.")
+            return
+        else:
+            renpy.show_screen("ddmd_progress", message="Installing mod. Please wait.")
+            folderPath = os.path.join(persistent.ddml_basedir, "game/mods", tempFolderName)
+            try:
+                if not valid_zip(zipPath):
+                    raise Exception("Given ZIP file is a invalid DDLC Mod ZIP Package. Please select a different ZIP file.")
+                    return
+
+                os.makedirs(folderPath)
+                os.makedirs(os.path.join(folderPath, "game"))
+
+                if not copy:
+                    mod_dir = tempfile.mkdtemp(prefix="NewDDML_", suffix="_TempArchive")
+
+                    with ZipFile(zipPath, "r") as tempzip:
+                        tempzip.extractall(mod_dir)
+                    
+                else:
+                    mod_dir = zipPath
+
+                for mod_src, dirs, files in os.walk(mod_dir):
+                    dst_dir = mod_src.replace(mod_dir, folderPath)
+                    for d in dirs:
+                        if d == "characters":
+                            shutil.move(os.path.join(mod_src, d), os.path.join(dst_dir, d))
+                    for f in files:
+                        if f.endswith((".rpa", ".rpyc", ".rpy")):
+                            if not f.startswith("00"):
+                                mod_dir = mod_src
+                                break
+
+                for mod_src, dirs, files in os.walk(mod_dir):
+                    dst_dir = mod_src.replace(mod_dir, folderPath + "/game")
+                    for mod_d in dirs:
+                        shutil.move(os.path.join(mod_src, mod_d), os.path.join(dst_dir, mod_d))
+                    for mod_f in files:
+                        shutil.move(os.path.join(mod_src, mod_f), os.path.join(dst_dir, mod_f))
+                
+                tempFolderName = ""
+                renpy.hide_screen("ddmd_progress")
+                renpy.show_screen("ddmd_dialog", message="%s has been installed successfully." % tempFolderName)
+            except OSError as err:
+                if os.path.exists(folderPath):
+                    shutil.rmtree(folderPath)
+                renpy.hide_screen("ddmd_progress")
+                renpy.show_screen("ddmd_dialog", message="A error has occured during installation.", message2=str(err))
+            except Exception as err:
+                if os.path.exists(folderPath):
+                    shutil.rmtree(folderPath)
+                renpy.hide_screen("ddmd_progress")
+                renpy.show_screen("ddmd_dialog", message="A error has occured during installation.", message2=str(err))
 
 screen mods():
     zorder 100
@@ -169,20 +242,25 @@ screen mods():
 
                         spacing 6
 
-                    if renpy.version_tuple == (6, 99, 12, 4, 2187):
-                        textbutton "DDLC Mode":
-                            action [SetVariable("selectedMod", "DDLC"), SensitiveIf(selectedMod != "DDLC")]
-                    else:
-                        textbutton "Stock Mode":
-                            action [SetVariable("selectedMod", "DDLC"), SensitiveIf(selectedMod != "DDLC")]
+                    button:
+                        action [SetVariable("selectedMod", "DDLC"), SensitiveIf(selectedMod != "DDLC")]
+
+                        add If(loadedMod == "DDLC", Composite((310, 50), (0, 1), "ddmd_selectedmod_icon", 
+                            (38, 0), Text(If(renpy.version_tuple == (6, 99, 12, 4, 2187), "DDLC Mode", 
+                            "Stock Mode"), style="mods_button_text")), Text(If(renpy.version_tuple == (6, 99, 12, 4, 2187), 
+                            "DDLC Mode", "Stock Mode"), style="mods_button_text"))
 
                     python:
                         global current_mod_list
                         current_mod_list = get_mod_list()
 
                     for x in current_mod_list:
-                        textbutton "[x.modFolderName!q]":
+                        button:
                             action [SetVariable("selectedMod", x.modFolderName), SensitiveIf(x.modFolderName != selectedMod)]
+                            
+                            add If(loadedMod == x.modFolderName, Composite((210, 50), (0, 1), "ddmd_selectedmod_icon", 
+                                (38, 0), Text(x.modFolderName, style="mods_button_text", substitute=False)), 
+                                Text(x.modFolderName, style="mods_button_text", substitute=False))
 
         hbox:
             style "mods_return_button"
@@ -190,12 +268,24 @@ screen mods():
                 imagebutton:
                     idle "ddmd_return_icon"
                     hover "ddmd_return_icon_hover"
+                    hovered Show("mods_hover_info", about="Exit the DDMD Menu")
+                    unhovered Hide("mods_hover_info")
                     action [Return(0), With(Dissolve(0.5))]
+            null width 10
+            vbox:
+                imagebutton:
+                    idle "ddmd_install_icon"
+                    hover "ddmd_install_icon_hover"
+                    hovered Show("mods_hover_info", about="Install a Mod")
+                    unhovered Hide("mods_hover_info")
+                    action [Hide("mods_hover_info"), Show("pc_directory", Dissolve(0.25))]
             null width 10
             vbox:
                 imagebutton:
                     idle "ddmd_search_icon"
                     hover "ddmd_search_icon_hover"
+                    hovered Show("mods_hover_info", about="Browse the Mod List!")
+                    unhovered Hide("mods_hover_info")
                     action If(not persistent.mod_list_disclaimer_accepted, 
                     Show("confirm", message="{b}Disclaimer{/b}: This mod list source is provided by the defunct Doki Doki Mod Club site.\nNot all mods may be on here while others may be out-of-date.\nBy accepting this prompt, you acknoledge to the following disclaimer above.", 
                         yes_action=[SetField(persistent, "mod_list_disclaimer_accepted", True), Hide("confirm", Dissolve(0.25)), 
@@ -206,6 +296,8 @@ screen mods():
                 imagebutton:
                     idle "ddmd_restart_icon"
                     hover "ddmd_restart_icon_hover"
+                    hovered Show("mods_hover_info", about="Quits DDMD")
+                    unhovered Hide("mods_hover_info")
                     action Quit()
 
         vbox:
@@ -300,3 +392,17 @@ init -1:
             easein .45 ycenter 670
         on hide:
             easein .45 ycenter 800 nearest True
+
+screen mods_hover_info(about):
+    zorder 101
+    style_prefix "mods_hover"
+
+    python:
+        currentpos = renpy.get_mouse_pos()
+    
+    frame at windows_like_effect:
+        xpos currentpos[0]
+        ypos currentpos[1] + 15
+        xsize 150
+
+        text _(about)

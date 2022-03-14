@@ -52,7 +52,7 @@ style mods_return_button is gui_button
 style mods_return_button_text is gui_button_text
 
 style mods_return_button:
-    xpos 90
+    xpos 70
     yalign 1.0
     yoffset -30
 
@@ -97,3 +97,12 @@ style ddmd_confirm_prompt_text:
 style ddmd_confirm_button:
     hover_sound gui.hover_sound
     activate_sound gui.activate_sound
+
+## Mod Hover Info
+style mods_hover_frame:
+    background Frame("#fff", left=4, top=4, bottom=4, right=4, tile=False)
+
+style mods_hover_text:
+    color "#000"
+    outlines []
+    size 12
