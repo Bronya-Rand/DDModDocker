@@ -1,3 +1,4 @@
+## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
 
 screen mod_list(search=None):
     zorder 101

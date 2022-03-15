@@ -1,3 +1,4 @@
+## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
 
 screen ddmd_confirm(xs=480, ys=220, message, message2=None, yes_action, no_action):
     modal True

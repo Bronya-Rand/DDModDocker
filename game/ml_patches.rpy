@@ -1,3 +1,4 @@
+## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
 
 init -100 python:
     import hashlib

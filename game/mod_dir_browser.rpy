@@ -1,3 +1,4 @@
+## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
 
 init python:
     def can_access(path):

@@ -1,3 +1,4 @@
+## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
 
 ## Standard Ren'Py Font
 style renpy_generic_text:

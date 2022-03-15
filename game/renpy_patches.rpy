@@ -1,13 +1,5 @@
 ## Copyright 2019-2022 Azariel Del Carmen (GanstaKingofSA). All rights reserved.
 
-## renpy_patches.rpy
-
-# This file is not part of DDLC. This file is mainly designed to 
-# patch certain versions of Ren'Py that break DDLC/DDLC mods by
-# patching the Ren'Py engine at startup.
-
-### DO NOT MODIFY ANYTHING BEYOND THIS POINT ###
-
 ## Patches 'wmic' environment variables with 'powershell' instead.
 python early:
     import os
@@ -19,7 +11,7 @@ init -100 python:
         try:
             onedrive_path = os.environ["OneDrive"]
             if onedrive_path in config.basedir:
-                raise Exception("DDLC mods/mod projects cannot be run from a cloud folder. Move your mod/mod project to another location and try again.")
+                raise Exception("Mod Docker cannot be run from a cloud folder. Move Mod Docker to another location and try again.")
         except: pass
 
 init -1 python:

@@ -1,3 +1,5 @@
+## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
+
 init 1 python:
     #config.developer = True
     gui.button_height = None

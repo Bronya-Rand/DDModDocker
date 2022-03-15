@@ -1,3 +1,4 @@
+## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
 
 init python:
     import os
@@ -8,7 +9,6 @@ init python:
     import tempfile
     from zipfile import ZipFile
     import shutil
-    import sys
 
     current_mod_list = []
     selectedMod = None

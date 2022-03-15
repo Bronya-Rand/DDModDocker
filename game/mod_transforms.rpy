@@ -1,3 +1,4 @@
+## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
 
 ## MD Show Transition
 transform ml_overlay_effect:

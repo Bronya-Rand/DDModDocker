@@ -1,8 +1,4 @@
-﻿## This template version is 3.0.0. When asked to provide the template version
-## you are using, give them this version number. 
-### DO NOT REMOVE OR CHANGE THE ABOVE COMMENT. ###
-
-## options.rpy
+﻿## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
 
 # This file customizes what your mod is and and how it starts and builds!
 
