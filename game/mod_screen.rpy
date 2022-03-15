@@ -322,9 +322,9 @@ screen mods():
                 xpos 0.2
                 yoffset -20
                 textbutton "Open Save Directory" action Function(open_save_dir)
-                if selectedMod != "DDLC":
-                    textbutton "Open Game Directory" action Function(open_dir, config.gamedir)
-                textbutton "Open Mod Docker Game Directory" action Function(open_dir, persistent.ddml_basedir + "/game")
+                if loadedMod != "DDLC":
+                    textbutton "Open Selected Mod's Game Directory" action Function(open_dir, config.gamedir)
+                textbutton "Open Mod Docker's Game Directory" action Function(open_dir, persistent.ddml_basedir + "/game")
                 if selectedMod == loadedMod and selectedMod != "DDLC":
                     imagebutton:
                         idle ConditionSwitch("config.gl2", Composite((250, 50), (0, 0), "ddmd_toggle_on",
