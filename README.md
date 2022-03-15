@@ -43,13 +43,17 @@ Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and ru
 Doki Doki Mod Launcher had the vision that Mod Docker has back in 2018, but due to my lack of coding expertise, it was more impractical. It required all modders to build a special DDML build rather than following the standard. Mod Docker revisits the old days of Mod Launcher, and revamps it to make the vision that I had all those years ago come to life with slight inspiration from [Docker](https://docker.com) itself.
 
 ## How does a 'mod container' work?
-![A diagram of how mod container works](.github/assets/Containerization.png)
+<p align="center">
+    <img src=".github/assets/Containerization.png" alt="A diagram of how mod container works"> 
+</p>
 
 A mod container is basically a mod folder inside of Mod Docker where mods are stored and can be run without loading other mod files, touching saves from other mods and run as if it was a new standard mod installation. All mod containers contain a *game* folder (sometimes a *characters* folder) within that contains the mods' `RPAs`, `RPYC/RPY's` and other crucial folders like `mod_assets` that are loaded per mod selected.
 
 ## Comparing Mod Docker to Other Mod Launchers/Managers
 While Mod Docker has some similarities to Doki Doki Mod Launcher/Mod Manager, Mod Docker functions as a hybrid approach to a mod launcher/manager and a standard install of a DDLC mod.
-![A diagram comparing Mod Docker to Doki Doki Mod Launcher/Mod Manager and Standard Installs](.github/assets/CompareThree.png)
+<p align="center">
+    <img src=".github/assets/CompareThree.png" alt="A diagram comparing Mod Docker to Doki Doki Mod Launcher/Mod Manager and Standard Installs"> 
+</p>
 
 ### Mod Docker
 > Mod Docker uses a custom Ren'Py 7 build that runs any selected mod as it's own mod (no matter if the mod is the same in two copies). It requires no external EXEs or the base game to work (except for the base game RPAs) to load the mods' own assets. It does not share save data of one mod throughout multiple copies.
