@@ -201,9 +201,9 @@ init python:
                     for mod_f in files:
                         shutil.move(os.path.join(mod_src, mod_f), os.path.join(dst_dir, mod_f))
                 
-                tempFolderName = ""
                 renpy.hide_screen("ddmd_progress")
                 renpy.show_screen("ddmd_dialog", message="%s has been installed successfully." % tempFolderName)
+                tempFolderName = ""
             except OSError as err:
                 if os.path.exists(folderPath):
                     shutil.rmtree(folderPath)
