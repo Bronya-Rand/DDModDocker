@@ -7,7 +7,7 @@
 # This file customizes what your mod is and and how it starts and builds!
 
 # This controls what your mod is called.
-define config.name = "Doki Doki Mod Docker"
+define config.name = "Doki Doki Mod Docker Alpha"
 define config.window_title = config.name
 
 # This controls whether you want your mod name to show in the main menu.
@@ -179,12 +179,10 @@ init python:
 
     # These variables declare the packages to build your mod that is Team Salvato
     # IPG compliant. Do not mess with these variables whatsoever.
-    build.package("DDMD6",'zip','mod',description="Ren'Py 6 DDMD Build (Alpha)")
-    build.package("DDMD7",'zip','windows linux mac renpy mod all',description="Ren'Py 7 DDMD Build: All")
-    build.package("win-liux",'zip','windows linux renpy mod all',description="Ren'Py 7 DDMD Build: Windows/Linux")
-    build.package("mac-app",'app-zip','mac renpy mod all',description="Ren'Py 7 DDMD Build: macOS")
-    #build.package("DDML7-pc",'zip','windows linux renpy mod all',description="R'Py 7 DDML Build: Windows and Linux")
-    #build.package("DDML7-mac", "app-zip app-dmg", "mac mod renpy all", "R'Py 7 DDML Build: macOS")
+    # build.package("DDMD6",'zip','mod',description="Ren'Py 6 DDMD Build (Alpha)")
+    build.package("full",'zip','windows linux mac renpy mod all',description="Ren'Py 7 DDMD Build: All")
+    # build.package("win-liux",'zip','windows linux renpy mod all',description="Ren'Py 7 DDMD Build: Windows/Linux")
+    # build.package("mac-app",'app-zip','mac renpy mod all',description="Ren'Py 7 DDMD Build: macOS")
 
     # These variables declare the archives that will be made to your packaged mod.
     # To add another archive, make a build.archive variable like in this example:
