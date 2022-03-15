@@ -8,6 +8,7 @@
 
 # This controls what your mod is called.
 define config.name = "Doki Doki Mod Docker"
+define config.window_title = config.name
 
 # This controls whether you want your mod name to show in the main menu.
 # If your mod name is big, it is suggested to turn this off.
@@ -112,6 +113,8 @@ define config.menu_clear_layers = ["front"]
 define config.gl_test_image = "white"
 
 init python:
+    build.executable_name = "DDMD"
+
     if len(renpy.loadsave.location.locations) > 1: del(renpy.loadsave.location.locations[1])
     renpy.game.preferences.pad_enabled = False
     def replace_text(s):
