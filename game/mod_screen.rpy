@@ -201,9 +201,9 @@ init python:
                     for mod_f in files:
                         shutil.move(os.path.join(mod_src, mod_f), os.path.join(dst_dir, mod_f))
                 
+                tempFolderName = ""
                 renpy.hide_screen("ddmd_progress")
                 renpy.show_screen("ddmd_dialog", message="%s has been installed successfully." % tempFolderName)
-                tempFolderName = ""
             except OSError as err:
                 if os.path.exists(folderPath):
                     shutil.rmtree(folderPath)
@@ -287,9 +287,9 @@ screen mods():
                     hovered Show("mods_hover_info", about="Browse the Mod List!")
                     unhovered Hide("mods_hover_info")
                     action If(not persistent.mod_list_disclaimer_accepted, 
-                    Show("confirm", message="{b}Disclaimer{/b}: This mod list source is provided by the defunct Doki Doki Mod Club site.\nNot all mods may be on here while others may be out-of-date.\nBy accepting this prompt, you acknoledge to the following disclaimer above.", 
-                        yes_action=[SetField(persistent, "mod_list_disclaimer_accepted", True), Hide("confirm", Dissolve(0.25)), 
-                        Show("mod_list", Dissolve(0.25))], no_action=Hide("confirm", Dissolve(0.25))), 
+                    [Hide("mods_hover_info"), Show("ddmd_confirm", message="Disclaimer", message2="This mod list source is provided by the defunct Doki Doki Mod Club site. Not all mods may be on here while others may be out-of-date. By accepting this prompt, you acknoledge to the following disclaimer above.", 
+                        yes_action=[SetField(persistent, "mod_list_disclaimer_accepted", True), Hide("ddmd_confirm", Dissolve(0.25)), 
+                        Show("mod_list", Dissolve(0.25))], no_action=Hide("ddmd_confirm", Dissolve(0.25)))], 
                         Show("mod_list", Dissolve(0.25)))
             null width 10
             vbox:
