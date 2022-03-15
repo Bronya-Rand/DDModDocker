@@ -4,7 +4,7 @@ init -100 python:
 
     for archive in ['audio','images','fonts','scripts']:
         if archive + ".rpa" not in os.listdir(persistent.ddml_basedir + "/game"):
-            raise Exception("'%s' was not found in the Mod Docker game folder. Check your installation and try again." % archive + ".rpa")
+            raise Exception("'%s.rpa' was not found in the Mod Docker game folder. Check your installation and try again." % archive)
 
     ## Hash as of DDLC 1.1.1
     if hashlib.sha256(open(os.path.join(persistent.ddml_basedir, "game/scripts.rpa"), "rb").read()).hexdigest() != 'da7ba6d3cf9ec1ae666ec29ae07995a65d24cca400cd266e470deb55e03a51d4':
