@@ -41,6 +41,7 @@ Doki Doki Mod Launcher had the vision that Mod Docker has back in 2018, but due 
 
 ## How does a 'mod container' work?
 ![A diagram of how mod container works](.github/assets/Containerization.png)
+
 A mod container is basically a mod folder inside of Mod Docker where mods are stored and can be run without loading other mod files, touching saves from other mods and run as if it was a new standard mod installation. All mod containers contain a *game* folder (sometimes a *characters* folder) within that contains the mods' `RPAs`, `RPYC/RPY's` and other crucial folders like `mod_assets` that are loaded per mod selected.
 
 ## Comparing Mod Docker to Other Mod Launchers/Managers
