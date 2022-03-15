@@ -1,5 +1,8 @@
 # Doki Doki Mod Docker
 
+<p align="center">
+    <img src=".github/assets/DDMDLogo.png" alt="DDMD Logo" width=160> 
+</p>
 Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and runs multiple) Doki Doki Literature Club mods into one game.
 
 > This project is in alpha. Expect bugs or several mods to not work as compared to other mod launchers/managers.

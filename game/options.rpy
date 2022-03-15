@@ -87,7 +87,7 @@ define config.save_directory = "DD-ModDocker"
 # define config.save_directory = "DDMLIntegrated"
 
 # This controls the window logo of your mod.
-define config.window_icon = "gui/window_icon.png"
+define config.window_icon = "sdc_system/DDMDLogo.png"
 
 # This controls whether your mod allows the player to skip dialogue.
 define config.allow_skipping = True
