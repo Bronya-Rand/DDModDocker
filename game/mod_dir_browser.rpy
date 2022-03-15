@@ -29,7 +29,7 @@ screen pc_directory(loc=None):
             python:
                 if loc and loc != "drive":
                     current_dir = loc
-                elif (loc == "drive" and renpy.windows:
+                elif (loc == "drive" and renpy.windows):
                     current_dir = None
                 else:
                     current_dir = persistent.ddml_basedir
@@ -99,7 +99,7 @@ screen pc_directory(loc=None):
                                     imagebutton:
                                         idle Composite((460, 18), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
                                         hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
-                                        action If(can_access(os.path.join(current_dir, x)), [Hide("pc_directory"), Show("pc_directory", loc=os.path.join(current_dir, x))], Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x))
+                                        action If(can_access(os.path.join(current_dir, x)), [Hide("pc_directory"), Show("pc_directory", loc=os.path.join(current_dir, x))], Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x)))
                             elif os.path.join(current_dir, x).endswith(".zip"):
                                 hbox:
                                     imagebutton:
