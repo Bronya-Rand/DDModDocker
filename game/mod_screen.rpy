@@ -214,6 +214,18 @@ init python:
                     shutil.rmtree(folderPath)
                 renpy.hide_screen("ddmd_progress")
                 renpy.show_screen("ddmd_dialog", message="A error has occured during installation.", message2=str(err))
+    
+    def delete_mod(mod):
+        try:
+            shutil.rmtree(persistent.ddml_basedir + "/game/mods/" + mod)
+        except Exception as err:
+            renpy.show_screen("ddmd_dialog", message="A error occured while deleting %s." % mod, message2=str(err))
+
+    def delete_saves(mod):
+        try:
+            shutil.rmtree(persistent.ddml_basedir + "/game/MLSaves/" + mod)
+        except Exception as err:
+            renpy.show_screen("ddmd_dialog", message="A error occured while deleting %s save data." % mod, message2=str(err))
 
 screen mods():
     zorder 100
@@ -278,7 +290,7 @@ screen mods():
                     hover "ddmd_install_icon_hover"
                     hovered Show("mods_hover_info", about="Install a Mod")
                     unhovered Hide("mods_hover_info")
-                    action [Hide("mods_hover_info"), Show("pc_directory", Dissolve(0.25))]
+                    action [Hide("mods_hover_info"), If(renpy.macintosh and not persistent.macos_zip_warn, [Show("ddmd_dialog", "As of now, Mod Docker only supports Mod ZIP packages. Downloading mods via Safari may auto-extract these ZIP files and requires them to be re-zipped."), SetField(persistent, "macos_zip_warn", True), Show("pc_directory", Dissolve(0.25))], Show("pc_directory", Dissolve(0.25))]
             null width 10
             vbox:
                 imagebutton:
@@ -325,6 +337,10 @@ screen mods():
                 if loadedMod != "DDLC":
                     textbutton "Open Selected Mod's Game Directory" action Function(open_dir, config.gamedir)
                 textbutton "Open Mod Docker's Game Directory" action Function(open_dir, persistent.ddml_basedir + "/game")
+                if selectedMod != loadedMod and selectedMod != "DDLC":
+                    textbutton "Delete Mod" action Function(delete_mod, selectedMod)
+                if selectedMod != loadedMod:
+                    textbutton "Delete Saves" action Function(delete_saves, selectedMod)
                 if selectedMod == loadedMod and selectedMod != "DDLC":
                     imagebutton:
                         idle ConditionSwitch("config.gl2", Composite((250, 50), (0, 0), "ddmd_toggle_on",

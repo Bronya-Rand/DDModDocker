@@ -37,3 +37,4 @@ default persistent.mod_list_disclaimer_accepted = False
 default modSearchCriteria = ""
 define tempFolderName = ""
 default persistent.self_extract = False
+default persistent.macos_zip_warn = False
