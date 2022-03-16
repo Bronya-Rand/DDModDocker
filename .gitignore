@@ -1,2 +1,4 @@
 *.rpyc
 *.bak
+*.chr
+poemwords.txt

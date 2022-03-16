@@ -1,8 +1,4 @@
-
-init 1 python:
-    #config.developer = True
-    gui.button_height = None
-    gui.navigation_spacing = -gui.navigation_spacing
+## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
 
 init python:
     import os
@@ -10,9 +6,13 @@ init python:
     import threading
     from time import sleep
     import subprocess
+    import tempfile
+    from zipfile import ZipFile
+    import shutil
 
     current_mod_list = []
     selectedMod = None
+    loadedMod = None
 
     config.keymap['mod_overlay'] = ['K_F9']
     config.underlay.append(
@@ -32,7 +32,8 @@ init python:
             thread.start()
         
         def show_notif(self):
-            renpy.display.screen.show_screen("steam_like_overlay", "Access the Mod Docker menu while playing.\n\n\t\t\t\t\t\t\tPress: "+ config.keymap['mod_overlay'][0].replace("K_", ""))
+            renpy.display.screen.show_screen("steam_like_overlay", "Access the Mod Docker menu while playing.", 
+                "Press: " + config.keymap['mod_overlay'][0].replace("K_", ""))
         
         def run(self):
             sleep(1.5)
@@ -40,7 +41,7 @@ init python:
 
     start_overlay = SteamLikeOverlay()
 
-    def load_json():
+    def get_mod_json():
         try:
             with open(persistent.ddml_basedir + "/selectedmod.json", "r") as mod_json:
                 temp = json.load(mod_json)
@@ -48,7 +49,8 @@ init python:
         except:
             return "DDLC"
 
-    selectedMod = load_json()
+    selectedMod = get_mod_json()
+    loadedMod = selectedMod
 
     def get_ddmc_modlist():
         with renpy.file("ddmc.json") as mod_json:
@@ -89,18 +91,21 @@ init python:
         with open(persistent.ddml_basedir + "/selectedmod.json", "w") as j:
             json.dump(mod_dict, j)
         
-        renpy.show_screen("dialog", Dissolve(0.25), message="Selected %s\nas the loadable mod. You must restart Mod Docker in order to load the mod." % folderName, ok_action=Hide("dialog", Dissolve(0.25)))
+        renpy.show_screen("ddmd_dialog", message="Selected %s as the loadable mod. You must restart Mod Docker in order to load the mod." % folderName)
 
     def clearMod():
-        global selectedMod
+        if os.path.exists(persistent.ddml_basedir + "/selectedmod.json"):
+            os.remove(persistent.ddml_basedir + "/selectedmod.json")
         
-        os.remove(persistent.ddml_basedir + "/selectedmod.json")
-        selectedMod = "DDLC"
-        
-        if renpy.version_tuple == (6, 99, 12, 4, 2187):
-            renpy.show_screen("dialog", Dissolve(0.25), message="Returned to DDLC mode.\nYou must restart Mod Docker in order to load the mod.", ok_action=Hide("dialog", Dissolve(0.25)))
+            if renpy.version_tuple == (6, 99, 12, 4, 2187):
+                renpy.show_screen("ddmd_dialog", message="Returned to DDLC mode. You must restart Mod Docker in order to load the mod.")
+            else:
+                renpy.show_screen("ddmd_dialog", message="Returned to stock mode. You must restart Mod Docker in order to apply these settings.")
         else:
-            renpy.show_screen("dialog", Dissolve(0.25), message="Returned to stock mode.\nYou must restart Mod Docker in order to apply these settings.", ok_action=Hide("dialog", Dissolve(0.25)))
+            if renpy.version_tuple == (6, 99, 12, 4, 2187):
+                renpy.show_screen("ddmd_dialog", message="Error: You are already in DDLC Mode.")
+            else:
+                renpy.show_screen("ddmd_dialog", message="Error: You are already in stock mode.")
 
     def open_save_dir():
         if renpy.windows:
@@ -118,7 +123,116 @@ init python:
         else:
             subprocess.Popen([ "xdg-open", path ])
 
-default persistent.mod_list_disclaimer_accepted = False
+    def set_settings_json():
+        temp = [
+            {
+            "config_gl2": config.gl2
+            }
+        ]
+        with open(persistent.ddml_basedir + "/ddmd_settings.json", "w") as ddmd_settings:
+            json.dump(temp, ddmd_settings)
+
+    def valid_zip(filePath):
+        """
+        Returns whether the given ZIP file is a valid Ren'Py/DDLC mod ZIP file.
+
+            filePath - the direct path to the ZIP file.
+        """
+        zip_contents = []
+
+        with ZipFile(filePath, "r") as temp_zip:
+            zip_contents = temp_zip.namelist()
+
+        for x in zip_contents:
+            if x.endswith((".rpa", ".rpyc", ".rpy")):
+                del zip_contents
+                return True
+
+        return False
+
+    def install_mod(zipPath, copy=False):
+        global tempFolderName
+        if not tempFolderName:
+            renpy.show_screen("ddmd_dialog", message="Error: The folder name cannot be blank.")
+            return
+        elif tempFolderName.lower() in ("ddlc mode", "stock mode", "ddlc", "stock"):
+            tempFolderName = ""
+            renpy.show_screen("ddmd_dialog", message="Error: %s is a reserved folder name. Please try another folder name." % tempFolderName)
+            return
+        elif os.path.exists(os.path.join(persistent.ddml_basedir, "game/mods/" + tempFolderName)):
+            tempFolderName = ""
+            renpy.show_screen("ddmd_dialog", message="Error: This mod folder already exists. Please try another folder name.")
+            return
+        else:
+            renpy.show_screen("ddmd_progress", message="Installing mod. Please wait.")
+            folderPath = os.path.join(persistent.ddml_basedir, "game/mods", tempFolderName)
+            try:
+                if not valid_zip(zipPath):
+                    raise Exception("Given ZIP file is a invalid DDLC Mod ZIP Package. Please select a different ZIP file.")
+                    return
+
+                os.makedirs(folderPath)
+                os.makedirs(os.path.join(folderPath, "game"))
+
+                if not copy:
+                    mod_dir = tempfile.mkdtemp(prefix="NewDDML_", suffix="_TempArchive")
+
+                    with ZipFile(zipPath, "r") as tempzip:
+                        tempzip.extractall(mod_dir)
+                    
+                else:
+                    mod_dir = zipPath
+
+                for mod_src, dirs, files in os.walk(mod_dir):
+                    dst_dir = mod_src.replace(mod_dir, folderPath)
+                    for d in dirs:
+                        if d == "characters":
+                            shutil.move(os.path.join(mod_src, d), os.path.join(dst_dir, d))
+                    for f in files:
+                        if f.endswith((".rpa", ".rpyc", ".rpy")):
+                            if not f.startswith("00"):
+                                mod_dir = mod_src
+                                break
+
+                for mod_src, dirs, files in os.walk(mod_dir):
+                    dst_dir = mod_src.replace(mod_dir, folderPath + "/game")
+                    for mod_d in dirs:
+                        shutil.move(os.path.join(mod_src, mod_d), os.path.join(dst_dir, mod_d))
+                    for mod_f in files:
+                        shutil.move(os.path.join(mod_src, mod_f), os.path.join(dst_dir, mod_f))
+                
+                renpy.hide_screen("ddmd_progress")
+                renpy.show_screen("ddmd_dialog", message="%s has been installed successfully." % tempFolderName)
+                tempFolderName = ""
+            except OSError as err:
+                if os.path.exists(folderPath):
+                    shutil.rmtree(folderPath)
+                renpy.hide_screen("ddmd_progress")
+                renpy.show_screen("ddmd_dialog", message="A error has occured during installation.", message2=str(err))
+            except Exception as err:
+                if os.path.exists(folderPath):
+                    shutil.rmtree(folderPath)
+                renpy.hide_screen("ddmd_progress")
+                renpy.show_screen("ddmd_dialog", message="A error has occured during installation.", message2=str(err))
+    
+    def delete_mod(mod):
+        try:
+            shutil.rmtree(persistent.ddml_basedir + "/game/mods/" + mod)
+            renpy.show_screen("ddmd_dialog", message="Successfully removed %s from Mod Docker." % mod)
+        except Exception as err:
+            renpy.show_screen("ddmd_dialog", message="A error occured while removing %s." % mod, message2=str(err))
+
+    def delete_saves(mod):
+        try:
+            shutil.rmtree(persistent.ddml_basedir + "/game/MLSaves/" + mod)
+            renpy.show_screen("ddmd_dialog", message="Successfully removed %s save data from Mod Docker." % mod)
+        except OSError as err:
+            if err.errno == 2:
+                renpy.show_screen("ddmd_dialog", message="No save files were found. You might have deleted the saves already or not launched this mod yet.")
+            else:
+                renpy.show_screen("ddmd_dialog", message="A error occured while removing %s save data." % mod, message2=str(err))
+        except Exception as err:
+            renpy.show_screen("ddmd_dialog", message="A error occured while removing %s save data." % mod, message2=str(err))
 
 screen mods():
     zorder 100
@@ -147,34 +261,62 @@ screen mods():
 
                         spacing 6
 
-                    if renpy.version_tuple == (6, 99, 12, 4, 2187):
-                        textbutton "DDLC Mode":
-                            action [Function(clearMod), SensitiveIf(selectedMod != "DDLC")]
-                    else:
-                        textbutton "Stock Mode":
-                            action [Function(clearMod), SensitiveIf(selectedMod != "DDLC")]
+                    button:
+                        action [SetVariable("selectedMod", "DDLC"), SensitiveIf(selectedMod != "DDLC")]
+
+                        add If(loadedMod == "DDLC", Composite((310, 50), (0, 1), "ddmd_selectedmod_icon", 
+                            (38, 0), Text(If(renpy.version_tuple == (6, 99, 12, 4, 2187), "DDLC Mode", 
+                            "Stock Mode"), style="mods_button_text")), Text(If(renpy.version_tuple == (6, 99, 12, 4, 2187), 
+                            "DDLC Mode", "Stock Mode"), style="mods_button_text"))
 
                     python:
                         global current_mod_list
                         current_mod_list = get_mod_list()
 
                     for x in current_mod_list:
-                        textbutton "[x.modFolderName!q]":
+                        button:
                             action [SetVariable("selectedMod", x.modFolderName), SensitiveIf(x.modFolderName != selectedMod)]
+                            
+                            add If(loadedMod == x.modFolderName, Composite((210, 50), (0, 1), "ddmd_selectedmod_icon", 
+                                (38, 0), Text(x.modFolderName, style="mods_button_text", substitute=False)), 
+                                Text(x.modFolderName, style="mods_button_text", substitute=False))
 
         hbox:
             style "mods_return_button"
             vbox:
-                textbutton _("Return"):
+                imagebutton:
+                    idle "ddmd_return_icon"
+                    hover "ddmd_return_icon_hover"
+                    hovered Show("mods_hover_info", about="Exit the DDMD Menu")
+                    unhovered Hide("mods_hover_info")
                     action [Return(0), With(Dissolve(0.5))]
+            null width 10
             vbox:
-                textbutton _("Search"):
+                imagebutton:
+                    idle "ddmd_install_icon"
+                    hover "ddmd_install_icon_hover"
+                    hovered Show("mods_hover_info", about="Install a Mod")
+                    unhovered Hide("mods_hover_info")
+                    action [Hide("mods_hover_info"), If(renpy.macintosh and not persistent.macos_zip_warn, Show("ddmd_confirm", message="Mod Docker only supports Mod ZIP files", message2="Downloading mods via Safari may extract ZIP files which is not compatible with Mod Docker. By confirming this message you understand this limitation in macOS.", yes_action=[SetField(persistent, "macos_zip_warn", True), Hide("ddmd_confirm"), Show("pc_directory", Dissolve(0.25))], no_action=Hide("ddmd_confirm")), Show("pc_directory", Dissolve(0.25)))]
+            null width 10
+            vbox:
+                imagebutton:
+                    idle "ddmd_search_icon"
+                    hover "ddmd_search_icon_hover"
+                    hovered Show("mods_hover_info", about="Browse the Mod List!")
+                    unhovered Hide("mods_hover_info")
                     action If(not persistent.mod_list_disclaimer_accepted, 
-                    Show("confirm", message="{b}Disclaimer{/b}: This mod list source is provided by the defunct Doki Doki Mod Club site.\nNot all mods may be on here while others may be out-of-date.\nBy accepting this prompt, you acknoledge to the following disclaimer above.", 
-                        yes_action=[SetField(persistent, "mod_list_disclaimer_accepted", True), Hide("confirm", Dissolve(0.25)), Show("mod_list", Dissolve(0.25))], no_action=Hide("confirm", Dissolve(0.25))), 
-                    Show("mod_list", Dissolve(0.25)))
+                    [Hide("mods_hover_info"), Show("ddmd_confirm", message="Disclaimer", message2="This mod list source is provided by the defunct Doki Doki Mod Club site. Not all mods may be on here while others may be out-of-date. By accepting this prompt, you acknoledge to the following disclaimer above.", 
+                        yes_action=[SetField(persistent, "mod_list_disclaimer_accepted", True), Hide("ddmd_confirm", Dissolve(0.25)), 
+                        Show("mod_list", Dissolve(0.25))], no_action=Hide("ddmd_confirm", Dissolve(0.25)))], 
+                        Show("mod_list", Dissolve(0.25)))
+            null width 10
             vbox:
-                textbutton _("Restart"):
+                imagebutton:
+                    idle "ddmd_restart_icon"
+                    hover "ddmd_restart_icon_hover"
+                    hovered Show("mods_hover_info", about="Quits DDMD")
+                    unhovered Hide("mods_hover_info")
                     action Quit()
 
         vbox:
@@ -199,262 +341,46 @@ screen mods():
                 xpos 0.2
                 yoffset -20
                 textbutton "Open Save Directory" action Function(open_save_dir)
-                textbutton "Open Game Directory" action Function(open_dir, config.gamedir)
-                textbutton "Open Mod Docker Game Directory" action Function(open_dir, persistent.ddml_basedir + "/game")
-                if not config.gl2:
-                    textbutton "Enable OpenGL 2":
-                        action Show("confirm", Dissolve(0.25), message="Are you sure you want to enable OpenGL 2?\nSome mods may suffer from broken affects if this setting is on.\n\n{b}A restart is required to load OpenGL 2{/b}", yes_action=[SetField(config, "gl2", True), Quit()] , no_action=Hide("confirm", Dissolve(0.25)))
-                else:
-                    textbutton "Disable OpenGL 2":
-                        action Show("confirm", Dissolve(0.25), message="Are you sure you want to disable OpenGL 2?\nSome mods may not have certain effects if this setting is off.\n\n{b}A restart is required to load OpenGL 2{/b}", yes_action=[SetField(config, "gl2", False), Quit(), Hide("confirm")] , no_action=Hide("confirm", Dissolve(0.25)))
+                if loadedMod != "DDLC":
+                    textbutton "Open Selected Mod's Game Directory" action Function(open_dir, config.gamedir)
+                textbutton "Open Mod Docker's Game Directory" action Function(open_dir, persistent.ddml_basedir + "/game")
+                if selectedMod != loadedMod and selectedMod != "DDLC":
+                    textbutton "Delete Mod" action Show("ddmd_confirm", message="Are you sure you want to remove %s?" % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_mod, selectedMod)], no_action=Hide("ddmd_confirm"))
+                if selectedMod != loadedMod:
+                    textbutton "Delete Saves" action Show("ddmd_confirm", message="Are you sure you want to remove %s save files?" % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_saves, selectedMod)], no_action=Hide("ddmd_confirm"))
+                if selectedMod == loadedMod and selectedMod != "DDLC":
+                    imagebutton:
+                        idle ConditionSwitch("config.gl2", Composite((250, 50), (0, 0), "ddmd_toggle_on",
+                            (55, 7), Text("Enable OpenGL 2", style="mods_text")), "True",
+                            Composite((250, 50), (0, 0), "ddmd_toggle_off", (55, 7), 
+                            Text("Enable OpenGL 2", style="mods_text")))
+                        hover ConditionSwitch("config.gl2", Composite((250, 50), (0, 0), "ddmd_toggle_on_hover",
+                            (55, 7), Text("Enable OpenGL 2", style="mods_text")), "True", 
+                            Composite((250, 50), (0, 0), "ddmd_toggle_off_hover", (55, 7), Text("Enable OpenGL 2", 
+                            style="mods_text")))
+                        action If(config.gl2, Show("ddmd_confirm", Dissolve(0.25), message="Disable OpenGL 2?", 
+                            message2="This mod may not have certain effects display if this setting is turned off. {b}A restart is required to load OpenGL 2{/b}.", 
+                            yes_action=[SetField(config, "gl2", False), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
+                            Dissolve(0.25))), Show("ddmd_confirm", Dissolve(0.25), message="Enable OpenGL 2?", 
+                            message2="This mod may suffer from broken affects if this setting is turned on. {b}A restart is required to load OpenGL 2{/b}.", 
+                            yes_action=[SetField(config, "gl2", True), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
+                            Dissolve(0.25))))
+
         vbox:
             xpos 0.9
             ypos 0.9
-            if selectedMod != "DDLC":
-                textbutton "Select" action Function(loadMod, persistent.ddml_basedir + "/game/mods/" + selectedMod, selectedMod)
+            textbutton "Select" action If(selectedMod == "DDLC", Function(clearMod), Function(loadMod, persistent.ddml_basedir + "/game/mods/" + selectedMod, selectedMod))
 
     key "K_ESCAPE" action Return(0)
-
-style mods_viewport is gui_viewport
-style mods_button is gui_button
-style mods_button_text is gui_button_text
-
-style mods_label is gui_label
-style mods_label_text is gui_label_text
-
-style mods_label:
-    xpos 50
-    ysize 120
-
-style mods_button:
-    hover_sound gui.hover_sound
-    activate_sound gui.activate_sound
-
-style mods_label_text:
-    font "gui/font/RifficFree-Bold.ttf"
-    size gui.title_text_size
-    color "#fff"
-    outlines [(6, "#803366", 0, 0), (3, "#803366", 2, 2)]
-    yalign 0.5
-
-style mods_info_label is mods_label
-style mods_info_label_text is mods_label_text
-
-style mods_info_label:
-    ypos 0.5
-
-style mods_button_text:
-    font "gui/font/RifficFree-Bold.ttf"
-    color "#fff"
-    outlines [(4, "#803366", 0, 0), (2, "#803366", 2, 2)]
-    hover_outlines [(4, "#bb4c96", 0, 0), (2, "#bb4c96", 2, 2)]
-    insensitive_outlines [(4, "#f374c9", 0, 0), (2, "#f374c9", 2, 2)]
-
-style mods_return_button is gui_button
-style mods_return_button_text is gui_button_text
-
-style mods_return_button:
-    xpos 30
-    yalign 1.0
-    yoffset -30
-
-style mods_return_button_text:
-    outlines [(4, "#803366", 0, 0), (2, "#803366", 2, 2)]
-    hover_outlines [(4, "#bb4c96", 0, 0), (2, "#bb4c96", 2, 2)]
-    insensitive_outlines [(4, "#f374c9", 0, 0), (2, "#f374c9", 2, 2)]
+    key "mousedown_2" action NullAction()
 
 label _mod_overlay:
 
     $ renpy.call_screen("mods")
     return
 
-transform ml_overlay_effect:
-    on show:
-        alpha 0.0
-        linear 0.5 alpha 1.0
-
-screen mod_list(search=None):
-    zorder 101
-    style_prefix "modList"
-
-    drag:
-        drag_name "mlist"
-        drag_handle (0, 0, 1.0, 40)
-        xsize 500
-        ysize 300
-        xpos 0.2
-        ypos 0.3
-        
-        frame:
-            hbox:
-                ypos 0.005
-                xalign 0.52 
-                text "DDMC Mod List"
-
-            hbox:
-                ypos 0.005
-                xalign 0.96
-                textbutton "S" action Show("mod_search", Dissolve(0.25))
-                textbutton "X" action Hide("mod_list", Dissolve(0.25))
-
-            side "c":
-                xpos 0.05
-                ypos 0.15
-                xsize 450
-                ysize 250
-
-                python:
-                    ddmc_json = get_ddmc_modlist()
-
-                viewport id "mlv":
-                    mousewheel True
-                    draggable True
-                    has vbox
-
-                    for x in ddmc_json:
-                        if not search:
-                            if x["modShow"] and x["modNSFW"]:
-                                textbutton "(NSFW) " + x["modName"].replace("[", "[[").replace("]", "]]"):
-                                    action Show("mod_list_info", Dissolve(0.25), mod=x)
-                            elif x["modShow"]:
-                                textbutton x["modName"].replace("[", "[[").replace("]", "]]"):
-                                    action Show("mod_list_info", Dissolve(0.25), mod=x)
-                        else:
-                            if search in x["modName"] or search in x["modSearch"]:
-                                if x["modShow"] and x["modNSFW"]:
-                                    textbutton "(NSFW) " + x["modName"].replace("[", "[[").replace("]", "]]"):
-                                        action Show("mod_list_info", Dissolve(0.25), mod=x)
-                                elif x["modShow"]:
-                                    textbutton x["modName"].replace("[", "[[").replace("]", "]]"):
-                                        action Show("mod_list_info", Dissolve(0.25), mod=x)  
-
-style renpy_generic_text:
-    color "#000"
-    outlines []
-
-style modList_text is renpy_generic_text
-style modList_button_text is mods_button_text
-
-default modSearchCriteria = ""
-screen mod_search():
-    ## Ensure other screens do not get input while this screen is displayed.
-    modal True
-
-    zorder 200
-
-    style_prefix "confirm"
-
-    add "gui/overlay/confirm.png"
-    key "K_RETURN" action NullAction()
-
-    frame:
-
-        vbox:
-            xalign .5
-            yalign .5
-            spacing 30
-
-            label _("Search For?"):
-                style "confirm_prompt"
-                xalign 0.5
-
-            input default "" value VariableInputValue("modSearchCriteria") length 12 allow "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[[]] "
-
-            hbox:
-                xalign 0.5
-                spacing 100
-
-                textbutton _("OK") action [Hide("mod_search", Dissolve(0.25)), Show("mod_list", search=modSearchCriteria)]
-
-screen mod_list_info(mod):
-    zorder 102
-    style_prefix "modInfo"
-    drag:
-        drag_name "mlistinfo"
-        drag_handle (0, 0, 1.0, 40)
-        xsize 800
-        ysize 550
-        xpos 0.2
-        ypos 0.3
-        
-        frame:
-            hbox:
-                ypos 0.005
-                xalign 0.52 
-                text "Mod Info"
-
-            hbox:
-                ypos 0.005
-                xalign 0.98
-                textbutton "X":
-                    text_style "navigation_button_text"
-                    action Hide("mod_list_info", Dissolve(0.25))
-
-            side "c":
-                xpos 0.05
-                ypos 0.1
-                xsize 740
-                ysize 420
-
-                python:
-                    ddmc_json = get_ddmc_modlist()
-
-                viewport id "mlv":
-                    mousewheel True
-                    draggable True
-                    has vbox
-
-                    text mod["modName"].replace("[", "[["):
-                        style "mods_label_text"
-                        size 24
-                    
-                    python:
-                        mod_release_date = datetime.datetime.strptime(mod['modDate'].replace(" ", "T"), "%Y-%m-%dT%H:%M:%S.%f")
-                        mrd = mod_release_date.strftime("%d %B %Y")
-
-                    if mod["modNSFW"]:
-                        text "{b}This mod is marked as Not Safe For Work{/b}"
-                    text "Released: " + mrd
-                    text "Status: " + mod["modStatus"]
-                    
-                    python:
-                        playTime = "Playtime: {u}"
-
-                        if not mod["modPlayTimeHours"] and not mod["modPlayTimeMinutes"]:
-                            playTime += "Unknown"
-
-                        if mod["modPlayTimeHours"]:
-                            playTime += str(mod["modPlayTimeHours"]) + " hour"
-
-                            if mod["modPlayTimeHours"] > 1:
-                                playTime += "s"
-
-                        if mod["modPlayTimeMinutes"]:
-
-                            if mod["modPlayTimeHours"] > 1:
-                                playTime += " "
-                            playTime += str(mod["modPlayTimeMinutes"]) + " minute"
-
-                            if mod["modPlayTimeMinutes"] > 1:
-                                playTime += "s"
-
-                    text playTime + "{/u}"
-
-                    null height 20
-
-                    text "{b}Description{/b}"
-                    text mod["modDescription"].replace("[", "[[")
-            
-            textbutton "Download":
-                xalign 0.95
-                yalign 0.98
-                action OpenURL(mod['modUploadURL'])
-
-style modInfo_text is renpy_generic_text
-style modInfo_button_text is mods_button_text
-
 init -1:
-    screen steam_like_overlay(message):
+    screen steam_like_overlay(message, message2):
 
         zorder 200
         style_prefix "steam"
@@ -464,17 +390,24 @@ init -1:
             ysize 100
             xalign 1.0
             yalign 1.0
-
-            has vbox:
+            
+            vbox:
                 xalign 0.5
-                yalign 0.5
-            text message size 16
+                yalign 0.15
+                text message size 16
+            vbox:
+                xalign 0.5
+                yalign 0.9
+                text message2 size 16
+                
 
         timer 3.25 action Hide('steam_like_overlay')
 
-    style steam_frame is frame
+    style steam_frame:
+        background Frame("sdc_system/ddmd_app/steam_frame.png", left=4, top=4, bottom=4, right=4, tile=False)
+
     style steam_text:
-        color "#000"
+        color "#fff"
         outlines []
 
     transform steam_effect:
@@ -484,3 +417,17 @@ init -1:
             easein .45 ycenter 670
         on hide:
             easein .45 ycenter 800 nearest True
+
+screen mods_hover_info(about):
+    zorder 101
+    style_prefix "mods_hover"
+
+    python:
+        currentpos = renpy.get_mouse_pos()
+    
+    frame at windows_like_effect:
+        xpos currentpos[0]
+        ypos currentpos[1] + 15
+        xsize 150
+
+        text _(about)
