@@ -345,9 +345,9 @@ screen mods():
                     textbutton "Open Selected Mod's Game Directory" action Function(open_dir, config.gamedir)
                 textbutton "Open Mod Docker's Game Directory" action Function(open_dir, persistent.ddml_basedir + "/game")
                 if selectedMod != loadedMod and selectedMod != "DDLC":
-                    textbutton "Delete Mod" action Show("ddmd_confirm", message="Are you sure you want to remove %s?" % selectedMod, yes_action=Function(delete_mod, selectedMod), no_action=Hide("ddmd_confirm"))
+                    textbutton "Delete Mod" action Show("ddmd_confirm", message="Are you sure you want to remove %s?" % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_mod, selectedMod)], no_action=Hide("ddmd_confirm"))
                 if selectedMod != loadedMod:
-                    textbutton "Delete Saves" action Show("ddmd_confirm", message="Are you sure you want to remove %s save files?" % selectedMod, yes_action=Function(delete_saves, selectedMod), no_action=Hide("ddmd_confirm"))
+                    textbutton "Delete Saves" action Show("ddmd_confirm", message="Are you sure you want to remove %s save files?" % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_saves, selectedMod)], no_action=Hide("ddmd_confirm"))
                 if selectedMod == loadedMod and selectedMod != "DDLC":
                     imagebutton:
                         idle ConditionSwitch("config.gl2", Composite((250, 50), (0, 0), "ddmd_toggle_on",
