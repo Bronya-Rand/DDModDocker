@@ -7,8 +7,7 @@ init python:
                 return os.access(path, os.R_OK)
             else:
                 for x in os.listdir(path):
-                    temp = x;
-                    del temp;
+                    print(x)
                     break
         except OSError as e:
             if e.errno == 13 or e.errno == 2:

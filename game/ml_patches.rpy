@@ -22,7 +22,6 @@ init -100 python:
 
     if config.window_title != "Doki Doki Mod Docker (Alpha)":
         config.window_title = "Doki Doki Mod Docker (Alpha) - Mod Container: " + config.name
-    config.window_icon = "sdc_system/DDMDLogo.png"
 
 init 1 python:
 
