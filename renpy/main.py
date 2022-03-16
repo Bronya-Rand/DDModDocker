@@ -486,25 +486,26 @@ def main():
             if not masTemplate or (masTemplate and base != "scripts"):
                 renpy.config.archives.append(base)
 
-        if temp and temp["isRPA"]:
+        if temp:
 
-            for i in sorted(os.listdir(renpy.config.gamedir)):
-                base, ext = os.path.splitext(i)
+            if temp["isRPA"]:
+                for i in sorted(os.listdir(renpy.config.gamedir)):
+                    base, ext = os.path.splitext(i)
 
-                # Check if the archive does not have any of the extensions in archive_extensions
-                if not (ext in archive_extensions):
-                    continue
+                    # Check if the archive does not have any of the extensions in archive_extensions
+                    if not (ext in archive_extensions):
+                        continue
 
-                renpy.config.archives.append(renpy.config.gamedir + "/" + base)
+                    renpy.config.archives.append(renpy.config.gamedir + "/" + base)
 
-        if "ddml" not in renpy.config.archives:
-            renpy.config.archives.append("ddml")
+            if "ddml" not in renpy.config.archives:
+                renpy.config.archives.append("ddml")
 
         renpy.config.archives.reverse()
 
         # Initialize archives.
         renpy.loader.index_archives()
-
+    
     find_archives(temp)
 
     if not inRenpy:
@@ -654,6 +655,7 @@ def main():
                 ddmc_json.write(renpy.exports.file("sdc_system/backups/ddmc.backup").read())
         
         def init_load_settings():
+            import json
             with open(renpy.config.basedir + "/ddmd_settings.json", "r") as ddmd_settings:
                 ddmd_configuration = json.load(ddmd_settings)
             
