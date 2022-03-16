@@ -1,9 +1,9 @@
 ## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
 
 init python:
-    def can_access(path):
+    def can_access(path, drive=False):
         try:
-            if not renpy.windows:
+            if not renpy.windows or drive:
                 return os.access(path, os.R_OK)
             else:
                 for x in os.listdir(path):
@@ -92,7 +92,7 @@ screen pc_directory(loc=None):
                                 imagebutton:
                                     idle Composite((460, 18), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
                                     hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
-                                    action [Hide("pc_directory"), Show("pc_directory", loc=x + ":/")]
+                                    action If(can_access(x + ":", True), [Hide("pc_directory"), Show("pc_directory", loc=x + ":/")], Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                         for x in net_drives:
                             hbox:
                                 imagebutton:
