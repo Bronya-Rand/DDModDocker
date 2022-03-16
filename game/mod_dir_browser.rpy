@@ -52,7 +52,7 @@ screen pc_directory(loc=None):
                         if x in net_drives:
                             drives.remove(x)
                          
-            if loc != "drive" or (not renpy.windows and loc != "/"):
+            if (renpy.windows and loc != "drive") or (not renpy.windows and loc != "/"):
                 hbox:
                     xalign 0.02 yoffset 6
                     imagebutton:
