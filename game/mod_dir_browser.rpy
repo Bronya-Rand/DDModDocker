@@ -92,7 +92,7 @@ screen pc_directory(loc=None):
                                 imagebutton:
                                     idle Composite((460, 18), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
                                     hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
-                                    action If(can_access(x + ":"), [Hide("pc_directory"), Show("pc_directory", loc=x + ":/")], Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
+                                    action [Hide("pc_directory"), Show("pc_directory", loc=x + ":/")]
                         for x in net_drives:
                             hbox:
                                 imagebutton:
