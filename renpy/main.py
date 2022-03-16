@@ -592,25 +592,27 @@ def main():
         mods_list = []
 
         if temp:
-
+            
+            #raise Exception(renpy.game.script.script_files)
             for x in renpy.game.script.script_files[:]:
-
+                
+                #Make sure we add the needed DDMD files
                 if (
                     ("mod_screen" in x[0] and x[1])
                     or "saves" in x[0]
                     or "ml_patches" in x[0]
                 ):
                     mods_list.append(x)
-                    continue
-
-                elif not x[1] and not temp["isRPA"]:
-                    continue
-
+                
+                # Check if the script file in the list is defined in mods folder
                 elif "mods/" + temp["modName"] + "/" in x[0]:
                     mods_list.append(x)
-                    continue
 
-                elif (temp["isRPA"] and not x[1]) or "renpy" in x[1]:
+                elif x[1] and "renpy" in x[1]:
+                    mods_list.append(x)
+
+                # Check if file in RPA
+                elif not x[1]:
                     rpycDeclared = False
                     for y in mods_list[:]:
 
@@ -621,8 +623,9 @@ def main():
                     if not rpycDeclared:
 
                         mods_list.append(x)
-                        continue
 
+                continue
+                
             renpy.game.script.script_files = mods_list
 
         else:
@@ -632,7 +635,7 @@ def main():
                 if "mods/" in x[0]:
                     renpy.game.script.script_files.remove(x)
 
-    # raise Exception(renpy.game.script.script_files)
+    #raise Exception(renpy.game.script.script_files)
     # Load all .rpy files.
     renpy.game.script.load_script()  # sets renpy.game.script.
     
