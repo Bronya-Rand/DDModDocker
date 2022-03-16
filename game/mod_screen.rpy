@@ -76,6 +76,9 @@ init python:
         return templist
 
     def loadMod(x, folderName):
+        if loadedMod == folderName:
+            renpy.show_screen("ddmd_dialog", message="Error: %s is already the selected mod." % folderName)
+            return
         isRPA = False
         
         for root, dirs, files in os.walk(x + "/game"):
