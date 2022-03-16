@@ -3,11 +3,15 @@
 init python:
     def can_access(path):
         try:
-            os.listdir(path)
-        except OSError as e:
-            if e.errno == 13:
+            if not renpy.windows:
+                return os.access(path, os.R_OK)
+            else:
+                t = open(path + "/temp.file", "w")
+                t.close()
+                os.remove(path + "/temp.file")
+        except IOError as e:
+            if e.errno == 13 or e.errno == 2:
                 return False
-            raise
         return True
 
 
@@ -47,8 +51,8 @@ screen pc_directory(loc=None):
                     for x in drives:
                         if x in net_drives:
                             drives.remove(x)
-            
-            if loc != "drive" and (not renpy.windows and loc != "/"):
+                         
+            if loc != "drive" or (not renpy.windows and loc != "/"):
                 hbox:
                     xalign 0.02 yoffset 6
                     imagebutton:
@@ -86,13 +90,13 @@ screen pc_directory(loc=None):
                                 imagebutton:
                                     idle Composite((460, 18), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
                                     hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
-                                    action [Hide("pc_directory"), Show("pc_directory", loc=x + ":/")]
+                                    action If(can_access(x + ":"), [Hide("pc_directory"), Show("pc_directory", loc=x + ":/")], Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                         for x in net_drives:
                             hbox:
                                 imagebutton:
                                     idle Composite((460, 18), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
                                     hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
-                                    action [Hide("pc_directory"), Show("pc_directory", loc=x + ":/")]
+                                    action If(can_access(x + ":"), [Hide("pc_directory"), Show("pc_directory", loc=x + ":/")], Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                     else:
                         for x in os.listdir(current_dir):
                             if os.path.isdir(os.path.join(current_dir, x)):
