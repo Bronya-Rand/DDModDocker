@@ -372,7 +372,7 @@ screen mods():
             textbutton "Select" action If(selectedMod == "DDLC", Function(clearMod), Function(loadMod, persistent.ddml_basedir + "/game/mods/" + selectedMod, selectedMod))
 
     key "K_ESCAPE" action Return(0)
-    key "mouseup_2" action NullAction()
+    key "mousedown_2" action NullAction()
 
 label _mod_overlay:
 
