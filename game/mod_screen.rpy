@@ -227,7 +227,7 @@ init python:
             shutil.rmtree(persistent.ddml_basedir + "/game/MLSaves/" + mod)
             renpy.show_screen("ddmd_dialog", message="Successfully removed %s save data from Mod Docker." % mod)
         except OSError as err:
-            if e.errno == 3:
+            if err.errno == 3:
                 renpy.show_screen("ddmd_dialog", message="No save files were found. You might have deleted the saves already or not launched this mod yet.")
         except Exception as err:
             renpy.show_screen("ddmd_dialog", message="A error occured while removing %s save data." % mod, message2=str(err))
