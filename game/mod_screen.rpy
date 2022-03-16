@@ -259,7 +259,7 @@ screen mods():
                     mousewheel True
                     has vbox:
 
-                        spacing 6
+                        spacing 20
 
                     button:
                         action [SetVariable("selectedMod", "DDLC"), SensitiveIf(selectedMod != "DDLC")]
