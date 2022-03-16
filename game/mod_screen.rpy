@@ -218,14 +218,19 @@ init python:
     def delete_mod(mod):
         try:
             shutil.rmtree(persistent.ddml_basedir + "/game/mods/" + mod)
+            renpy.show_screen("ddmd_dialog", message="Successfully removed %s from Mod Docker." % mod)
         except Exception as err:
-            renpy.show_screen("ddmd_dialog", message="A error occured while deleting %s." % mod, message2=str(err))
+            renpy.show_screen("ddmd_dialog", message="A error occured while removing %s." % mod, message2=str(err))
 
     def delete_saves(mod):
         try:
             shutil.rmtree(persistent.ddml_basedir + "/game/MLSaves/" + mod)
+            renpy.show_screen("ddmd_dialog", message="Successfully removed %s save data from Mod Docker." % mod)
+        except OSError as err:
+            if e.errno == 3:
+                renpy.show_screen("ddmd_dialog", message="No save files were found. You might have deleted the saves already or not launched this mod yet.")
         except Exception as err:
-            renpy.show_screen("ddmd_dialog", message="A error occured while deleting %s save data." % mod, message2=str(err))
+            renpy.show_screen("ddmd_dialog", message="A error occured while removing %s save data." % mod, message2=str(err))
 
 screen mods():
     zorder 100
@@ -290,7 +295,7 @@ screen mods():
                     hover "ddmd_install_icon_hover"
                     hovered Show("mods_hover_info", about="Install a Mod")
                     unhovered Hide("mods_hover_info")
-                    action [Hide("mods_hover_info"), If(renpy.macintosh and not persistent.macos_zip_warn, [Show("ddmd_dialog", "As of now, Mod Docker only supports Mod ZIP packages. Downloading mods via Safari may auto-extract these ZIP files and requires them to be re-zipped."), SetField(persistent, "macos_zip_warn", True), Show("pc_directory", Dissolve(0.25))], Show("pc_directory", Dissolve(0.25))]
+                    action [Hide("mods_hover_info"), If(renpy.macintosh and not persistent.macos_zip_warn, [Show("ddmd_dialog", "As of now, Mod Docker only supports Mod ZIP packages. Downloading mods via Safari may auto-extract these ZIP files and requires them to be re-zipped."), SetField(persistent, "macos_zip_warn", True), Show("pc_directory", Dissolve(0.25))], Show("pc_directory", Dissolve(0.25)))]
             null width 10
             vbox:
                 imagebutton:
