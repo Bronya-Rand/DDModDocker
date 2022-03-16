@@ -260,9 +260,8 @@ screen mods():
 
                 viewport id "mlvp":
                     mousewheel True
-                    has vbox:
-
-                        spacing 20
+                    has vbox
+                    spacing 10
 
                     button:
                         action [SetVariable("selectedMod", "DDLC"), SensitiveIf(selectedMod != "DDLC")]

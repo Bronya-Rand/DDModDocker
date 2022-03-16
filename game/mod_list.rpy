@@ -35,6 +35,7 @@ screen mod_list(search=None):
                 ypos 0.15
                 xsize 450
                 ysize 250
+                spacing 10
 
                 python:
                     ddmc_json = get_ddmc_modlist()
@@ -43,6 +44,7 @@ screen mod_list(search=None):
                     mousewheel True
                     draggable True
                     has vbox
+                    spacing 3
 
                     for x in ddmc_json:
                         if not search:

@@ -18,6 +18,7 @@ style mods_label:
     ysize 120
 
 style mods_button:
+    ysize None
     hover_sound gui.hover_sound
     activate_sound gui.activate_sound
 
@@ -50,17 +51,11 @@ style mods_button_text:
 
 ## Main UI 3 (Sidebar Options)
 style mods_return_button is gui_button
-style mods_return_button_text is gui_button_text
 
 style mods_return_button:
     xpos 70
     yalign 1.0
     yoffset -30
-
-style mods_return_button_text:
-    outlines [(4, "#803366", 0, 0), (2, "#803366", 2, 2)]
-    hover_outlines [(4, "#bb4c96", 0, 0), (2, "#bb4c96", 2, 2)]
-    insensitive_outlines [(4, "#f374c9", 0, 0), (2, "#f374c9", 2, 2)]
 
 style mods_frame:
     padding gui.frame_borders.padding
@@ -68,6 +63,8 @@ style mods_frame:
 
 ## Mod List
 style modList_text is renpy_generic_text
+style modList_button:
+    ysize None
 style modList_button_text is mods_button_text
 style modList_frame is mods_frame:
     background Frame("sdc_system/ddmd_app/ddmd_frame.png", left=4, top=3, bottom=4, right=4, tile=False)
@@ -96,6 +93,7 @@ style ddmd_confirm_prompt_text:
     layout "subtitle"
 
 style ddmd_confirm_button:
+    ysize None
     hover_sound gui.hover_sound
     activate_sound gui.activate_sound
 
