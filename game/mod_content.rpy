@@ -1,9 +1,7 @@
 ## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
 
-init 1 python:
+#init 1 python:
     #config.developer = True
-    gui.button_height = None
-    gui.navigation_spacing = -gui.navigation_spacing
 
 image ddmd_toggle_on = "sdc_system/ddmd_app/enabled.png"
 image ddmd_toggle_off = "sdc_system/ddmd_app/disabled.png"
