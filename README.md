@@ -15,6 +15,8 @@ Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and ru
 - Mod List (from defunct DD Mod Club site)
 - Ability to store multiple mods in one game
 - Separate saves
+- Custom background
+  > To add a custom background, put a 16:9 image into Mod Docker's game directory and name it `docker_custom_image`.
 - [Beta] Auto scripts.rpa removal for certain mods.
 - [Alpha] Auto MAS template built mods fixes.
 
