@@ -20,8 +20,8 @@ init -100 python:
     if not os.path.exists(config.basedir + "/characters"):
         os.makedirs(config.basedir + "/characters")
 
-    if config.window_title != "Doki Doki Mod Docker":
-        config.window_title = "Doki Doki Mod Docker - Mod Container: " + config.name
+    if config.window_title != "Doki Doki Mod Docker (Alpha)":
+        config.window_title = "Doki Doki Mod Docker (Alpha) - Mod Container: " + config.name
 
 init 1 python:
 

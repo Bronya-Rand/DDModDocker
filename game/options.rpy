@@ -3,7 +3,7 @@
 # This file customizes what your mod is and and how it starts and builds!
 
 # This controls what your mod is called.
-define config.name = "Doki Doki Mod Docker Alpha"
+define config.name = "Doki Doki Mod Docker (Alpha)"
 define config.window_title = config.name
 
 # This controls whether you want your mod name to show in the main menu.
