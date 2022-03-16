@@ -6,12 +6,14 @@ init python:
             if not renpy.windows:
                 return os.access(path, os.R_OK)
             else:
-                t = open(path + "/temp.file", "w")
-                t.close()
-                os.remove(path + "/temp.file")
-        except IOError as e:
+                for x in os.listdir(path):
+                    temp = x;
+                    del temp;
+                    break
+        except OSError as e:
             if e.errno == 13 or e.errno == 2:
                 return False
+            raise
         return True
 
 
@@ -104,7 +106,7 @@ screen pc_directory(loc=None):
                                     imagebutton:
                                         idle Composite((460, 18), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
                                         hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
-                                        action If(can_access(os.path.join(current_dir, x)), [Hide("pc_directory"), Show("pc_directory", loc=os.path.join(current_dir, x))], Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x)))
+                                        action If(can_access(os.path.join(current_dir, x)), [Hide("pc_directory"), Show("pc_directory", loc=os.path.join(current_dir, x))], Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x).replace("\\", "/")))
                             elif os.path.join(current_dir, x).endswith(".zip"):
                                 hbox:
                                     imagebutton:
