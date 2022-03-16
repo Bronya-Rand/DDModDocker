@@ -646,6 +646,10 @@ def main():
             with open(renpy.config.basedir + "/ddmd_settings.json", "wb") as ddmd_settings:
                 ddmd_settings.write(renpy.exports.file("sdc_system/backups/settings.backup").read())
         
+        if not os.path.exists(renpy.config.basedir + "/game/ddmc.json"):
+            with open(renpy.config.basedir + "/game/ddmc.json", "wb") as ddmc_json:
+                ddmc_json.write(renpy.exports.file("sdc_system/backups/ddmc.backup").read())
+        
         def init_load_settings():
             with open(renpy.config.basedir + "/ddmd_settings.json", "r") as ddmd_settings:
                 ddmd_configuration = json.load(ddmd_settings)
