@@ -5,7 +5,7 @@
 </p>
 Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and runs multiple) Doki Doki Literature Club mods into one game.
 
-> This project is in alpha. Expect bugs or several mods to not work as compared to other mod launchers/managers.
+> This project is in alpha. Expect bugs or several mods to not work as compared to other mod launchers/managers. To report mod incompatibility, report it either in [Issues](https://github.com/GanstaKingofSA/DDModDocker/issues) or [here](https://docs.google.com/forms/d/e/1FAIpQLSflrNfAf3vbBcpafv-3CEqszlGb8-P90IZAvloKVhiO10JzTQ/viewform).
 
 > This project is unaffiliated with Team Salvato. No DDLC source code is provided in this project build. See [BUILDING.md](BUILDING.md) on how to build Mod Docker with fixes for Pull Requests.
 
