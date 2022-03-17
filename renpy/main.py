@@ -262,31 +262,64 @@ def main():
 
     log_clock("Early init")
 
+    inRenpy = False
+    for x in os.listdir(renpy.config.basedir):
+        if x in ("launcher", "gui", "doc", "module", "tutorial", "the_question"):
+            inRenpy = True
+
     # Note the game directory.
     old_gamedir = renpy.config.gamedir
 
-    if os.path.exists(renpy.config.basedir + "/selectedmod.json"):
-        import json
+    # Load the selected mod info or stock/DDLC
+    def init_load_json():
+        if os.path.exists(renpy.config.basedir + "/selectedmod.json"):
+            import json
 
-        try:
-            with open(renpy.config.basedir + "/selectedmod.json", "r") as f:
-                j = json.load(f)
-        except:
-            j = None
-    else:
-        j = None
-    
-    if j:
-        if os.path.exists(renpy.config.gamedir + "/mods/" + j['modName'] + "/game"):
-            renpy.config.gamedir = renpy.config.gamedir + "/mods/" + j['modName'] + "/game"
+            try:
+                with open(renpy.config.basedir + "/selectedmod.json", "r") as mod_json:
+                    temp = json.load(mod_json)
+                    return temp
+            except:
+                return None
         else:
-            renpy.config.gamedir = old_gamedir
+            return None
+
+    if inRenpy:
+        temp = None
+    else:
+        temp = init_load_json()
+
+    if temp:
+        # Redefine game directory to mod directory
+        if os.path.exists(
+            os.path.join(renpy.config.gamedir, "mods", temp["modName"], "game")
+        ):
+            renpy.config.gamedir = os.path.join(
+                renpy.config.gamedir, "mods", temp["modName"], "game"
+            ).replace("\\", "/")
+        else:
+            raise Exception(
+                "'game' folder could not be found in %s."
+                % os.path.join(renpy.config.gamedir, "mods", temp["modName"]).replace(
+                    "\\", "/"
+                )
+            )
+
+        # Get that advanced_scripts folder out of there! (if RPYC/RPY mode)
+        if os.path.exists(renpy.config.gamedir + "/advanced_scripts"):
+            for src, dirs, files in os.walk(renpy.config.gamedir + "/advanced_scripts"):
+                dst = src.replace(
+                    renpy.config.gamedir + "/advanced_scripts", renpy.config.gamedir
+                )
+                for f in files:
+                    os.rename(os.path.join(src, f), os.path.join(dst, f))
+            os.rmdir(renpy.config.gamedir + "/advanced_scripts")
 
     game.basepath = renpy.config.gamedir
     if renpy.config.gamedir != old_gamedir:
-        renpy.config.searchpath = [ renpy.config.gamedir, old_gamedir ]
+        renpy.config.searchpath = [renpy.config.gamedir, old_gamedir]
     else:
-        renpy.config.searchpath = [ renpy.config.gamedir ]
+        renpy.config.searchpath = [renpy.config.gamedir]
 
     # Find the common directory.
     commondir = __main__.path_to_common(renpy.config.renpy_base)  # E1101 @UndefinedVariable
@@ -301,41 +334,71 @@ def main():
         renpy.config.searchpath = [ ]
         renpy.config.commondir = None
 
+        if "ANDROID_PUBLIC" in os.environ:
+            android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
+
+            print("Android searchpath: ", android_game)
+
+            if os.path.exists(android_game):
+                renpy.config.searchpath.insert(0, android_game)
+
     # Load Ren'Py extensions.
     for dir in renpy.config.searchpath:  # @ReservedAssignment
         for fn in os.listdir(dir):
             if fn.lower().endswith(".rpe"):
                 load_rpe(dir + "/" + fn)
 
-    # The basename is the final component of the path to the gamedir.
-    for i in sorted(os.listdir(old_gamedir)):
+    def find_archives(temp, masTemplate=False):
+        # Find archives.
+        for i in sorted(os.listdir(old_gamedir)):
 
-        if not i.endswith(".rpa"):
-            continue
-
-        i = i[:-4]
-        renpy.config.archives.append(i)
-
-    if j and j['isRPA']:
-
-        for i in sorted(os.listdir(renpy.config.gamedir)):
-            
+            # Check if the archive does not have .rpa
             if not i.endswith(".rpa"):
                 continue
-
+            
             i = i[:-4]
-            renpy.config.archives.append(renpy.config.gamedir.replace("\\", "/") + "/" + i)
+            if not masTemplate or (masTemplate and i != "scripts"):
+                renpy.config.archives.append(i)
 
-    #raise Exception(renpy.config.archives)
-    renpy.config.archives.reverse()
-    
-    # Initialize archives.
-    renpy.loader.index_archives()
+        if temp:
+
+            if temp["isRPA"]:
+                for i in sorted(os.listdir(renpy.config.gamedir)):
+                    base, ext = os.path.splitext(i)
+
+                    # Check if the archive does not have any of the extensions in archive_extensions
+                    if not (ext in archive_extensions):
+                        continue
+
+                    renpy.config.archives.append(renpy.config.gamedir + "/" + base)
+
+            if "ddml" not in renpy.config.archives:
+                renpy.config.archives.append("ddml")
+
+        renpy.config.archives.reverse()
+
+        # Initialize archives.
+        renpy.loader.index_archives()
+
+    find_archives(temp)
+
+    if not inRenpy:
+        # The MAS fix (hopefully) (curse you advanced_scripts!)
+        for x in renpy.loader.listdirfiles():
+            if "advanced_scripts" in x:
+                renpy.config.archives = []
+                find_archives(temp, True)
 
     # Start auto-loading.
     renpy.loader.auto_init()
 
-    log_clock("Loader init")
+    if not inRenpy:
+        if temp and temp["isRPA"]:
+            log_clock("Loading %s needed RPAs" % temp["modName"])
+        else:
+            log_clock("Loading Stock/DDLC RPAs")
+    else:
+        log_clock("Loader init")
 
     # Initialize the log.
     game.log = renpy.python.RollbackLog()
@@ -357,8 +420,8 @@ def main():
     renpy.game.exception_info = 'While loading the script.'
     renpy.game.script = renpy.script.Script()
 
-    #if renpy.session.get("compile", False):
-    renpy.game.args.compile = False
+    if renpy.session.get("compile", False):
+        renpy.game.args.compile = True
 
     # Set up error handling.
     renpy.exports.load_module("_errorhandling")
@@ -393,50 +456,84 @@ def main():
         renpy.loader.cleardirfiles()
         renpy.game.script.scan_script_files()
 
-    #raise Exception(renpy.game.script.script_files)
+    if not inRenpy:
+        mods_list = []
 
-    mods_list = []
-    
-    if j:
-
-        for x in renpy.game.script.script_files[:]:
+        if temp:
+            
+            #raise Exception(renpy.game.script.script_files)
+            for x in renpy.game.script.script_files[:]:
                 
-            if not x[1] and not j['isRPA']:
-                continue
-
-            if "mod_screen" in x[0] or "saves" in x[0] or "mods/" + j['modName'] in x[0]:
-                             
-                mods_list.append(x)
-                continue
-
-            elif (j['isRPA'] and not x[1]) or "renpy" in x[1]:
-                    
-                rpycDeclared = False
-                for y in mods_list[:]:
-                        
-                    if y[0].endswith(x[0]):
-                        rpycDeclared = True
-                        break
-                    
-                if not rpycDeclared:
-
+                #Make sure we add the needed DDMD files
+                if (
+                    ("mod_screen" in x[0] and x[1])
+                    or "saves" in x[0]
+                    or "ml_patches" in x[0]
+                ):
                     mods_list.append(x)
-                    continue   
+                
+                # Check if the script file in the list is defined in mods folder
+                elif "mods/" + temp["modName"] + "/" in x[0]:
+                    mods_list.append(x)
 
-        #raise Exception(mods_list)                
-        renpy.game.script.script_files = mods_list
-        
-    else:
+                elif x[1] and "renpy" in x[1]:
+                    mods_list.append(x)
 
-        for x in renpy.game.script.script_files[:]:
+                # Check if file in RPA
+                elif not x[1]:
+                    rpycDeclared = False
+                    for y in mods_list[:]:
 
-            if "mods/" in x[0]:
-                renpy.game.script.script_files.remove(x)
-    
-    #raise Exception(renpy.game.script.script_files)
+                        if y[0].split("/")[-1] == x[0]:
+                            rpycDeclared = True
+                            break
+
+                    if not rpycDeclared:
+
+                        mods_list.append(x)
+
+                continue
+                
+            renpy.game.script.script_files = mods_list
+
+        else:
+
+            for x in renpy.game.script.script_files[:]:
+
+                if "mods/" in x[0]:
+                    renpy.game.script.script_files.remove(x)
+
     # Load all .rpy files.
     renpy.game.script.load_script()  # sets renpy.game.script.
-    log_clock("Loading script")
+    
+    if not inRenpy:
+        if temp:
+            log_clock("Loading %s needed RPYC/RPYs" % temp["modName"])
+        else:
+            log_clock("Loading Stock/DDLC RPYC/RPYs")
+
+        if not os.path.exists(renpy.config.basedir + "/ddmd_settings.json"):
+            with open(renpy.config.basedir + "/ddmd_settings.json", "wb") as ddmd_settings:
+                ddmd_settings.write(renpy.exports.file("sdc_system/backups/settings.backup").read())
+        
+        if not os.path.exists(renpy.config.basedir + "/game/ddmc.json"):
+            with open(renpy.config.basedir + "/game/ddmc.json", "wb") as ddmc_json:
+                ddmc_json.write(renpy.exports.file("sdc_system/backups/ddmc.backup").read())
+        
+        def init_load_settings():
+            import json
+            with open(renpy.config.basedir + "/ddmd_settings.json", "r") as ddmd_settings:
+                ddmd_configuration = json.load(ddmd_settings)
+            
+            for ddmd in ddmd_configuration:
+                renpy.config.gl2 = ddmd['config_gl2']
+
+            del ddmd_configuration
+        
+        init_load_settings()
+        log_clock("Loading DDMD Settings")
+    else:
+        log_clock("Loading script")
 
     if renpy.game.args.command == 'load-test':  # @UndefinedVariable
         start = time.time()
@@ -483,6 +580,14 @@ def main():
         renpy.store.persistent = game.persistent
         renpy.store._preferences = game.preferences
         renpy.store._test = renpy.test.testast._test
+
+        if not inRenpy:
+            renpy.store.persistent.ddml_basedir = renpy.config.basedir.replace("\\", "/")
+            if temp:
+                renpy.config.basedir = os.path.join(
+                    renpy.config.basedir, "game/mods", temp["modName"]
+                ).replace("\\", "/")
+            del temp
 
         if renpy.parser.report_parse_errors():
             raise renpy.game.ParseErrorException()

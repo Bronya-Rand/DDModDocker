@@ -1,2 +1,10 @@
 *.rpyc
 *.bak
+cache
+saves
+mods
+MLSaves
+*.rpa
+*.chr
+poemwords.txt
+firstrun
