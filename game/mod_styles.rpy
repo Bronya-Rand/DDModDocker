@@ -105,3 +105,24 @@ style mods_hover_text:
     color "#000"
     outlines []
     size 12
+
+## File Explorer
+style pc_dir_frame is mods_frame
+style pc_dir_button_text:
+    color "#fff"
+    outlines []
+    text_align 0.0
+
+style pc_dir_scrollbar:
+    xsize 8
+    ysize 96
+    base_bar Frame("#222222")
+    thumb Frame("sdc_system/file_app/FileExplorerHBar.png", tile=False)
+
+style pc_dir_vscrollbar:
+    xsize 8
+    ysize 96
+    base_bar Frame("#222222")
+    thumb Frame("sdc_system/file_app/FileExplorerVBar.png", tile=False)
+
+style pc_dir_text is pc_dir_button_text

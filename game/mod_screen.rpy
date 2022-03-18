@@ -315,9 +315,17 @@ screen mods():
             null width 10
             vbox:
                 imagebutton:
+                    idle "ddmd_settings_icon"
+                    hover "ddmd_settings_icon_hover"
+                    hovered Show("mods_hover_info", about="View DDMD's Settings")
+                    unhovered Hide("mods_hover_info")
+                    action [Hide("mods_hover_info"), Show("mod_settings", Dissolve(0.25)))]
+            null width 10
+            vbox:
+                imagebutton:
                     idle "ddmd_restart_icon"
                     hover "ddmd_restart_icon_hover"
-                    hovered Show("mods_hover_info", about="Quits DDMD")
+                    hovered Show("mods_hover_info", about="Quit DDMD")
                     unhovered Hide("mods_hover_info")
                     action Quit()
 
@@ -350,23 +358,6 @@ screen mods():
                     textbutton "Delete Mod" action Show("ddmd_confirm", message="Are you sure you want to remove %s?" % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_mod, selectedMod)], no_action=Hide("ddmd_confirm"))
                 if selectedMod != loadedMod:
                     textbutton "Delete Saves" action Show("ddmd_confirm", message="Are you sure you want to remove %s save files?" % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_saves, selectedMod)], no_action=Hide("ddmd_confirm"))
-                if selectedMod == loadedMod and selectedMod != "DDLC":
-                    imagebutton:
-                        idle ConditionSwitch("config.gl2", Composite((250, 50), (0, 0), "ddmd_toggle_on",
-                            (55, 7), Text("Enable OpenGL 2", style="mods_text")), "True",
-                            Composite((250, 50), (0, 0), "ddmd_toggle_off", (55, 7), 
-                            Text("Enable OpenGL 2", style="mods_text")))
-                        hover ConditionSwitch("config.gl2", Composite((250, 50), (0, 0), "ddmd_toggle_on_hover",
-                            (55, 7), Text("Enable OpenGL 2", style="mods_text")), "True", 
-                            Composite((250, 50), (0, 0), "ddmd_toggle_off_hover", (55, 7), Text("Enable OpenGL 2", 
-                            style="mods_text")))
-                        action If(config.gl2, Show("ddmd_confirm", Dissolve(0.25), message="Disable OpenGL 2?", 
-                            message2="This mod may not have certain effects display if this setting is turned off. {b}A restart is required to load OpenGL 2{/b}.", 
-                            yes_action=[SetField(config, "gl2", False), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
-                            Dissolve(0.25))), Show("ddmd_confirm", Dissolve(0.25), message="Enable OpenGL 2?", 
-                            message2="This mod may suffer from broken affects if this setting is turned on. {b}A restart is required to load OpenGL 2{/b}.", 
-                            yes_action=[SetField(config, "gl2", True), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
-                            Dissolve(0.25))))
 
         vbox:
             xpos 0.9
