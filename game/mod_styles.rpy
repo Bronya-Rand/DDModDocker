@@ -53,7 +53,7 @@ style mods_button_text:
 style mods_return_button is gui_button
 
 style mods_return_button:
-    xpos 70
+    xpos 45
     yalign 1.0
     yoffset -30
 
