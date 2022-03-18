@@ -17,13 +17,13 @@ init python:
         modsTransferred = []
         try:
             for dirs in os.listdir(ddmm_path):
-                if not os.path.exists(persistent.ddml_basedir + "/game/mods/" + dirs):
+                if not os.path.exists(os.path.join(persistent.ddml_basedir, "game/mods", dirs)):
                     modsTransferred.append(dirs)
-                    os.makedirs(persistent.ddml_basedir + "/game/mods/" + dirs)
-                    os.makedirs(persistent.ddml_basedir + "/game/mods/" + dirs + "/game")
+                    os.makedirs(os.path.join(persistent.ddml_basedir, "game/mods", dirs))
+                    os.makedirs(os.path.join(persistent.ddml_basedir, "game/mods", dirs, "game"))
 
                     for ddmm_src, mod_dirs, mod_files in os.walk(ddmm_path + "/" + dirs):
-                        dst_dir = ddmm_src.replace(ddmm_path + "/" + dirs, persistent.ddml_basedir + "/game/mods/" + dirs)
+                        dst_dir = ddmm_src.replace(ddmm_path + "/" + dirs, os.path.join(persistent.ddml_basedir, "game/mods", dirs))
                         for d in mod_dirs:
                             if d == "characters":
                                 shutil.copytree(os.path.join(ddmm_src, d), os.path.join(dst_dir, d))
@@ -34,7 +34,7 @@ init python:
                                     break
                         
                     for ddmm_src, mod_dirs, mod_files in os.walk(ddmm_path):
-                        dst_dir = ddmm_src.replace(ddmm_path, persistent.ddml_basedir + "/game/mods" + dirs + "/game")
+                        dst_dir = ddmm_src.replace(ddmm_path, os.path.join(persistent.ddml_basedir, "game/mods", dirs, "game"))
                         for mod_d in mod_dirs:
                             shutil.copytree(os.path.join(ddmm_src, mod_d), os.path.join(dst_dir, mod_d))
                         for mod_f in mod_files:
