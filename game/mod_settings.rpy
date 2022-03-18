@@ -33,8 +33,8 @@ init python:
                                     mod_dir = ddmm_src
                                     break
                         
-                    for ddmm_src, mod_dirs, mod_files in os.walk(ddmm_path):
-                        dst_dir = ddmm_src.replace(ddmm_path, os.path.join(persistent.ddml_basedir, "game/mods", dirs, "game"))
+                    for ddmm_src, mod_dirs, mod_files in os.walk(mod_dir):
+                        dst_dir = ddmm_src.replace(mod_dir, os.path.join(persistent.ddml_basedir, "game/mods", dirs, "game"))
                         for mod_d in mod_dirs:
                             shutil.copytree(os.path.join(ddmm_src, mod_d), os.path.join(dst_dir, mod_d))
                         for mod_f in mod_files:
