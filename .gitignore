@@ -2,3 +2,7 @@
 *.bak
 *.chr
 poemwords.txt
+cache
+MLSaves
+*.rpa
+firstrun

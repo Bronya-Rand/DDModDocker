@@ -17,13 +17,15 @@ init -100 python:
         os.makedirs(persistent.ddml_basedir + "/game/mods")
     if not os.path.exists(persistent.ddml_basedir + "/game/MLSaves"):
         os.makedirs(persistent.ddml_basedir + "/game/MLSaves")
-    if not os.path.exists(config.basedir + "/characters"):
-        os.makedirs(config.basedir + "/characters")
 
     if config.window_title != "Doki Doki Mod Docker (Alpha)":
         config.window_title = "Doki Doki Mod Docker (Alpha) - Mod Container: " + config.name
 
-init 1 python:
+init python:
+    if not os.path.exists(config.basedir + "/characters"):
+        os.makedirs(config.basedir + "/characters")
+
+init -100 python:
 
     def patched_file(fn):
         if ".." in fn:
