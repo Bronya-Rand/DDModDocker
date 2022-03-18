@@ -308,7 +308,11 @@ screen mods():
                     hover "ddmd_install_icon_hover"
                     hovered Show("mods_hover_info", about="Install a Mod")
                     unhovered Hide("mods_hover_info")
-                    action [Hide("mods_hover_info"), If(renpy.macintosh and not persistent.macos_zip_warn, Show("ddmd_confirm", message="Mod Docker only supports Mod ZIP files", message2="Downloading mods via Safari may extract ZIP files which is not compatible with Mod Docker. By confirming this message you understand this limitation in macOS.", yes_action=[SetField(persistent, "macos_zip_warn", True), Hide("ddmd_confirm"), Show("pc_directory", Dissolve(0.25))], no_action=Hide("ddmd_confirm")), Show("pc_directory", Dissolve(0.25)))]
+                    action [Hide("mods_hover_info"), If(renpy.macintosh and not persistent.self_extract, 
+                        Show("ddmd_confirm", message="ZIP Extraction On?", message2="Does your version of macOS extract ZIP files after downloading?", 
+                        yes_action=[SetField(persistent, "self_extract", True), Hide("ddmd_confirm"))], no_action=Hide("ddmd_confirm")), 
+                        If(renpy.macintosh and persistent.self_extract, Show("pc_folder_directory", Dissolve(0.25)), 
+                        Show("pc_directory", Dissolve(0.25)))]
             null width 10
             vbox:
                 imagebutton:

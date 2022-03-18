@@ -36,8 +36,6 @@ image ddmd_file_folder = "sdc_system/file_app/OSFolder.png"
 image ddmd_transfer_icon = "sdc_system/settings_app/transfer.png"
 
 default persistent.mod_list_disclaimer_accepted = False
+default persistent.self_extract = False
 default modSearchCriteria = ""
 define tempFolderName = ""
-define tempDirPath = ""
-default persistent.self_extract = False
-default persistent.macos_zip_warn = False
