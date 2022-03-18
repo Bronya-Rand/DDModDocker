@@ -115,7 +115,7 @@ screen pc_directory(loc=None):
             
                 vbar value YScrollValue("fe") xoffset 20 yoffset 10 ysize 240
 
-screen pc_folder_directory(folderType, loc=None):
+screen pc_folder_directory(folderType, ok_action, loc=None):
     modal True
     
     zorder 200
@@ -208,4 +208,4 @@ screen pc_folder_directory(folderType, loc=None):
                 vbar value YScrollValue("fe") xoffset 20 yoffset 10 ysize 240
 
             if (renpy.windows and loc != "drive") or (not renpy.windows and loc != "/"):
-                textbutton "Select Current Folder" action [Hide("pc_folder_directory"), SetVariable("tempDirPath", loc)]
+                textbutton "Select Current Folder" action [Hide("pc_folder_directory"), SetVariable("tempDirPath", loc), ok_action]
