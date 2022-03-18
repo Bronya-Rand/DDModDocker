@@ -1,5 +1,17 @@
 
 init python:
+    import os
+    import hashlib
+
+    def is_original_file(path):
+        if path.endswith("audio.rpa"):
+            return hashlib.sha256(open(path), "rb").read()).hexdigest() == '121fedc50823e2a76d947025cc0f2dfa7c64b2454760b50091a64d1d36b7d2e7'
+        elif path.endswith("fonts.rpa"):
+            return hashlib.sha256(open(path), "rb").read()).hexdigest() == 'd48beafa7e1f3171b0e8e312f857af0e7eb387ef1e524a5be2595d46652d2018'
+        elif path.endswith("images.rpa"):
+            return hashlib.sha256(open(path), "rb").read()).hexdigest() == '6c3dccd4f35723ca1679b95710d4d09cec3d22439e24264bc6ff60d90640d393'
+        elif path.endswith("scripts.rpa"):
+            return hashlib.sha256(open(path), "rb").read()).hexdigest() == 'da7ba6d3cf9ec1ae666ec29ae07995a65d24cca400cd266e470deb55e03a51d4'
 
     def transfer_data(ddmm_path):
         modsTransferred = []
@@ -11,24 +23,29 @@ init python:
                     os.makedirs(persistent.ddml_basedir + "/game/mods/" + dirs + "/game")
 
                     for ddmm_src, mod_dirs, mod_files in os.walk(ddmm_path + "/" + dirs):
-                        dst_dir = ddmm_src.replace(ddmm_src + "/" + dirs, persistent.ddml_basedir + "/game/mods/" + dirs)
+                        dst_dir = ddmm_src.replace(ddmm_path + "/" + dirs, persistent.ddml_basedir + "/game/mods/" + dirs)
                         for d in mod_dirs:
                             if d == "characters":
                                 shutil.copytree(os.path.join(ddmm_src, d), os.path.join(dst_dir, d))
                         for f in mod_files:
                             if f.endswith((".rpa", ".rpyc", ".rpy")):
                                 if not f.startswith("00"):
-                                    mod_dir = mod_src
+                                    mod_dir = ddmm_src
                                     break
                         
-                    for ddmm_src, mod_dirs, mod_files in os.walk(mod_dir):
-                        dst_dir = ddmm_src.replace(ddmm_src + "/" + dirs + "/game", persistent.ddml_basedir + "/game/mods/" + dirs + "/game")
+                    for ddmm_src, mod_dirs, mod_files in os.walk(ddmm_path):
+                        dst_dir = ddmm_src.replace(ddmm_path, persistent.ddml_basedir + "/game/mods" + dirs + "/game")
                         for mod_d in mod_dirs:
-                            shutil.copy2(os.path.join(ddmm_src, mod_d), os.path.join(dst_dir, mod_d))
+                            shutil.copytree(os.path.join(ddmm_src, mod_d), os.path.join(dst_dir, mod_d))
                         for mod_f in mod_files:
+                            if mod_f.endswith(".rpa"):
+                                if is_original_file(os.path.join(ddmm_src, mod_f)):
+                                    continue
                             shutil.copy2(os.path.join(ddmm_src, mod_f), os.path.join(dst_dir, mod_f))
+
             tempDirPath = ""
             renpy.hide_screen("ddmd_progress")
+            renpy.show_screen("ddmd_dialog", message="Transferred all data sucessfully.")
         except OSError as err:
             tempDirPath = ""
             shutil.rmtree(persistent.ddml_basedir + "/game/mods/" + modsTransferred[-1])
@@ -49,12 +66,10 @@ init python:
             os.getenv("APPDATA"), "DokiDokiModManager/GameData/installs"
         )
         transfer_data(ddmm_path)
-        renpy.show_screen("ddmd_dialog", message="Transferred all data from DDMM sucessfully.")
 
     def transfer_ddml_data(ddml_path):
         renpy.show_screen("pc_folder_directory", Dissolve(0.25), folderType="DDML")
         transfer_data(tempDirPath)
-        renpy.show_screen("ddmd_dialog", message="Transferred all data from DDML sucessfully.")
 
 screen mod_settings():
     zorder 101
