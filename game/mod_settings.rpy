@@ -112,16 +112,16 @@ screen mod_settings():
                         idle ConditionSwitch("config.gl2", Composite((250, 40), (0, 0), "ddmd_toggle_on",
                             (55, 13), Text("Enable OpenGL 2 Globally", style="modSettings_text", size=18)), "True",
                             Composite((250, 40), (0, 0), "ddmd_toggle_off", (55, 13), 
-                            Text("Enable OpenGL 2", style="modSettings_text", size=18)))
+                            Text("Enable OpenGL 2 Globally", style="modSettings_text", size=18)))
                         hover ConditionSwitch("config.gl2", Composite((250, 40), (0, 0), "ddmd_toggle_on_hover",
-                            (55, 14), Text("Enable OpenGL 2", style="modSettings_text", size=18)), "True", 
-                            Composite((250, 40), (0, 0), "ddmd_toggle_off_hover", (55, 14), Text("Enable OpenGL 2", 
+                            (55, 14), Text("Enable OpenGL 2 Globally", style="modSettings_text", size=18)), "True", 
+                            Composite((250, 40), (0, 0), "ddmd_toggle_off_hover", (55, 14), Text("Enable OpenGL 2 Globally", 
                             style="modSettings_text", size=18)))
                         action If(config.gl2, Show("ddmd_confirm", Dissolve(0.25), message="Disable OpenGL 2?", 
-                            message2="This mod may not have certain effects display if this setting is turned off. {b}A restart is required to load OpenGL 2{/b}.", 
+                            message2="Some mods may not have certain effects display if this setting is turned off. {b}A restart is required to load OpenGL 2{/b}.", 
                             yes_action=[SetField(config, "gl2", False), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
                             Dissolve(0.25))), Show("ddmd_confirm", Dissolve(0.25), message="Enable OpenGL 2?", 
-                            message2="This mod may suffer from broken affects if this setting is turned on. {b}A restart is required to load OpenGL 2{/b}.", 
+                            message2="Some mods may suffer from broken affects if this setting is turned on. {b}A restart is required to load OpenGL 2{/b}.", 
                             yes_action=[SetField(config, "gl2", True), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
                             Dissolve(0.25))))
 
