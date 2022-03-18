@@ -73,7 +73,7 @@ screen ddmd_dialog(xs=480, ys=220, message, message2=None):
 
                 textbutton _("OK") action Hide("ddmd_dialog", Dissolve(0.25))
 
-screen mod_name_input(zipPath, xs=480, ys=220):
+screen mod_name_input(zipPath, copy=False, xs=480, ys=220):
     modal True
 
     zorder 200

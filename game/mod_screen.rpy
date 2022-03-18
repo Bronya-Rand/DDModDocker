@@ -170,21 +170,30 @@ init python:
             renpy.show_screen("ddmd_progress", message="Installing mod. Please wait.")
             folderPath = os.path.join(persistent.ddml_basedir, "game/mods", tempFolderName)
             try:
-                if not valid_zip(zipPath):
-                    raise Exception("Given ZIP file is a invalid DDLC Mod ZIP Package. Please select a different ZIP file.")
-                    return
-
-                os.makedirs(folderPath)
-                os.makedirs(os.path.join(folderPath, "game"))
-
                 if not copy:
+                    if not valid_zip(zipPath):
+                        raise Exception("Given ZIP file is a invalid DDLC Mod ZIP Package. Please select a different ZIP file.")
+                        return
+                    
                     mod_dir = tempfile.mkdtemp(prefix="NewDDML_", suffix="_TempArchive")
 
                     with ZipFile(zipPath, "r") as tempzip:
                         tempzip.extractall(mod_dir)
                     
                 else:
-                    mod_dir = zipPath
+                    validMod = False
+                    for mod_src, dirs, files in os.walk(zipPath):
+                        for mod_f in files:
+                            if mod_f.endswith((".rpa", ".rpyc", ".rpy")):
+                                validMod = True
+                    if validMod:
+                        mod_dir = zipPath
+                    else:
+                        raise Exception("Given Mod Folder is a invalid DDLC Mod Folder Package. Please select a different mod folder.")
+                        return
+
+                os.makedirs(folderPath)
+                os.makedirs(os.path.join(folderPath, "game"))
 
                 for mod_src, dirs, files in os.walk(mod_dir):
                     dst_dir = mod_src.replace(mod_dir, folderPath)
