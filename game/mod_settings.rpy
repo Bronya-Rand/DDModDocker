@@ -50,12 +50,12 @@ init python:
             tempDirPath = ""
             shutil.rmtree(persistent.ddml_basedir + "/game/mods/" + modsTransferred[-1])
             renpy.hide_screen("ddmd_progress")
-            renpy.show_screen("ddmd_dialog", message="A error has occured while transfering %s." % modsTransferred[-1], message2=str(err))
+            renpy.show_screen("ddmd_dialog", message="A error has occured while transferring.", message2=str(err))
         except Exception as err:
             tempDirPath = ""
             shutil.rmtree(persistent.ddml_basedir + "/game/mods/" + modsTransferred[-1])
             renpy.hide_screen("ddmd_progress")
-            renpy.show_screen("ddmd_dialog", message="A error has occured while transfering %s." % modsTransferred[-1], message2=str(err))
+            renpy.show_screen("ddmd_dialog", message="A unknown error has occured while transferring.", message2=str(err))
 
     def transfer_ddmm_data():
         if not renpy.windows:
@@ -68,8 +68,7 @@ init python:
         transfer_data(ddmm_path)
 
     def transfer_ddml_data(ddml_path):
-        renpy.show_screen("pc_folder_directory", Dissolve(0.25), folderType="DDML")
-        transfer_data(tempDirPath)
+        transfer_data(ddml_path)
 
 screen mod_settings():
     zorder 101
@@ -134,6 +133,6 @@ screen mod_settings():
                             add Composite((410, 40), (0, 1), "ddmd_transfer_icon", (50, 8), Text("[Beta] Transfer DDMM Mods to DDMD", style="modSettings_button_text", substitute=False, size=18))
                     
                     button:
-                        action Function(transfer_ddml_data)
+                        action Show("pc_folder_directory", Dissolve(0.25), folderType="DDML Mod", ok_action=Function(transfer_ddml_data, ddml_path=tempDirPath))
                                 
                         add Composite((410, 40), (0, 1), "ddmd_transfer_icon", (50, 8), Text("[Beta] Transfer DDML Mods to DDMD", style="modSettings_button_text", substitute=False, size=18))
