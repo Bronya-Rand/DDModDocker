@@ -319,7 +319,7 @@ screen mods():
                     hover "ddmd_settings_icon_hover"
                     hovered Show("mods_hover_info", about="View DDMD's Settings")
                     unhovered Hide("mods_hover_info")
-                    action [Hide("mods_hover_info"), Show("mod_settings", Dissolve(0.25)))]
+                    action [Hide("mods_hover_info"), Show("mod_settings", Dissolve(0.25))]
             null width 10
             vbox:
                 imagebutton:

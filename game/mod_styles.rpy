@@ -126,3 +126,12 @@ style pc_dir_vscrollbar:
     thumb Frame("sdc_system/file_app/FileExplorerVBar.png", tile=False)
 
 style pc_dir_text is pc_dir_button_text
+
+## Mod Settings
+style modSettings_text is renpy_generic_text
+style modSettings_button:
+    ysize None
+    hover_sound gui.hover_sound
+    activate_sound gui.activate_sound
+style modSettings_button_text is modList_button_text
+style modSettings_frame is modList_frame
