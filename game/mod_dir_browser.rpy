@@ -158,7 +158,7 @@ screen install_folder_directory(loc=None):
                     imagebutton:
                         idle "sdc_system/file_app/OSBack.png"
                         hover Composite((18, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "sdc_system/file_app/OSBack.png")
-                        action Show("pc_folder_directory", loc=If(current_dir != prev_dir, prev_dir, "drive"))
+                        action Show("install_folder_directory", loc=If(current_dir != prev_dir, prev_dir, "drive"))
 
             hbox:
                 ypos 0.005
@@ -171,7 +171,7 @@ screen install_folder_directory(loc=None):
                 imagebutton:
                     idle "ddmd_close_icon"
                     hover "ddmd_close_icon_hover"
-                    action Hide("pc_folder_directory", Dissolve(0.25))
+                    action Hide("install_folder_directory", Dissolve(0.25))
             
             side "c r":
                 yoffset 35
@@ -189,13 +189,13 @@ screen install_folder_directory(loc=None):
                                 imagebutton:
                                     idle Composite((460, 18), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
                                     hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
-                                    action If(can_access(x + ":", True), Show("pc_folder_directory", loc=x + ":/"), Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
+                                    action If(can_access(x + ":", True), Show("install_folder_directory", loc=x + ":/"), Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                         for x in net_drives:
                             hbox:
                                 imagebutton:
                                     idle Composite((460, 18), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
                                     hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
-                                    action If(can_access(x + ":"), Show("pc_folder_directory", loc=x + ":/"), Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
+                                    action If(can_access(x + ":"), Show("install_folder_directory", loc=x + ":/"), Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                     else:
                         for x in os.listdir(current_dir):
                             if os.path.isdir(os.path.join(current_dir, x)):
@@ -203,14 +203,14 @@ screen install_folder_directory(loc=None):
                                     imagebutton:
                                         idle Composite((460, 18), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
                                         hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
-                                        action If(can_access(os.path.join(current_dir, x)), Show("pc_folder_directory", loc=os.path.join(current_dir, x)), Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x).replace("\\", "/")))
+                                        action If(can_access(os.path.join(current_dir, x)), Show("install_folder_directory", loc=os.path.join(current_dir, x)), Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x).replace("\\", "/")))
             
                 vbar value YScrollValue("fe") xoffset 20 yoffset 10 ysize 200
 
             if (renpy.windows and loc != "drive") or (not renpy.windows and loc != "/"):
                 textbutton "Select Current Folder":
                     text_style "mods_button_text"
-                    action [Hide("pc_folder_directory", Dissolve(0.25)), Function(transfer_data, ddmm_path=current_dir)]
+                    action [Hide("install_folder_directory", Dissolve(0.25)), Function(transfer_data, ddmm_path=current_dir)]
                     text_size 16
                     xalign 0.95 yalign 0.98
 
