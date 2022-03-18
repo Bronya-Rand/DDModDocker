@@ -102,7 +102,7 @@ screen mod_name_input(zipPath, copy=False, xs=480, ys=220):
                 xalign 0.5
                 spacing 100
 
-                textbutton _("OK") action [Hide("mod_name_input"), Function(install_mod, zipPath=zipPath)]
+                textbutton _("OK") action [Hide("mod_name_input"), Function(install_mod, zipPath=zipPath, copy=copy)]
 
 screen ddmd_progress(message, xs=480, ys=220):
     modal True

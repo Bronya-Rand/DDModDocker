@@ -308,11 +308,11 @@ screen mods():
                     hover "ddmd_install_icon_hover"
                     hovered Show("mods_hover_info", about="Install a Mod")
                     unhovered Hide("mods_hover_info")
-                    action [Hide("mods_hover_info"), If(renpy.macintosh and not persistent.self_extract, 
+                    action [Hide("mods_hover_info"), If(renpy.macintosh and not persistent.self_extract is None, 
                         Show("ddmd_confirm", message="ZIP Extraction On?", message2="Does your version of macOS extract ZIP files after downloading?", 
-                        yes_action=[SetField(persistent, "self_extract", True), Hide("ddmd_confirm")], no_action=Hide("ddmd_confirm"))), 
-                        If(renpy.macintosh and persistent.self_extract, Show("pc_folder_directory", Dissolve(0.25)), 
-                        Show("pc_directory", Dissolve(0.25)))]
+                        yes_action=[SetField(persistent, "self_extract", True), Hide("ddmd_confirm"), Show("pc_folder_directory", Dissolve(0.25))], 
+                        no_action=[SetField(persistent, "self_extract", False), Hide("ddmd_confirm"), Show("pc_folder_directory", Dissolve(0.25))]), 
+                        If(renpy.macintosh and persistent.self_extract, Show("pc_folder_directory", Dissolve(0.25)), Show("pc_directory", Dissolve(0.25))))]
             null width 10
             vbox:
                 imagebutton:
@@ -320,8 +320,8 @@ screen mods():
                     hover "ddmd_search_icon_hover"
                     hovered Show("mods_hover_info", about="Browse the Mod List!")
                     unhovered Hide("mods_hover_info")
-                    action If(not persistent.mod_list_disclaimer_accepted, 
-                    [Hide("mods_hover_info"), Show("ddmd_confirm", message="Disclaimer", message2="This mod list source is provided by the defunct Doki Doki Mod Club site. Not all mods may be on here while others may be out-of-date. By accepting this prompt, you acknoledge to the following disclaimer above.", 
+                    action [Hide("mods_hover_info"), If(not persistent.mod_list_disclaimer_accepted, 
+                    Show("ddmd_confirm", message="Disclaimer", message2="This mod list source is provided by the defunct Doki Doki Mod Club site. Not all mods may be on here while others may be out-of-date. By accepting this prompt, you acknowledge to the following disclaimer above.", 
                         yes_action=[SetField(persistent, "mod_list_disclaimer_accepted", True), Hide("ddmd_confirm", Dissolve(0.25)), 
                         Show("mod_list", Dissolve(0.25))], no_action=Hide("ddmd_confirm", Dissolve(0.25)))], 
                         Show("mod_list", Dissolve(0.25)))
