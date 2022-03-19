@@ -25,6 +25,14 @@ init python:
     if not os.path.exists(config.basedir + "/characters"):
         os.makedirs(config.basedir + "/characters")
 
+init 1 python:
+    import ddmd_api
+    
+    modDocker_api = ddmd_api.ModDocker_API()
+    modDocker_api.get_mod_info()
+    if not os.path.exists(config.basedir + "/modinfo.json") and modDocker_api.get_current_container_save_folder().split("/")[-1] != "DDLC":
+        modDocker_api.write_mod_data()
+
 init -100 python:
 
     def patched_file(fn):
