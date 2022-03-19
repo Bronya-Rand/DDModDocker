@@ -23,7 +23,7 @@ class ModDocker_API:
         Get's the current mod containers' build name.
         """
         if os.path.exists(os.path.join(self.mod_basedir, "modinfo.json")):
-            self.parse_mod_info(os.path.join(self.mod_basedir, "modinfo.json"))
+            self.mod_info = self.parse_mod_info(os.path.join(self.mod_basedir, "modinfo.json"))
         else:
             self.mod_info = [
                 {
