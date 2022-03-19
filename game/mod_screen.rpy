@@ -308,7 +308,7 @@ screen mods():
                     hover "ddmd_install_icon_hover"
                     hovered Show("mods_hover_info", about="Install a Mod")
                     unhovered Hide("mods_hover_info")
-                    action [Hide("mods_hover_info"), If(renpy.macintosh and not persistent.self_extract is None, 
+                    action [Hide("mods_hover_info"), If(renpy.macintosh and persistent.self_extract is None, 
                         Show("ddmd_confirm", message="ZIP Extraction On?", message2="Does your version of macOS extract ZIP files after downloading?", 
                         yes_action=[SetField(persistent, "self_extract", True), Hide("ddmd_confirm"), Show("pc_folder_directory", Dissolve(0.25))], 
                         no_action=[SetField(persistent, "self_extract", False), Hide("ddmd_confirm"), Show("pc_folder_directory", Dissolve(0.25))]), 
