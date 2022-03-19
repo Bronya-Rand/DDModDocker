@@ -170,21 +170,30 @@ init python:
             renpy.show_screen("ddmd_progress", message="Installing mod. Please wait.")
             folderPath = os.path.join(persistent.ddml_basedir, "game/mods", tempFolderName)
             try:
-                if not valid_zip(zipPath):
-                    raise Exception("Given ZIP file is a invalid DDLC Mod ZIP Package. Please select a different ZIP file.")
-                    return
-
-                os.makedirs(folderPath)
-                os.makedirs(os.path.join(folderPath, "game"))
-
                 if not copy:
+                    if not valid_zip(zipPath):
+                        raise Exception("Given ZIP file is a invalid DDLC Mod ZIP Package. Please select a different ZIP file.")
+                        return
+                    
                     mod_dir = tempfile.mkdtemp(prefix="NewDDML_", suffix="_TempArchive")
 
                     with ZipFile(zipPath, "r") as tempzip:
                         tempzip.extractall(mod_dir)
                     
                 else:
-                    mod_dir = zipPath
+                    validMod = False
+                    for mod_src, dirs, files in os.walk(zipPath):
+                        for mod_f in files:
+                            if mod_f.endswith((".rpa", ".rpyc", ".rpy")):
+                                validMod = True
+                    if validMod:
+                        mod_dir = zipPath
+                    else:
+                        raise Exception("Given Mod Folder is a invalid DDLC Mod Folder Package. Please select a different mod folder.")
+                        return
+
+                os.makedirs(folderPath)
+                os.makedirs(os.path.join(folderPath, "game"))
 
                 for mod_src, dirs, files in os.walk(mod_dir):
                     dst_dir = mod_src.replace(mod_dir, folderPath)
@@ -299,7 +308,11 @@ screen mods():
                     hover "ddmd_install_icon_hover"
                     hovered Show("mods_hover_info", about="Install a Mod")
                     unhovered Hide("mods_hover_info")
-                    action [Hide("mods_hover_info"), If(renpy.macintosh and not persistent.macos_zip_warn, Show("ddmd_confirm", message="Mod Docker only supports Mod ZIP files", message2="Downloading mods via Safari may extract ZIP files which is not compatible with Mod Docker. By confirming this message you understand this limitation in macOS.", yes_action=[SetField(persistent, "macos_zip_warn", True), Hide("ddmd_confirm"), Show("pc_directory", Dissolve(0.25))], no_action=Hide("ddmd_confirm")), Show("pc_directory", Dissolve(0.25)))]
+                    action [Hide("mods_hover_info"), If(renpy.macintosh and not persistent.self_extract is None, 
+                        Show("ddmd_confirm", message="ZIP Extraction On?", message2="Does your version of macOS extract ZIP files after downloading?", 
+                        yes_action=[SetField(persistent, "self_extract", True), Hide("ddmd_confirm"), Show("pc_folder_directory", Dissolve(0.25))], 
+                        no_action=[SetField(persistent, "self_extract", False), Hide("ddmd_confirm"), Show("pc_folder_directory", Dissolve(0.25))]), 
+                        If(renpy.macintosh and persistent.self_extract, Show("pc_folder_directory", Dissolve(0.25)), Show("pc_directory", Dissolve(0.25))))]
             null width 10
             vbox:
                 imagebutton:
@@ -307,17 +320,24 @@ screen mods():
                     hover "ddmd_search_icon_hover"
                     hovered Show("mods_hover_info", about="Browse the Mod List!")
                     unhovered Hide("mods_hover_info")
-                    action If(not persistent.mod_list_disclaimer_accepted, 
-                    [Hide("mods_hover_info"), Show("ddmd_confirm", message="Disclaimer", message2="This mod list source is provided by the defunct Doki Doki Mod Club site. Not all mods may be on here while others may be out-of-date. By accepting this prompt, you acknoledge to the following disclaimer above.", 
-                        yes_action=[SetField(persistent, "mod_list_disclaimer_accepted", True), Hide("ddmd_confirm", Dissolve(0.25)), 
-                        Show("mod_list", Dissolve(0.25))], no_action=Hide("ddmd_confirm", Dissolve(0.25)))], 
-                        Show("mod_list", Dissolve(0.25)))
+                    action [Hide("mods_hover_info"), If(not persistent.mod_list_disclaimer_accepted, 
+                        Show("ddmd_confirm", message="Disclaimer", message2="This mod list source is provided by the defunct Doki Doki Mod Club site. Not all mods may be on here while others may be out-of-date. By accepting this prompt, you acknowledge to the following disclaimer above.", 
+                        yes_action=[SetField(persistent, "mod_list_disclaimer_accepted", True), Hide("ddmd_confirm"), Show("mod_list", Dissolve(0.25))], 
+                        no_action=Hide("ddmd_confirm")), Show("mod_list", Dissolve(0.25)))]
+            null width 10
+            vbox:
+                imagebutton:
+                    idle "ddmd_settings_icon"
+                    hover "ddmd_settings_icon_hover"
+                    hovered Show("mods_hover_info", about="View DDMD's Settings")
+                    unhovered Hide("mods_hover_info")
+                    action [Hide("mods_hover_info"), Show("mod_settings", Dissolve(0.25))]
             null width 10
             vbox:
                 imagebutton:
                     idle "ddmd_restart_icon"
                     hover "ddmd_restart_icon_hover"
-                    hovered Show("mods_hover_info", about="Quits DDMD")
+                    hovered Show("mods_hover_info", about="Quit DDMD")
                     unhovered Hide("mods_hover_info")
                     action Quit()
 
@@ -350,23 +370,6 @@ screen mods():
                     textbutton "Delete Mod" action Show("ddmd_confirm", message="Are you sure you want to remove %s?" % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_mod, selectedMod)], no_action=Hide("ddmd_confirm"))
                 if selectedMod != loadedMod:
                     textbutton "Delete Saves" action Show("ddmd_confirm", message="Are you sure you want to remove %s save files?" % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_saves, selectedMod)], no_action=Hide("ddmd_confirm"))
-                if selectedMod == loadedMod and selectedMod != "DDLC":
-                    imagebutton:
-                        idle ConditionSwitch("config.gl2", Composite((250, 50), (0, 0), "ddmd_toggle_on",
-                            (55, 7), Text("Enable OpenGL 2", style="mods_text")), "True",
-                            Composite((250, 50), (0, 0), "ddmd_toggle_off", (55, 7), 
-                            Text("Enable OpenGL 2", style="mods_text")))
-                        hover ConditionSwitch("config.gl2", Composite((250, 50), (0, 0), "ddmd_toggle_on_hover",
-                            (55, 7), Text("Enable OpenGL 2", style="mods_text")), "True", 
-                            Composite((250, 50), (0, 0), "ddmd_toggle_off_hover", (55, 7), Text("Enable OpenGL 2", 
-                            style="mods_text")))
-                        action If(config.gl2, Show("ddmd_confirm", Dissolve(0.25), message="Disable OpenGL 2?", 
-                            message2="This mod may not have certain effects display if this setting is turned off. {b}A restart is required to load OpenGL 2{/b}.", 
-                            yes_action=[SetField(config, "gl2", False), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
-                            Dissolve(0.25))), Show("ddmd_confirm", Dissolve(0.25), message="Enable OpenGL 2?", 
-                            message2="This mod may suffer from broken affects if this setting is turned on. {b}A restart is required to load OpenGL 2{/b}.", 
-                            yes_action=[SetField(config, "gl2", True), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
-                            Dissolve(0.25))))
 
         vbox:
             xpos 0.9
