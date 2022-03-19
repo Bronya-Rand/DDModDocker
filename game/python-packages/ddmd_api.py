@@ -6,8 +6,8 @@ class ModDocker_API:
 
     def __init__(self):
         self.mods_path = os.path.join(renpy.store.persistent.ddml_basedir, "game/mods")
-        self.mod_basedir = renpy.config.basedir
-        self.mod_gamedir = renpy.config.gamedir
+        self.mod_basedir = renpy.config.basedir.replace("\\", "/")
+        self.mod_gamedir = renpy.config.gamedir.replace("\\", "/")
         self.mod_info = []
         self.multipersistent = None
 
@@ -30,7 +30,7 @@ class ModDocker_API:
                     "modName": renpy.config.name,
                     "modVersion": renpy.config.version,
                     "buildName": renpy.store.build.name,
-                    "saveDir": renpy.config.savedir,
+                    "saveDir": renpy.config.savedir.replace("\\", "/"),
                 }
             ]
     
