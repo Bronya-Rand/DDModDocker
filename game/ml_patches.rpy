@@ -25,6 +25,16 @@ init -100 python:
         config.window_title = "Doki Doki Mod Docker: SE (Alpha) - R6 Mod Container"
 
 init 1 python:
+    import ddmd_api
+
+    modDocker_api = ddmd_api.ModDocker_API()
+    modDocker_api.get_mod_info()
+
+    # Re-write in case of new API updates
+    if modDocker_api.get_current_container_save_folder().split("/")[-1] != "DDLC":
+        modDocker_api.write_mod_data()
+
+init -100 python:
 
     def patched_file(fn):
         if ".." in fn:
