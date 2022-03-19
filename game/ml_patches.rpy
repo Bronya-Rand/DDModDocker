@@ -30,7 +30,9 @@ init 1 python:
     
     modDocker_api = ddmd_api.ModDocker_API()
     modDocker_api.get_mod_info()
-    if not os.path.exists(config.basedir + "/modinfo.json") and modDocker_api.get_current_container_save_folder().split("/")[-1] != "DDLC":
+    
+    # Re-write in case of new API updates
+    if modDocker_api.get_current_container_save_folder().split("/")[-1] != "DDLC":
         modDocker_api.write_mod_data()
 
 init -100 python:
