@@ -25,7 +25,7 @@ init python:
 
         for x in temp:
             if x in net_drives:
-                drives.remove(x)
+                temp.remove(x)
         return temp
 
 screen pc_directory(loc=None):
