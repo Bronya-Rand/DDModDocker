@@ -153,6 +153,12 @@ init python:
 
         return False
 
+    def inInvalidDir(path):
+        for x in ("lib", "renpy"):
+            if x + "/" in path.replace("\\", "/"):
+                return True
+        return False
+
     def install_mod(zipPath, copy=False):
         global tempFolderName
         if not tempFolderName:
@@ -174,7 +180,7 @@ init python:
                     if not valid_zip(zipPath):
                         raise Exception("Given ZIP file is a invalid DDLC Mod ZIP Package. Please select a different ZIP file.")
                         return
-
+                    
                     mod_dir = tempfile.mkdtemp(prefix="NewDDML_", suffix="_TempArchive")
 
                     with ZipFile(zipPath, "r") as tempzip:
@@ -202,7 +208,7 @@ init python:
                             shutil.move(os.path.join(mod_src, d), os.path.join(dst_dir, d))
                     for f in files:
                         if f.endswith((".rpa", ".rpyc", ".rpy")):
-                            if not f.startswith("00"):
+                            if not inInvalidDir(mod_src):
                                 mod_dir = mod_src
                                 break
 
