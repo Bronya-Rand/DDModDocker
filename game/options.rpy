@@ -11,7 +11,7 @@ define config.window_title = config.name
 define gui.show_name = False
 
 # This controls the version number of your mod.
-define config.version = "1.0.2"
+define config.version = "1.0.3"
 
 # This adds information about your mod in the About screen.
 # DDLC does not have a 'About' screen so you can leave this blank.
@@ -168,8 +168,6 @@ init python:
     #   Example: build.classify("game/**.pdf", "scripts all")
     
     build.classify("game/**.rpyc", "ddml")
-    build.classify("game/**.chr", "ddml")
-    build.classify("game/**.txt", "ddml")
     build.classify("game/sdc_system/**", "ddml")
     build.classify("game/python-packages/**", "mod")
     build.classify("game/ddmc.json", "mod")
@@ -180,6 +178,7 @@ init python:
     build.classify("game/mods/**", None)
     build.classify("game/docker_custom_image.png", None)
     build.classify("game/firstrun", None)
+    build.classify("BUILDING.md", None)
     build.classify('**~', None)
     build.classify('**.bak', None)
     build.classify('**/.**', None)
