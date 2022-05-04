@@ -435,9 +435,9 @@ def main():
                     os.rename(os.path.join(src, f), os.path.join(dst, f))
             os.rmdir(renpy.config.gamedir + "/advanced_scripts")
 
-    game.basepath = old_gamedir  # renpy.config.gamedir
+    game.basepath = renpy.config.gamedir
     if renpy.config.gamedir != old_gamedir:
-        renpy.config.searchpath = [old_gamedir, renpy.config.gamedir]
+        renpy.config.searchpath = [old_gamedir]
     else:
         renpy.config.searchpath = [renpy.config.gamedir]
 
@@ -496,7 +496,7 @@ def main():
                     if not (ext in archive_extensions):
                         continue
 
-                    renpy.config.archives.append(renpy.config.gamedir + "/" + base)
+                    renpy.config.archives.append("mods/" + temp["modName"] + "/game/" + base)
 
             if "ddml" not in renpy.config.archives:
                 renpy.config.archives.append("ddml")
@@ -644,8 +644,6 @@ def main():
 
                 if "mods/" in x[0]:
                     renpy.game.script.script_files.remove(x)
-
-    # raise Exception(renpy.game.script.script_files)
 
     # Load all .rpy files.
     renpy.game.script.load_script()  # sets renpy.game.script.
