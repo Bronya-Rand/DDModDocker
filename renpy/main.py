@@ -605,6 +605,7 @@ def main():
                 # Make sure we add the needed DDMD files
                 ddmd_files = [
                     "mod_screen",
+                    "mod_settings",
                     "ml_patches",
                     "mod_content",
                     "mod_dir_browser",
