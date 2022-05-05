@@ -22,8 +22,13 @@ init -100 python:
         os.makedirs(config.basedir + "/characters")
 
     if config.window_title != "Doki Doki Mod Docker: SE (Alpha)":
-        config.window_title = "Doki Doki Mod Docker: SE (Alpha) - R6 Mod Container"
+        # config.window_title = "Doki Doki Mod Docker: SE (Alpha) - R6 Mod Container"
+        config.window_title = "Doki Doki Mod Docker: SE (Alpha) - Mod Container: " + config.name
 
+init python:
+    if not os.path.exists(config.basedir + "/characters"):
+        os.makedirs(config.basedir + "/characters")
+        
 init 1 python:
     import ddmd_api
 

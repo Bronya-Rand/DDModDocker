@@ -259,10 +259,10 @@ screen mods():
         style_prefix "mods"
 
         if os.path.exists(persistent.ddml_basedir + "/game/docker_custom_image.png"):
-            add persistent.ddml_basedir + "/game/docker_custom_image.png" size(1280, 720)
+            add persistent.ddml_basedir + "/game/docker_custom_image.png" xsize 1280 ysize 720
         else:
             add "game_menu_bg"
-        add Transform("#000", alpha=0.8) size(365, 720)
+        add Transform("#000", alpha=0.8) xsize 365
         add Transform("#202020", alpha=0.5) xpos 0.28
 
         vbox:

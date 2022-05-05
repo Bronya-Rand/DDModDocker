@@ -134,4 +134,4 @@ style modSettings_button:
     hover_sound gui.hover_sound
     activate_sound gui.activate_sound
 style modSettings_button_text is modList_button_text
-style modSettings_frame is modList_frame 
+style modSettings_frame is modList_frame

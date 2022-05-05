@@ -11,7 +11,7 @@ define config.window_title = config.name
 define gui.show_name = False
 
 # This controls the version number of your mod.
-define config.version = "1.0.2"
+define config.version = "1.0.3"
 
 # This adds information about your mod in the About screen.
 # DDLC does not have a 'About' screen so you can leave this blank.
@@ -152,10 +152,8 @@ init python:
 
     # These variables declare the packages to build your mod that is Team Salvato
     # IPG compliant. Do not mess with these variables whatsoever.
-    # build.package("DDMD6",'zip','mod',description="Ren'Py 6 DDMD Build (Alpha)")
-    build.package("full-se",'zip','windows linux mac renpy mod all',description="Ren'Py 6 DDMD Build: All")
-    # build.package("win-liux",'zip','windows linux renpy mod all',description="Ren'Py 7 DDMD Build: Windows/Linux")
-    # build.package("mac-app",'app-zip','mac renpy mod all',description="Ren'Py 7 DDMD Build: macOS")
+    build.package("ddmd-win",'zip','windows linux renpy mod all',description="Ren'Py 7 DDMD Build: Windows/Linux")
+    build.package("ddmd-mac",'app-zip','mac renpy mod all',description="Ren'Py 7 DDMD Build: macOS")
 
     # These variables declare the archives that will be made to your packaged mod.
     # To add another archive, make a build.archive variable like in this example:
@@ -168,8 +166,6 @@ init python:
     #   Example: build.classify("game/**.pdf", "scripts all")
     
     build.classify("game/**.rpyc", "ddml")
-    build.classify("game/**.chr", "ddml")
-    build.classify("game/**.txt", "ddml")
     build.classify("game/sdc_system/**", "ddml")
     build.classify("game/python-packages/**", "mod")
     build.classify("game/ddmc.json", "mod")
@@ -180,6 +176,7 @@ init python:
     build.classify("game/mods/**", None)
     build.classify("game/docker_custom_image.png", None)
     build.classify("game/firstrun", None)
+    build.classify("BUILDING.md", None)
     build.classify('**~', None)
     build.classify('**.bak', None)
     build.classify('**/.**', None)

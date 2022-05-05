@@ -1,4 +1,4 @@
-# Doki Doki Mod Docker
+# Doki Doki Mod Docker (SE Edition)
 
 <p align="center">
     <img src=".github/assets/DDMDLogo.png" alt="DDMD SE Logo" width=160> 
@@ -9,7 +9,7 @@ Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and ru
 
 > This project is in alpha. Expect bugs or several mods to not work as compared to other mod launchers/managers. To report mod incompatibility, report it either in [Issues](https://github.com/GanstaKingofSA/DDModDocker/issues) or [here](https://docs.google.com/forms/d/e/1FAIpQLSflrNfAf3vbBcpafv-3CEqszlGb8-P90IZAvloKVhiO10JzTQ/viewform).
 
-> This project is unaffiliated with Team Salvato. No DDLC source code is provided in this project build. See [BUILDING.md](BUILDING.md) on how to build Mod Docker with fixes for Pull Requests.
+> This project is unaffiliated with Team Salvato. See [BUILDING.md](BUILDING.md) on how to build Mod Docker with fixes for Pull Requests.
 
 ## Features
 - Ren'Py 6 mod compatiblity
@@ -23,8 +23,9 @@ Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and ru
 - [Alpha] Auto MAS template built mods fixes.
 
 ## Installation
+### For Windows/Linux
 1. Download the latest version of Mod Docker [here](https://github.com/GanstaKingofSA/DDModDocker/releases).
-2. Open the ZIP file and extract the *DokiDokiModDockerSE-X.X.X-full* somewhere on your PC.
+2. Open the ZIP file and extract the *DokiDokiModDockerSE-X.X.X-ddmd-win* somewhere on your PC.
    > Do not install Mod Docker over DDLC.
 3. Download DDLC's PC ZIP from [ddlc.moe](https://ddlc.moe), open the ZIP file, go to *DDLC-X.X.X-pc/game* and copy `audio.rpa`, `fonts.rpa`, `images.rpa`, and `scripts.rpa` to Mod Docker's game folder.
 4. Make a folder in Mod Docker's game folder called `mods`.
@@ -32,7 +33,24 @@ Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and ru
 (I suggest the name of the mod or it's acroymn)
 6. Copy the *game* folder of the mod that you want to play to the mod folder you just made.
    > If there is no *game* folder and all you have is just RPAs or RPYCs, make a 'game' folder in the mod folder you made and copy all the files into that folder.
-7. Launch Mod Docker via DDMD-SE.exe.
+7. Launch Mod Docker via DDMD-SE.exe (DDMD-SE.sh for Linux users).
+8. Press F9 to open the Mod Docker menu and select your mod by clicking on it and pressing Select.
+9. Restart the game and relaunch Mod Docker.
+10. Done!
+
+### For macOS
+> In order to follow these steps, you must open DDMD-SE by right-clicking the app, click "Show Package Contents" then go to "Contents/Resources/autorun".
+
+1. Download the latest version of Mod Docker [here](https://github.com/GanstaKingofSA/DDModDocker/releases).
+2. Open the ZIP file and extract the *DokiDokiModDockerSE-X.X.X-ddmd-mac* somewhere on your PC.
+   > Do not install Mod Docker over DDLC.
+3. Download DDLC's PC ZIP from [ddlc.moe](https://ddlc.moe), open the ZIP file, go to *DDLC-X.X.X-pc/game* and copy `audio.rpa`, `fonts.rpa`, `images.rpa`, and `scripts.rpa` to Mod Docker's game folder.
+4. Make a folder in Mod Docker's game folder called `mods`.
+5. Open the *mods* folder and make a folder for the mod you want to install.
+(I suggest the name of the mod or it's acroymn)
+6. Copy the *game* folder of the mod that you want to play to the mod folder you just made.
+   > If there is no *game* folder and all you have is just RPAs or RPYCs, make a 'game' folder in the mod folder you made and copy all the files into that folder.
+7. Launch Mod Docker via DDMD-SE.
 8. Press F9 to open the Mod Docker menu and select your mod by clicking on it and pressing Select.
 9. Restart the game and relaunch Mod Docker.
 10. Done!

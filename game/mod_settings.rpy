@@ -60,11 +60,11 @@ init python:
         if not renpy.windows:
             renpy.show_screen("ddmd_dialog", message="Transferring data from DDMM is only supported on Windows.")
             return
+        renpy.show_screen("ddmd_progress", message="Transferring data. Please wait.")
         ddmm_path = os.path.join(
             os.getenv("APPDATA"), "DokiDokiModManager/GameData/installs"
         )
         if os.path.exists(ddmm_path):
-            renpy.show_screen("ddmd_progress", message="Transferring data. Please wait.")
             transfer_data(ddmm_path)
         else:
             renpy.show_screen("ddmd_dialog", message="Error: We were unable to locate a Doki Doki Manager folder in your AppData folder.", message2="If this is in error, please report it on Github.")
@@ -84,7 +84,7 @@ screen mod_settings():
         ysize 300
         xpos 0.3
         ypos 0.3
-
+        
         frame:
             hbox:
                 ypos 0.005
@@ -115,10 +115,10 @@ screen mod_settings():
                     if renpy.windows:        
                         button:
                             action If(not persistent.transfer_warning, Show("ddmd_confirm", message="Transfer Warning", message2="Transferring mods is in beta and some mods may not work due to Ren'Py version differences. By accepting this disclaimer, transferring will proceed.", yes_action=[SetField(persistent, "transfer_warning", True), Hide("ddmd_confirm"), Function(transfer_ddmm_data)], no_action=Hide("ddmd_confirm")), Function(transfer_ddmm_data))
-
+                                    
                             add LiveComposite((410, 40), (0, 1), "ddmd_transfer_icon", (50, 8), Text("[Beta] Transfer DDMM Mods to DDMD", style="modSettings_button_text", substitute=False, size=18))
-
+                    
                     button:
                         action If(not persistent.transfer_warning, Show("ddmd_confirm", message="Transfer Warning", message2="Transferring mods is in beta and some mods may not work due to Ren'Py version differences. By accepting this disclaimer, transferring will proceed.", yes_action=[SetField(persistent, "transfer_warning", True), Hide("ddmd_confirm"), Function(transfer_ddml_data)], no_action=Hide("ddmd_confirm")), Function(transfer_ddml_data))
-
+                                
                         add LiveComposite((410, 40), (0, 1), "ddmd_transfer_icon", (50, 8), Text("[Beta] Transfer DDML Mods to DDMD", style="modSettings_button_text", substitute=False, size=18))

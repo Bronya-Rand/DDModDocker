@@ -317,7 +317,7 @@ def main():
 
     game.basepath = renpy.config.gamedir
     if renpy.config.gamedir != old_gamedir:
-        renpy.config.searchpath = [renpy.config.gamedir, old_gamedir]
+        renpy.config.searchpath = [old_gamedir]
     else:
         renpy.config.searchpath = [renpy.config.gamedir]
 
@@ -367,10 +367,11 @@ def main():
                     base, ext = os.path.splitext(i)
 
                     # Check if the archive does not have any of the extensions in archive_extensions
-                    if not (ext in archive_extensions):
+                    if not i.endswith(".rpa"):
                         continue
-
-                    renpy.config.archives.append(renpy.config.gamedir + "/" + base)
+                    
+                    i = i[:-4]
+                    renpy.config.archives.append("mods/" + temp["modName"] + "/game/" + i)
 
             if "ddml" not in renpy.config.archives:
                 renpy.config.archives.append("ddml")
@@ -464,16 +465,25 @@ def main():
             #raise Exception(renpy.game.script.script_files)
             for x in renpy.game.script.script_files[:]:
                 
-                #Make sure we add the needed DDMD files
-                if (
-                    ("mod_screen" in x[0] and x[1])
-                    or "saves" in x[0]
-                    or "ml_patches" in x[0]
-                ):
-                    mods_list.append(x)
-                
+                # Make sure we add the needed DDMD files
+                ddmd_files = [
+                    "mod_screen",
+                    "ml_patches",
+                    "mod_content",
+                    "mod_dir_browser",
+                    "mod_list",
+                    "mod_prompt",
+                    "mod_styles",
+                    "mod_transforms",
+                    "saves",
+                ]
+
+                for df in ddmd_files:
+                    if (df in x[0] and x[1]) or df in x[0]:
+                        mods_list.append(x)
+
                 # Check if the script file in the list is defined in mods folder
-                elif "mods/" + temp["modName"] + "/" in x[0]:
+                if "mods/" + temp["modName"] + "/" in x[0]:
                     mods_list.append(x)
 
                 elif x[1] and "renpy" in x[1]:
@@ -493,7 +503,7 @@ def main():
                         mods_list.append(x)
 
                 continue
-                
+
             renpy.game.script.script_files = mods_list
 
         else:

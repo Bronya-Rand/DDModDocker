@@ -13,7 +13,7 @@ init python:
                 return False
             raise
         return True
-
+    
     def get_network_drives():
         temp = subprocess.check_output("powershell (Get-WmiObject -ClassName Win32_MappedLogicalDisk).Name", shell=True).replace("\r\n", "").split(":")
         temp.pop(-1)
@@ -123,7 +123,7 @@ screen pc_directory(loc=None):
 
 screen install_folder_directory(loc=None):
     modal True
-
+    
     zorder 200
     style_prefix "pc_dir"
 
@@ -134,7 +134,7 @@ screen install_folder_directory(loc=None):
         ysize 300
         xpos 0.5
         ypos 0.4
-
+        
         frame:
 
             python:
@@ -151,7 +151,7 @@ screen install_folder_directory(loc=None):
                 else:
                     net_drives = get_network_drives()
                     drives = get_physical_drives(net_drives)
-
+                         
             if (renpy.windows and loc != "drive") or (not renpy.windows and loc != "/"):
                 hbox:
                     xalign 0.02 yoffset 6
@@ -172,7 +172,7 @@ screen install_folder_directory(loc=None):
                     idle "ddmd_close_icon"
                     hover "ddmd_close_icon_hover"
                     action Hide("install_folder_directory", Dissolve(0.25))
-
+            
             side "c r":
                 yoffset 35
                 xoffset 5
@@ -204,7 +204,7 @@ screen install_folder_directory(loc=None):
                                         idle LiveComposite((460, 18), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
                                         hover LiveComposite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
                                         action If(can_access(os.path.join(current_dir, x)), Show("install_folder_directory", loc=os.path.join(current_dir, x)), Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x).replace("\\", "/")))
-
+            
                 vbar value YScrollValue("fe") xoffset 20 yoffset 10 ysize 200
 
             if (renpy.windows and loc != "drive") or (not renpy.windows and loc != "/"):
@@ -216,7 +216,7 @@ screen install_folder_directory(loc=None):
 
 screen pc_folder_directory(loc=None):
     modal True
-
+    
     zorder 200
     style_prefix "pc_dir"
 
@@ -227,7 +227,7 @@ screen pc_folder_directory(loc=None):
         ysize 300
         xpos 0.5
         ypos 0.4
-
+        
         frame:
 
             python:
@@ -244,7 +244,7 @@ screen pc_folder_directory(loc=None):
                 else:
                     net_drives = get_network_drives()
                     drives = get_physical_drives(net_drives)
-
+                         
             if (renpy.windows and loc != "drive") or (not renpy.windows and loc != "/"):
                 hbox:
                     xalign 0.02 yoffset 6
@@ -265,7 +265,7 @@ screen pc_folder_directory(loc=None):
                     idle "ddmd_close_icon"
                     hover "ddmd_close_icon_hover"
                     action Hide("pc_folder_directory", Dissolve(0.25))
-
+            
             side "c r":
                 yoffset 35
                 xoffset 5
@@ -297,7 +297,7 @@ screen pc_folder_directory(loc=None):
                                         idle LiveComposite((460, 18), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
                                         hover LiveComposite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
                                         action If(can_access(os.path.join(current_dir, x)), Show("pc_folder_directory", loc=os.path.join(current_dir, x)), Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x).replace("\\", "/")))
-
+            
                 vbar value YScrollValue("fe") xoffset 20 yoffset 10 ysize 200
 
             if (renpy.windows and loc != "drive") or (not renpy.windows and loc != "/"):

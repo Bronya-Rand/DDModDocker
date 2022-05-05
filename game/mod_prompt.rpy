@@ -21,7 +21,8 @@ screen ddmd_confirm(xs=480, ys=220, message, message2=None, yes_action, no_actio
             label _(message):
                 text_size 20
                 xalign 0.0
-            
+                substitute False
+
             if message2:
                 text _(message2):
                     xalign 0.0
@@ -57,6 +58,7 @@ screen ddmd_dialog(xs=480, ys=220, message, message2=None):
             label _(message):
                 xalign 0.0
                 text_size 16
+                substitute False
 
             if message2:
                 text _(message2):
