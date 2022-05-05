@@ -496,9 +496,14 @@ def main():
                     if not (ext in archive_extensions):
                         continue
 
-                    renpy.config.archives.append("mods/" + temp["modName"] + "/game/" + base)
+                    renpy.config.archives.append(
+                        "mods/" + temp["modName"] + "/game/" + base
+                    )
 
-            if "ddml" not in renpy.config.archives:
+            if (
+                os.path.exists(renpy.config.gamedir + "/ddml.rpa")
+                and "ddml" not in renpy.config.archives
+            ):
                 renpy.config.archives.append("ddml")
 
         renpy.config.archives.reverse()
