@@ -6,7 +6,7 @@
 5. Copy the 'game' folder of the mod that you want to play to the mod folder you just made.
 (If there is no game folder and all you have is just RPAs or RPYCs, make a 'game' folder 
 in the mod folder you made and copy all the files into that folder.)
-6. Launch Mod Docker via DDMD.exe (DDMD-32.exe for 32-bit users).
+6. Launch Mod Docker via DDMD.exe (DDMD.sh for Linux).
 7. Press F9 to open the Mod Docker menu and select your mod by clicking on it and pressing Select.
 8. Restart the game and relaunch Mod Docker.
 9. Done!

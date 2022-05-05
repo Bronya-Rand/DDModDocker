@@ -7,7 +7,7 @@ Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and ru
 
 > This project is in alpha. Expect bugs or several mods to not work as compared to other mod launchers/managers. To report mod incompatibility, report it either in [Issues](https://github.com/GanstaKingofSA/DDModDocker/issues) or [here](https://docs.google.com/forms/d/e/1FAIpQLSflrNfAf3vbBcpafv-3CEqszlGb8-P90IZAvloKVhiO10JzTQ/viewform).
 
-> This project is unaffiliated with Team Salvato. No DDLC source code is provided in this project build. See [BUILDING.md](BUILDING.md) on how to build Mod Docker with fixes for Pull Requests.
+> This project is unaffiliated with Team Salvato.  See [BUILDING.md](BUILDING.md) on how to build Mod Docker with fixes for Pull Requests.
 
 ## Features
 - Ren'Py 6 and 7 mod compatiblity
@@ -20,9 +20,10 @@ Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and ru
 - [Beta] Auto scripts.rpa removal for certain mods.
 - [Alpha] Auto MAS template built mods fixes.
 
-## Installation
+## Installation 
+### For Windows/Linux
 1. Download the latest version of Mod Docker [here](https://github.com/GanstaKingofSA/DDModDocker/releases).
-2. Open the ZIP file and extract the *DokiDokiModDocker-X.X.X-full* somewhere on your PC.
+2. Open the ZIP file and extract the *DokiDokiModDocker-X.X.X-ddmd-win* somewhere on your PC.
    > Do not install Mod Docker over DDLC.
 3. Download DDLC's PC ZIP from [ddlc.moe](https://ddlc.moe), open the ZIP file, go to *DDLC-X.X.X-pc/game* and copy `audio.rpa`, `fonts.rpa`, `images.rpa`, and `scripts.rpa` to Mod Docker's game folder.
 4. Make a folder in Mod Docker's game folder called `mods`.
@@ -30,7 +31,24 @@ Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and ru
 (I suggest the name of the mod or it's acroymn)
 6. Copy the *game* folder of the mod that you want to play to the mod folder you just made.
    > If there is no *game* folder and all you have is just RPAs or RPYCs, make a 'game' folder in the mod folder you made and copy all the files into that folder.
-7. Launch Mod Docker via DDMD.exe (DDMD-32.exe for 32-bit users).
+7. Launch Mod Docker via DDMD.exe (DDMD.sh for Linux users).
+8. Press F9 to open the Mod Docker menu and select your mod by clicking on it and pressing Select.
+9. Restart the game and relaunch Mod Docker.
+10. Done!
+
+### For macOS
+> In order to follow these steps, you must open DDMD by right-clicking the app, click "Show Package Contents" then go to "Contents/Resources/autorun".
+
+1. Download the latest version of Mod Docker [here](https://github.com/GanstaKingofSA/DDModDocker/releases).
+2. Open the ZIP file and extract the *DokiDokiModDocker-X.X.X-ddmd-mac* somewhere on your PC.
+   > Do not install Mod Docker over DDLC.
+3. Download DDLC's PC ZIP from [ddlc.moe](https://ddlc.moe), open the ZIP file, go to *DDLC-X.X.X-pc/game* and copy `audio.rpa`, `fonts.rpa`, `images.rpa`, and `scripts.rpa` to Mod Docker's game folder.
+4. Make a folder in Mod Docker's game folder called `mods`.
+5. Open the *mods* folder and make a folder for the mod you want to install.
+(I suggest the name of the mod or it's acroymn)
+6. Copy the *game* folder of the mod that you want to play to the mod folder you just made.
+   > If there is no *game* folder and all you have is just RPAs or RPYCs, make a 'game' folder in the mod folder you made and copy all the files into that folder.
+7. Launch Mod Docker via DDMD.
 8. Press F9 to open the Mod Docker menu and select your mod by clicking on it and pressing Select.
 9. Restart the game and relaunch Mod Docker.
 10. Done!
@@ -58,7 +76,7 @@ While Mod Docker has some similarities to Doki Doki Mod Launcher/Mod Manager, Mo
 </p>
 
 ### Mod Docker
-> Mod Docker uses a custom Ren'Py 7 build that runs any selected mod as it's own mod (no matter if the mod is the same in two copies). It requires no external EXEs or the base game to work (except for the base game RPAs) to load the mods' own assets. It does not share save data of one mod throughout multiple copies.
+> Mod Docker uses a custom Ren'Py 6 (SE) and 7 build that runs any selected mod as it's own mod (no matter if the mod is the same in two copies). It requires no external EXEs or the base game to work (except for the base game RPAs) to load the mods' own assets. It does not share save data of one mod throughout multiple copies.
 
 ### Doki Doki Mod Launcher/Doki Doki Mod Manager
 > Doki Doki Mod Launcher/Doki Doki Mod Manager uses a custom Ren'Py SDK build (Doki Doki Mod Launcher) or a custom-made program (Doki Doki Mod Manager) to store mods in one mod directory. They require the base game (and sometimes the mods' own EXE for Ren'Py 7 mods) to load the mods' own assets. They share save data of one mod throughout multiple copies.

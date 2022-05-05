@@ -1,0 +1,18 @@
+
+In order to follow these steps, you must open DDMD by right-clicking the app, click "Show Package Contents"
+then go to "Contents/Resources/autorun".
+
+1. Download DDLC and copy all of its' RPA files to the game folder of Mod Docker.
+2. Download your favorite R6 mod.
+3. Make a folder in Mod Docker's game folder called 'mods'.
+4. Open the 'mods' folder and make a folder for the mod you want to install.
+(I suggest the name of the mod or it's acroymn)
+5. Copy the 'game' folder of the mod that you want to play to the mod folder you just made.
+(If there is no game folder and all you have is just RPAs or RPYCs, make a 'game' folder 
+in the mod folder you made and copy all the files into that folder).
+6. Launch Mod Docker via DDMD.
+7. Press F9 to open the Mod Docker menu and select your mod by clicking on it and pressing Select.
+8. Restart the game and relaunch Mod Docker.
+9. Done!
+
+(To switch back to normal mode, select Stock.)
