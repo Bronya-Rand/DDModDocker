@@ -152,8 +152,8 @@ init python:
 
     # These variables declare the packages to build your mod that is Team Salvato
     # IPG compliant. Do not mess with these variables whatsoever.
-    build.package("ddmd-win",'zip','windows linux renpy mod all',description="Ren'Py 7 DDMD Build: Windows/Linux")
-    build.package("ddmd-mac",'app-zip','mac renpy mod all',description="Ren'Py 7 DDMD Build: macOS")
+    build.package("ddmd-win",'zip','windows linux renpy mod all',description="Ren'Py 6 DDMD Build: Windows/Linux")
+    build.package("ddmd-mac",'app-zip','mac renpy mod all',description="Ren'Py 6 DDMD Build: macOS")
 
     # These variables declare the archives that will be made to your packaged mod.
     # To add another archive, make a build.archive variable like in this example:
