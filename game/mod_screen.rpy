@@ -385,8 +385,8 @@ screen mods():
     key "K_ESCAPE" action Return(0)
 
 label _mod_overlay:
-
-    $ renpy.call_screen("mods")
+    if not renpy.get_screen("mods"):
+        $ renpy.call_screen("mods")
     return
 
 init -1:
