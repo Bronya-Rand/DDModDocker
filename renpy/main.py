@@ -317,7 +317,7 @@ def main():
 
     game.basepath = renpy.config.gamedir
     if renpy.config.gamedir != old_gamedir:
-        renpy.config.searchpath = [old_gamedir]
+        renpy.config.searchpath = [old_gamedir, renpy.config.gamedir] # Somehow this works now
     else:
         renpy.config.searchpath = [renpy.config.gamedir]
 
