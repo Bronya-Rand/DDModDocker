@@ -9,7 +9,7 @@ Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and ru
 
 > This project is in alpha. Expect bugs or several mods to not work as compared to other mod launchers/managers. To report mod incompatibility, report it either in [Issues](https://github.com/GanstaKingofSA/DDModDocker/issues) or [here](https://docs.google.com/forms/d/e/1FAIpQLSflrNfAf3vbBcpafv-3CEqszlGb8-P90IZAvloKVhiO10JzTQ/viewform).
 
-> This project is unaffiliated with Team Salvato. See [BUILDING.md](BUILDING.md) on how to build Mod Docker with fixes for Pull Requests.
+> This project is unaffiliated with Team Salvato. See [BUILDING.md](BUILDING.md) on how to build Mod Docker with fixes for Pull Requests. Credits for DDMD can be seen by looking at [CREDITS.md](CREDITS.md).
 
 ## Features
 - Ren'Py 6 mod compatiblity
@@ -78,7 +78,7 @@ While Mod Docker has some similarities to Doki Doki Mod Launcher/Mod Manager, Mo
 </p>
 
 ### Mod Docker
-> Mod Docker uses a custom Ren'Py 6 build that runs any selected mod as it's own mod (no matter if the mod is the same in two copies). It doesn't require the base game to work (except for the base game RPAs) to load the mods' own assets. It does not share save data of one mod throughout multiple copies.
+> Mod Docker uses a custom Ren'Py 6 and 7 (non-SE) build that runs any selected mod as it's own mod (no matter if the mod is the same in two copies). It doesn't require the base game to work (except for the base game RPAs) to load the mods' own assets. It does not share save data of one mod throughout multiple copies.
 
 ### Doki Doki Mod Launcher/Doki Doki Mod Manager
 > Doki Doki Mod Launcher/Doki Doki Mod Manager uses a custom Ren'Py SDK build (Doki Doki Mod Launcher) or a custom-made program (Doki Doki Mod Manager) to store mods in one mod directory. They require the base game to load the mods' own assets. They share save data of one mod throughout multiple copies.
