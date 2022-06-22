@@ -684,7 +684,6 @@ def main():
 
             for ddmd in ddmd_configuration:
                 renpy.config.gl2 = ddmd["config_gl2"]
-                renpy.store.persistent.military_time = ddmd["military_time"]
 
             del ddmd_configuration
 
