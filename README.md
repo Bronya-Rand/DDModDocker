@@ -7,7 +7,7 @@ Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and ru
 
 > This project is in alpha. Expect bugs or several mods to not work as compared to other mod launchers/managers. To report mod incompatibility, report it either in [Issues](https://github.com/GanstaKingofSA/DDModDocker/issues) or [here](https://docs.google.com/forms/d/e/1FAIpQLSflrNfAf3vbBcpafv-3CEqszlGb8-P90IZAvloKVhiO10JzTQ/viewform).
 
-> This project is unaffiliated with Team Salvato.  See [BUILDING.md](BUILDING.md) on how to build Mod Docker with fixes for Pull Requests.
+> This project is unaffiliated with Team Salvato.  See [BUILDING.md](BUILDING.md) on how to build Mod Docker with fixes for Pull Requests. Credits for DDMD can be seen by looking at [CREDITS.md](CREDITS.md).
 
 ## Features
 - Ren'Py 6 and 7 mod compatiblity
