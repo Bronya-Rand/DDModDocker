@@ -135,7 +135,7 @@ screen mod_list_info(mod):
                         size 24
                     
                     python:
-                        mod_release_date = datetime.datetime.strptime(mod['modDate'].replace(" ", "T"), "%Y-%m-%dT%H:%M:%S.%f")
+                        mod_release_date = datetime.datetime.strftime(mod['modDate'].replace(" ", "T"), "%Y-%m-%dT%H:%M:%S.%f")
                         mrd = mod_release_date.strftime("%d %B %Y")
 
                     if mod["modNSFW"]:

@@ -7,7 +7,7 @@ python early:
         with open(renpy.config.basedir + "/selectedmod.json", "r") as mod_json:
             temp = json.load(mod_json)
             selectedMod = temp['modName']
-    except:
+    except IOError:
         selectedMod = "DDLC"
 
     renpy.config.savedir = renpy.config.basedir + "/game/MLSaves/" + selectedMod

@@ -8,11 +8,10 @@ python early:
 
 init -100 python:
     if renpy.windows:
-        try:
-            onedrive_path = os.environ["OneDrive"]
+        onedrive_path = os.environ.get("OneDrive")
+        if onedrive_path is not None:
             if onedrive_path in config.basedir:
                 raise Exception("Mod Docker cannot be run from a cloud folder. Move Mod Docker to another location and try again.")
-        except: pass
 
 init -1 python:
     ## Patches the 7.4.6 - 7.4.8 transform bugs. 
