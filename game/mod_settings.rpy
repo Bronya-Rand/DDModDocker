@@ -99,7 +99,7 @@ screen mod_settings():
                     hover "ddmd_close_icon_hover"
                     action Hide("mod_settings", Dissolve(0.25))
 
-            side "c r":
+            side "c":
                 xpos 0.05
                 ypos 0.15
                 xsize 450
