@@ -4,8 +4,9 @@
 - RenPyTom (PyTom) - For Ren'Py In General. Also for borrowed code used for DDMD.
 - Dan Salvato - For making DDLC and allowing DDLC mods to be possible. 
 - Mithost - IPG clarification for DDMD.
-- [Matt McInerney, Pablo Impallari, and Rodrigo Fuenzalida](https://fonts.google.com/specimen/Raleway?query=Rale) - Raleway Font (similar to Riffic-Bold).
+- [Matt McInerney, Pablo Impallari, and Rodrigo Fuenzalida](https://fonts.google.com/specimen/Raleway?query=Rale) - Raleway Font (similar to Riffic-Bold for UI text).
 - [Andrew Paglinawan](https://fonts.google.com/specimen/Quicksand?query=Andrew+Paglinawan) - Quicksand Font (for time).
+- [Łukasz Dziedzic](https://fonts.google.com/specimen/Lato?query=%C5%81ukasz+Dziedzic) - Lato Font (for the UI text in the menus)
 - [Google](https://fonts.google.com/icons?query=Rale) - Material Icons and Fonts credited above.
 - Samsung - UI inspiration for the DDMD menu (Settings).
 - Microsoft - UI inspiration for the DDMD menu (Hover Info).
