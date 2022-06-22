@@ -66,7 +66,8 @@ style mods_frame:
 style modList_text is renpy_generic_text
 style modList_button:
     ysize None
-style modList_button_text is mods_button_text
+style modList_button_text is mods_button_text:
+    size 18
 style modList_frame is mods_frame:
     background Frame("sdc_system/ddmd_app/ddmd_frame.png", left=4, top=3, bottom=4, right=4, tile=False)
 

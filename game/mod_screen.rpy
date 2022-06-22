@@ -434,7 +434,7 @@ init -1:
     style steam_frame:
         background Frame("sdc_system/ddmd_app/steam_frame.png", left=4, top=4, bottom=4, right=4, tile=False)
 
-    style steam_text:
+    style steam_text is renpy_generic_text:
         color "#fff"
         outlines []
 
