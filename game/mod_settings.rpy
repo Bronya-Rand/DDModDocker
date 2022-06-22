@@ -129,6 +129,18 @@ screen mod_settings():
                             yes_action=[SetField(config, "gl2", True), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
                             Dissolve(0.25))))
 
+                    imagebutton:
+                        idle ConditionSwitch("persistent.military_time", Composite((250, 40), (0, 0), "ddmd_toggle_on",
+                            (55, 13), Text("Use 24-Hour Format", style="modSettings_text", size=18)), "True",
+                            Composite((250, 40), (0, 0), "ddmd_toggle_off", (55, 13), 
+                            Text("Use 24-Hour Format", style="modSettings_text", size=18)))
+                        hover ConditionSwitch("persistent.military_time", Composite((250, 40), (0, 0), "ddmd_toggle_on_hover",
+                            (55, 14), Text("Use 24-Hour Format", style="modSettings_text", size=18)), "True", 
+                            Composite((250, 40), (0, 0), "ddmd_toggle_off_hover", (55, 14), Text("Use 24-Hour Format", 
+                            style="modSettings_text", size=18)))
+                        action If(persistent.military_time, SetField(persistent, "military_time", False),
+                            SetField(persistent, "military_time", True))
+
                     if renpy.windows:        
                         button:
                             action If(not persistent.transfer_warning, Show("ddmd_confirm", message="Transfer Warning", message2="Transferring mods is in beta and some mods may not work due to Ren'Py version differences. By accepting this disclaimer, transferring will proceed.", yes_action=[SetField(persistent, "transfer_warning", True), Hide("ddmd_confirm"), Function(transfer_ddmm_data)], no_action=Hide("ddmd_confirm")), Function(transfer_ddmm_data))

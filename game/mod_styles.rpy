@@ -135,3 +135,10 @@ style modSettings_button:
     activate_sound gui.activate_sound
 style modSettings_button_text is modList_button_text
 style modSettings_frame is modList_frame
+
+## Time
+style time_text:
+    color "#fff"
+    size 24
+    font "sdc_system/ddmd_app/Quicksand-Light.ttf"
+    outlines []

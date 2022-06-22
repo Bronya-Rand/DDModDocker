@@ -260,6 +260,12 @@ init python:
         except Exception as err:
             renpy.show_screen("ddmd_dialog", message="A error occured while removing %s save data." % mod, message2=str(err))
 
+    def get_current_time(st, at):
+        if persistent.military_time:
+            return Text(datetime.datetime.now().strftime("%H:%M"), style="time_text"), 1.0
+        else:
+            return Text(datetime.datetime.now().strftime("%I:%M %p"), style="time_text"), 1.0
+
 screen mods():
     zorder 100
     modal True
@@ -357,6 +363,14 @@ screen mods():
                     action Quit()
 
         vbox:
+            hbox:
+                if persistent.military_time:
+                    xpos 1175
+                else:
+                    xpos 1150
+                ypos 25
+                add "ddmd_time_clock"
+
             hbox:
                 viewport id "modinfoname":
                     xpos 450

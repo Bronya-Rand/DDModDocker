@@ -35,8 +35,11 @@ image ddmd_file_folder = "sdc_system/file_app/OSFolder.png"
 
 image ddmd_transfer_icon = "sdc_system/settings_app/transfer.png"
 
+image ddmd_time_clock = DynamicDisplayable(get_current_time)
+
 default persistent.mod_list_disclaimer_accepted = False
 default persistent.self_extract = None
 default modSearchCriteria = ""
 define tempFolderName = ""
 default persistent.transfer_warning = False
+default persistent.military_time = False
