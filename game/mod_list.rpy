@@ -132,16 +132,16 @@ screen mod_list_info(mod):
 
                     text mod["modName"].replace("[", "[["):
                         style "mods_label_text"
-                        size 24
+                        size 22
                     
                     python:
                         mod_release_date = datetime.datetime.strptime(mod['modDate'].replace(" ", "T"), "%Y-%m-%dT%H:%M:%S.%f")
                         mrd = mod_release_date.strftime("%d %B %Y")
 
                     if mod["modNSFW"]:
-                        text "{b}This mod is marked as Not Safe For Work{/b}"
-                    text "Released: " + mrd
-                    text "Status: " + mod["modStatus"]
+                        text "{b}This mod is marked as Not Safe For Work{/b}" size 20
+                    text "Released: " + mrd size 20
+                    text "Status: " + mod["modStatus"] size 20
                     
                     python:
                         playTime = "Playtime: {u}"
@@ -164,12 +164,12 @@ screen mod_list_info(mod):
                             if mod["modPlayTimeMinutes"] > 1:
                                 playTime += "s"
 
-                    text playTime + "{/u}"
+                    text playTime + "{/u}" size 20
 
                     null height 20
 
-                    text "{b}Description{/b}"
-                    text mod["modDescription"].replace("[", "[[")
+                    text "{b}Description{/b}" size 20
+                    text mod["modDescription"].replace("[", "[[") size 20
             
             imagebutton:
                 idle LiveComposite((250, 50), (0, 0), "ddmd_openinbrowser_icon", (40, 0), Text("Download Page", style="mods_text"))

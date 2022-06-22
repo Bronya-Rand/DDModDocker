@@ -1,6 +1,6 @@
 ## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
 
-init python:
+python early:
     import os
     import json
     import threading
@@ -9,17 +9,25 @@ init python:
     import tempfile
     from zipfile import ZipFile
     import shutil
+    import datetime
 
-    current_mod_list = []
-    selectedMod = None
-    loadedMod = None
+init -1000 python:
+
+    def _mod_overlay():
+        renpy.show_screen("mods")
+        renpy.restart_interaction()
 
     config.keymap['mod_overlay'] = ['K_F9']
     config.underlay.append(
         renpy.Keymap(
-        mod_overlay = renpy.curried_call_in_new_context("_mod_overlay")
+        mod_overlay = _mod_overlay
         )
     )
+
+init python:
+    current_mod_list = []
+    selectedMod = None
+    loadedMod = None
 
     class Mod:
         def __init__(self, modFolderName, path):
@@ -252,8 +260,15 @@ init python:
         except Exception as err:
             renpy.show_screen("ddmd_dialog", message="A error occured while removing %s save data." % mod, message2=str(err))
 
+    def get_current_time(st, at):
+        if persistent.military_time:
+            return Text(datetime.datetime.now().strftime("%H:%M"), style="time_text"), 1.0
+        else:
+            return Text(datetime.datetime.now().strftime("%I:%M %p"), style="time_text"), 1.0
+
 screen mods():
     zorder 100
+    modal True
 
     fixed at ml_overlay_effect:
         style_prefix "mods"
@@ -306,7 +321,7 @@ screen mods():
                     hover "ddmd_return_icon_hover"
                     hovered Show("mods_hover_info", about="Exit the DDMD Menu")
                     unhovered Hide("mods_hover_info")
-                    action [Return(0), With(Dissolve(0.5))]
+                    action [Hide("mods_hover_info"), Hide("mods"), With(Dissolve(0.5))]
             null width 10
             vbox:
                 imagebutton:
@@ -349,6 +364,14 @@ screen mods():
 
         vbox:
             hbox:
+                if persistent.military_time:
+                    xpos 1175
+                else:
+                    xpos 1150
+                ypos 25
+                add "ddmd_time_clock"
+
+            hbox:
                 viewport id "modinfoname":
                     xpos 450
                     ypos 50
@@ -382,12 +405,7 @@ screen mods():
             ypos 0.9
             textbutton "Select" action If(selectedMod == "DDLC", Function(clearMod), Function(loadMod, persistent.ddml_basedir + "/game/mods/" + selectedMod, selectedMod))
 
-    key "K_ESCAPE" action Return(0)
-
-label _mod_overlay:
-    if not renpy.get_screen("mods"):
-        $ renpy.call_screen("mods")
-    return
+    key "K_ESCAPE" action Hide("mods")
 
 init -1:
     screen steam_like_overlay(message, message2):
@@ -416,7 +434,7 @@ init -1:
     style steam_frame:
         background Frame("sdc_system/ddmd_app/steam_frame.png", left=4, top=4, bottom=4, right=4, tile=False)
 
-    style steam_text:
+    style steam_text is renpy_generic_text:
         color "#fff"
         outlines []
 

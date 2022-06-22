@@ -2,6 +2,7 @@
 
 ## Standard Ren'Py Font
 style renpy_generic_text:
+    font "sdc_system/ddmd_app/Lato-Light.ttf"
     color "#fff"
     outlines []
 
@@ -65,7 +66,8 @@ style mods_frame:
 style modList_text is renpy_generic_text
 style modList_button:
     ysize None
-style modList_button_text is mods_button_text
+style modList_button_text is mods_button_text:
+    size 18
 style modList_frame is mods_frame:
     background Frame("sdc_system/ddmd_app/ddmd_frame.png", left=4, top=3, bottom=4, right=4, tile=False)
 
@@ -83,6 +85,8 @@ style ddmd_confirm_frame:
 
 style ddmd_confirm_prompt is gui_prompt
 style ddmd_confirm_prompt_text is gui_prompt_text
+style ddmd_confirm_label_text is renpy_generic_text
+style ddmd_confirm_text is renpy_generic_text
 style ddmd_confirm_button is gui_medium_button
 style ddmd_confirm_button_text is mods_button_text
 
@@ -102,15 +106,14 @@ style mods_hover_frame:
     background Frame("#fff", left=4, top=4, bottom=4, right=4, tile=False)
 
 style mods_hover_text:
+    font "sdc_system/ddmd_app/Lato-Regular.ttf"
     color "#000"
     outlines []
     size 12
 
 ## File Explorer
 style pc_dir_frame is mods_frame
-style pc_dir_button_text:
-    color "#fff"
-    outlines []
+style pc_dir_button_text is renpy_generic_text:
     text_align 0.0
 
 style pc_dir_scrollbar:
@@ -135,3 +138,10 @@ style modSettings_button:
     activate_sound gui.activate_sound
 style modSettings_button_text is modList_button_text
 style modSettings_frame is modList_frame
+
+## Time
+style time_text:
+    color "#fff"
+    size 24
+    font "sdc_system/ddmd_app/Quicksand-Light.ttf"
+    outlines []
