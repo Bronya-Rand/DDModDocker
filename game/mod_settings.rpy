@@ -138,8 +138,8 @@ screen mod_settings():
                             (55, 14), Text("Use 24-Hour Format", style="modSettings_text", size=18)), "True", 
                             Composite((250, 40), (0, 0), "ddmd_toggle_off_hover", (55, 14), Text("Use 24-Hour Format", 
                             style="modSettings_text", size=18)))
-                        action If(persistent.military_time, SetField(persistent, "military_time", False),
-                            SetField(persistent, "military_time", True))
+                        action [If(persistent.military_time, SetField(persistent, "military_time", False),
+                            SetField(persistent, "military_time", True)), Function(set_settings_json)]
 
                     if renpy.windows:        
                         button:

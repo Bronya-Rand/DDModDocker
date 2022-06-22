@@ -139,6 +139,9 @@ init python:
             {
             "config_gl2": config.gl2
             }
+            {
+            "military_time": persistent.military_time
+            }
         ]
         with open(persistent.ddml_basedir + "/ddmd_settings.json", "w") as ddmd_settings:
             json.dump(temp, ddmd_settings)
