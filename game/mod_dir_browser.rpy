@@ -9,7 +9,7 @@ init python:
                 for x in os.listdir(path):
                     break
         except OSError as e:
-            if e.errno == 13 or e.errno == 2:
+            if e.errno == 13 or e.errno == 2 or e.errno == 22:
                 return False
             raise
         return True
@@ -95,28 +95,28 @@ screen pc_directory(loc=None):
                         for x in drives:
                             hbox:
                                 imagebutton:
-                                    idle Composite((460, 18), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
-                                    hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
+                                    idle Composite((460, 18), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=12, style="pc_dir_text"))
+                                    hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=12, style="pc_dir_text"))
                                     action If(can_access(x + ":", True), [Hide("pc_directory"), Show("pc_directory", loc=x + ":/")], Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                         for x in net_drives:
                             hbox:
                                 imagebutton:
-                                    idle Composite((460, 18), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
-                                    hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
+                                    idle Composite((460, 18), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=12, style="pc_dir_text"))
+                                    hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=12, style="pc_dir_text"))
                                     action If(can_access(x + ":"), [Hide("pc_directory"), Show("pc_directory", loc=x + ":/")], Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                     else:
                         for x in os.listdir(current_dir):
                             if os.path.isdir(os.path.join(current_dir, x)):
                                 hbox:
                                     imagebutton:
-                                        idle Composite((460, 18), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
-                                        hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
+                                        idle Composite((460, 18), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=12, style="pc_dir_text"))
+                                        hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=14, style="pc_dir_text"))
                                         action If(can_access(os.path.join(current_dir, x)), [Hide("pc_directory"), Show("pc_directory", loc=os.path.join(current_dir, x))], Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x).replace("\\", "/")))
                             elif os.path.join(current_dir, x).endswith(".zip"):
                                 hbox:
                                     imagebutton:
-                                        idle Composite((460, 18), (0, 0), "ddmd_file_file", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
-                                        hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_file", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
+                                        idle Composite((460, 18), (0, 0), "ddmd_file_file", (18, 2), Text(x, substitute=False, size=12, style="pc_dir_text"))
+                                        hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_file", (18, 2), Text(x, substitute=False, size=14, style="pc_dir_text"))
                                         action [Hide("pc_directory"), Show("mod_name_input", zipPath=os.path.join(current_dir, x))]
             
                 vbar value YScrollValue("fe") xoffset 20 yoffset 10 ysize 240
@@ -187,22 +187,22 @@ screen install_folder_directory(loc=None):
                         for x in drives:
                             hbox:
                                 imagebutton:
-                                    idle Composite((460, 18), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
-                                    hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
+                                    idle Composite((460, 18), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=12, style="pc_dir_text"))
+                                    hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=12, style="pc_dir_text"))
                                     action If(can_access(x + ":", True), Show("install_folder_directory", loc=x + ":/"), Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                         for x in net_drives:
                             hbox:
                                 imagebutton:
-                                    idle Composite((460, 18), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
-                                    hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
+                                    idle Composite((460, 18), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=12, style="pc_dir_text"))
+                                    hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=12, style="pc_dir_text"))
                                     action If(can_access(x + ":"), Show("install_folder_directory", loc=x + ":/"), Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                     else:
                         for x in os.listdir(current_dir):
                             if os.path.isdir(os.path.join(current_dir, x)):
                                 hbox:
                                     imagebutton:
-                                        idle Composite((460, 18), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
-                                        hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
+                                        idle Composite((460, 18), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=12, style="pc_dir_text"))
+                                        hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=12, style="pc_dir_text"))
                                         action If(can_access(os.path.join(current_dir, x)), Show("install_folder_directory", loc=os.path.join(current_dir, x)), Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x).replace("\\", "/")))
             
                 vbar value YScrollValue("fe") xoffset 20 yoffset 10 ysize 200
@@ -280,22 +280,22 @@ screen pc_folder_directory(loc=None):
                         for x in drives:
                             hbox:
                                 imagebutton:
-                                    idle Composite((460, 18), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
-                                    hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
+                                    idle Composite((460, 18), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=12, style="pc_dir_text"))
+                                    hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_physical_drive", (18, 2), Text(x + ":/", substitute=False, size=12, style="pc_dir_text"))
                                     action If(can_access(x + ":", True), Show("pc_folder_directory", loc=x + ":/"), Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                         for x in net_drives:
                             hbox:
                                 imagebutton:
-                                    idle Composite((460, 18), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
-                                    hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=10, style="pc_dir_text"))
+                                    idle Composite((460, 18), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=12, style="pc_dir_text"))
+                                    hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_network_drive", (18, 2), Text(x + ":/", substitute=False, size=12, style="pc_dir_text"))
                                     action If(can_access(x + ":"), Show("pc_folder_directory", loc=x + ":/"), Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                     else:
                         for x in os.listdir(current_dir):
                             if os.path.isdir(os.path.join(current_dir, x)):
                                 hbox:
                                     imagebutton:
-                                        idle Composite((460, 18), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
-                                        hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=10, style="pc_dir_text"))
+                                        idle Composite((460, 18), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=12, style="pc_dir_text"))
+                                        hover Composite((460, 18), (0, 0), Frame("#dbdbdd"), (0, 0), "ddmd_file_folder", (18, 2), Text(x, substitute=False, size=12, style="pc_dir_text"))
                                         action If(can_access(os.path.join(current_dir, x)), Show("pc_folder_directory", loc=os.path.join(current_dir, x)), Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x).replace("\\", "/")))
             
                 vbar value YScrollValue("fe") xoffset 20 yoffset 10 ysize 200

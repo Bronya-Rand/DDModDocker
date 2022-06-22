@@ -34,6 +34,7 @@ image ddmd_file_file = "sdc_system/file_app/OSFile.png"
 image ddmd_file_folder = "sdc_system/file_app/OSFolder.png"
 
 image ddmd_transfer_icon = "sdc_system/settings_app/transfer.png"
+image ddmd_transfer_icon_hover = "sdc_system/settings_app/transferHover.png"
 
 image ddmd_time_clock = DynamicDisplayable(get_current_time)
 
