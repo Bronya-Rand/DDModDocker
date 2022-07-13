@@ -1,17 +1,17 @@
 ## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
 
-screen ddmd_confirm(xs=480, ys=220, message, message2=None, yes_action, no_action):
+screen ddmd_confirm(message, yes_action, no_action, message2=None, xs=480, ys=220):
     modal True
 
     zorder 200
 
     style_prefix "ddmd_confirm"
     
-    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay)
+    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay) xsize config.screen_width ysize config.screen_height
 
     frame at android_like_frame:
-        xsize xs
-        ysize ys
+        xsize int(xs * res_scale)
+        ysize int(ys * res_scale)
 
         vbox:
             xalign .5
@@ -19,36 +19,36 @@ screen ddmd_confirm(xs=480, ys=220, message, message2=None, yes_action, no_actio
             spacing 8
 
             label _(message):
-                text_size 20
+                text_size int(20 * res_scale)
                 xalign 0.0
                 substitute False
 
             if message2:
                 text _(message2):
                     xalign 0.0
-                    size 16
+                    size int(16 * res_scale)
                     outlines []
                     substitute False
 
             hbox:
                 xalign 0.5
-                spacing 100
+                spacing int(100 * res_scale)
 
                 textbutton _("Yes") action yes_action
                 textbutton _("No") action no_action
 
-screen ddmd_dialog(xs=480, ys=220, message, message2=None):
+screen ddmd_dialog(message, message2=None, xs=480, ys=220):
     modal True
 
     zorder 200
 
     style_prefix "ddmd_confirm"
 
-    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay)
+    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay) xsize config.screen_width ysize config.screen_height
 
     frame at android_like_frame:
-        xsize xs
-        ysize ys
+        xsize int(xs * res_scale)
+        ysize int(ys * res_scale)
 
         vbox:
             xalign .5
@@ -57,13 +57,13 @@ screen ddmd_dialog(xs=480, ys=220, message, message2=None):
 
             label _(message):
                 xalign 0.0
-                text_size 16
+                text_size int(16 * res_scale)
                 substitute False
 
             if message2:
                 text _(message2):
                     xalign 0.0
-                    size 16
+                    size int(16 * res_scale)
                     outlines []
                     substitute False
 
@@ -80,12 +80,12 @@ screen mod_name_input(zipPath, copy=False, xs=480, ys=220):
 
     style_prefix "ddmd_confirm"
 
-    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay)
+    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay) xsize config.screen_width ysize config.screen_height
     key "K_RETURN" action NullAction()
 
     frame at android_like_frame:
-        xsize xs
-        ysize ys
+        xsize int(xs * res_scale)
+        ysize int(ys * res_scale)
 
         vbox:
             xalign .5
@@ -93,7 +93,7 @@ screen mod_name_input(zipPath, copy=False, xs=480, ys=220):
             spacing 8
 
             label _("Enter the name you wish to call this mod."):
-                text_size 18
+                text_size int(18 * res_scale)
                 xalign 0.5
 
             input default "" value VariableInputValue("tempFolderName") length 24 allow "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz "
@@ -111,12 +111,12 @@ screen ddmd_progress(message, xs=480, ys=220):
 
     style_prefix "ddmd_confirm"
 
-    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay)
+    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay) xsize config.screen_width ysize config.screen_height
     key "K_RETURN" action NullAction()
 
     frame at android_like_frame:
-        xsize xs
-        ysize ys
+        xsize int(xs * res_scale)
+        ysize int(ys * res_scale)
 
         vbox:
             xalign .5

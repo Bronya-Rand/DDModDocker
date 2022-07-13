@@ -19,7 +19,8 @@ init -100 python:
         os.makedirs(persistent.ddml_basedir + "/game/MLSaves")
 
     if config.window_title != "Doki Doki Mod Docker (Alpha)":
-        config.window_title = "Doki Doki Mod Docker (Alpha) - Mod Container: " + config.name
+        container_name = config.name or config.basedir.replace("\\", "/").split("/")[-1]
+        config.window_title = "Doki Doki Mod Docker (Alpha) - Mod Container: " + container_name
 
 init python:
     if not os.path.exists(config.basedir + "/characters"):
