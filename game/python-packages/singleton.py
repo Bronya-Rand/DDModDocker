@@ -27,54 +27,64 @@ class SingleInstance:
 
     def __init__(self, flavor_id=""):
         import sys
-        self.initialized = False
-        basename = os.path.splitext(os.path.abspath(sys.argv[0]))[0].replace(
-            "/", "-").replace(":", "").replace("\\", "-") + '-%s' % flavor_id + '.lock'
-        # os.path.splitext(os.path.abspath(sys.modules['__main__'].__file__))[0].replace("/", "-").replace(":", "").replace("\\", "-") + '-%s' % flavor_id + '.lock'
-        self.lockfile = os.path.normpath(
-            tempfile.gettempdir() + '/' + basename)
+        from renpy import config
 
-        logger.debug("SingleInstance lockfile: " + self.lockfile)
-        if sys.platform == 'win32':
-            try:
-                # file already exists, we try to remove (in case previous
-                # execution was interrupted)
-                if os.path.exists(self.lockfile):
-                    os.unlink(self.lockfile)
-                self.fd = os.open(
-                    self.lockfile, os.O_CREAT | os.O_EXCL | os.O_RDWR)
-            except OSError:
-                type, e, tb = sys.exc_info()
-                if e.errno == 13:
-                    logger.error(
-                        "Another instance is already running, quitting.")
+        self.initialized = False
+        # To avoid dual singleton errors, we check if a mod is selected to ignore DDLC's own
+        # singleton code line in favor of the mods' own.
+        if not os.path.exists(config.basedir + "/selectedMod.json"):
+            basename = (
+                os.path.splitext(os.path.abspath(sys.argv[0]))[0]
+                .replace("/", "-")
+                .replace(":", "")
+                .replace("\\", "-")
+                + "-%s" % flavor_id
+                + ".lock"
+            )
+            # os.path.splitext(os.path.abspath(sys.modules['__main__'].__file__))[0].replace("/", "-").replace(":", "").replace("\\", "-") + '-%s' % flavor_id + '.lock'
+            self.lockfile = os.path.normpath(tempfile.gettempdir() + "/" + basename)
+
+            logger.debug("SingleInstance lockfile: " + self.lockfile)
+            if sys.platform == "win32":
+                try:
+                    # file already exists, we try to remove (in case previous
+                    # execution was interrupted)
+                    if os.path.exists(self.lockfile):
+                        os.unlink(self.lockfile)
+                    self.fd = os.open(self.lockfile, os.O_CREAT | os.O_EXCL | os.O_RDWR)
+                except OSError:
+                    type, e, tb = sys.exc_info()
+                    if e.errno == 13:
+                        logger.error("Another instance is already running, quitting.")
+                        raise SingleInstanceException()
+                    print(e.errno)
+                    raise
+            else:  # non Windows
+                import fcntl
+
+                self.fp = open(self.lockfile, "w")
+                self.fp.flush()
+                try:
+                    fcntl.lockf(self.fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except IOError:
+                    logger.warning("Another instance is already running, quitting.")
                     raise SingleInstanceException()
-                print(e.errno)
-                raise
-        else:  # non Windows
-            import fcntl
-            self.fp = open(self.lockfile, 'w')
-            self.fp.flush()
-            try:
-                fcntl.lockf(self.fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            except IOError:
-                logger.warning(
-                    "Another instance is already running, quitting.")
-                raise SingleInstanceException()
-        self.initialized = True
+            self.initialized = True
 
     def __del__(self):
         import sys
         import os
+
         if not self.initialized:
             return
         try:
-            if sys.platform == 'win32':
-                if hasattr(self, 'fd'):
+            if sys.platform == "win32":
+                if hasattr(self, "fd"):
                     os.close(self.fd)
                     os.unlink(self.lockfile)
             else:
                 import fcntl
+
                 fcntl.lockf(self.fp, fcntl.LOCK_UN)
                 # os.close(self.fp)
                 if os.path.isfile(self.lockfile):
@@ -96,6 +106,7 @@ def f(name):
         sys.exit(-1)
     logger.setLevel(tmp)
     pass
+
 
 logger = logging.getLogger("tendo.singleton")
 logger.addHandler(logging.StreamHandler())
