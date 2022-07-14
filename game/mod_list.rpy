@@ -16,7 +16,7 @@ screen mod_list(search=None):
             hbox:
                 ypos 0.005
                 xalign 0.52 
-                text "DDMC Mod List"
+                text _("DDMC Mod List")
 
             hbox:
                 ypos -0.005
@@ -109,7 +109,7 @@ screen mod_list_info(mod):
             hbox:
                 ypos 0.005
                 xalign 0.52 
-                text "Mod Info"
+                text _("Mod Info")
 
             hbox:
                 ypos 0.005
@@ -139,18 +139,18 @@ screen mod_list_info(mod):
                         mrd = mod_release_date.strftime("%d %B %Y")
 
                     if mod["modNSFW"]:
-                        text "{b}This mod is marked as Not Safe For Work{/b}" size int(20 * res_scale)
-                    text "Released: " + mrd size int(20 * res_scale)
-                    text "Status: " + mod["modStatus"] size int(20 * res_scale)
+                        text _("{b}This mod is marked as Not Safe For Work{/b}") size int(20 * res_scale)
+                    text _("Released: ") + mrd size int(20 * res_scale)
+                    text _("Status: ") + mod["modStatus"] size int(20 * res_scale)
                     
                     python:
-                        playTime = "Playtime: {u}"
+                        playTime = _("Playtime: {u}")
 
                         if not mod["modPlayTimeHours"] and not mod["modPlayTimeMinutes"]:
-                            playTime += "Unknown"
+                            playTime += _("Unknown")
 
                         if mod["modPlayTimeHours"]:
-                            playTime += str(mod["modPlayTimeHours"]) + " hour"
+                            playTime += str(mod["modPlayTimeHours"]) + _(" hour")
 
                             if mod["modPlayTimeHours"] > 1:
                                 playTime += "s"
@@ -159,7 +159,7 @@ screen mod_list_info(mod):
 
                             if mod["modPlayTimeHours"] > 1:
                                 playTime += " "
-                            playTime += str(mod["modPlayTimeMinutes"]) + " minute"
+                            playTime += str(mod["modPlayTimeMinutes"]) + _(" minute")
 
                             if mod["modPlayTimeMinutes"] > 1:
                                 playTime += "s"
@@ -168,12 +168,12 @@ screen mod_list_info(mod):
 
                     null height 20
 
-                    text "{b}Description{/b}" size int(20 * res_scale)
+                    text _("{b}Description{/b}") size int(20 * res_scale)
                     text mod["modDescription"].replace("[", "[[") size int(20 * res_scale)
             
             imagebutton:
-                idle Composite((int(250 * res_scale), int(50 * res_scale)), (0, 0), Transform("ddmd_openinbrowser_icon", size=(int(36 * res_scale), int(36 * res_scale))), (int(40 * res_scale), 0), Text("Download Page", style="mods_text"))
-                hover Composite((int(250 * res_scale), int(50 * res_scale)), (0, 0), Transform("ddmd_openinbrowser_icon_hover", size=(int(36 * res_scale), int(36 * res_scale))), (int(40 * res_scale), 0), Text("Download Page", style="mods_button_text"))
+                idle Composite((int(250 * res_scale), int(50 * res_scale)), (0, 0), Transform("ddmd_openinbrowser_icon", size=(int(36 * res_scale), int(36 * res_scale))), (int(40 * res_scale), 0), Text(_("Download Page"), style="mods_text"))
+                hover Composite((int(250 * res_scale), int(50 * res_scale)), (0, 0), Transform("ddmd_openinbrowser_icon_hover", size=(int(36 * res_scale), int(36 * res_scale))), (int(40 * res_scale), 0), Text(_("Download Page"), style="mods_button_text"))
                 xalign 0.95
                 yalign 0.98
                 action OpenURL(mod['modUploadURL'])

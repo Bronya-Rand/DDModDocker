@@ -40,8 +40,8 @@ init python:
             thread.start()
         
         def show_notif(self):
-            renpy.display.screen.show_screen("steam_like_overlay", "Access the Mod Docker menu while playing.", 
-                "Press: " + config.keymap['mod_overlay'][0].replace("K_", ""))
+            renpy.display.screen.show_screen("steam_like_overlay", _("Access the Mod Docker menu while playing."), 
+                _("Press: ") + config.keymap['mod_overlay'][0].replace("K_", ""))
         
         def run(self):
             sleep(1.5)
@@ -307,8 +307,8 @@ screen mods():
 
                         add If(loadedMod == "DDLC", Composite((int(310 * res_scale), int(50 * res_scale)), (0, int(1 * res_scale)), Transform("ddmd_selectedmod_icon", size=(int(36 * res_scale), int(36 * res_scale))), 
                             (int(38 * res_scale), 0), Text(If(renpy.version_tuple == (6, 99, 12, 4, 2187), "DDLC Mode", 
-                            "Stock Mode"), style="mods_button_text")), Text(If(renpy.version_tuple == (6, 99, 12, 4, 2187), 
-                            "DDLC Mode", "Stock Mode"), style="mods_button_text"))
+                            _("Stock Mode")), style="mods_button_text")), Text(If(renpy.version_tuple == (6, 99, 12, 4, 2187), 
+                            _("DDLC Mode"), _("Stock Mode")), style="mods_button_text"))
 
                     python:
                         global current_mod_list
@@ -328,7 +328,7 @@ screen mods():
                 imagebutton:
                     idle Transform("ddmd_return_icon", size=(int(48 * res_scale), int(48 * res_scale)))
                     hover Transform("ddmd_return_icon_hover", size=(int(48 * res_scale), int(48 * res_scale)))
-                    hovered Show("mods_hover_info", about="Exit the DDMD Menu")
+                    hovered Show("mods_hover_info", about=_("Exit the DDMD Menu"))
                     unhovered Hide("mods_hover_info")
                     action [Hide("mods_hover_info"), Hide("mods"), With(Dissolve(0.5))]
             null width 10
@@ -336,7 +336,7 @@ screen mods():
                 imagebutton:
                     idle Transform("ddmd_install_icon", size=(int(48 * res_scale), int(48 * res_scale)))
                     hover Transform("ddmd_install_icon_hover", size=(int(48 * res_scale), int(48 * res_scale)))
-                    hovered Show("mods_hover_info", about="Install a Mod")
+                    hovered Show("mods_hover_info", about=_("Install a Mod"))
                     unhovered Hide("mods_hover_info")
                     action [Hide("mods_hover_info"), If(renpy.macintosh and persistent.self_extract is None, 
                         Show("ddmd_confirm", message="ZIP Extraction On?", message2="Does your version of macOS extract ZIP files after downloading?", 
@@ -348,7 +348,7 @@ screen mods():
                 imagebutton:
                     idle Transform("ddmd_search_icon", size=(int(48 * res_scale), int(48 * res_scale)))
                     hover Transform("ddmd_search_icon_hover", size=(int(48 * res_scale), int(48 * res_scale)))
-                    hovered Show("mods_hover_info", about="Browse the Mod List!")
+                    hovered Show("mods_hover_info", about=_("Browse the Mod List!"))
                     unhovered Hide("mods_hover_info")
                     action [Hide("mods_hover_info"), If(not persistent.mod_list_disclaimer_accepted, 
                         Show("ddmd_confirm", message="Disclaimer", message2="This mod list source is provided by the defunct Doki Doki Mod Club site. Not all mods may be on here while others may be out-of-date. By accepting this prompt, you acknowledge to the following disclaimer above.", 
@@ -359,7 +359,7 @@ screen mods():
                 imagebutton:
                     idle Transform("ddmd_settings_icon", size=(int(48 * res_scale), int(48 * res_scale)))
                     hover Transform("ddmd_settings_icon_hover", size=(int(48 * res_scale), int(48 * res_scale)))
-                    hovered Show("mods_hover_info", about="View DDMD's Settings")
+                    hovered Show("mods_hover_info", about=_("View DDMD's Settings"))
                     unhovered Hide("mods_hover_info")
                     action [Hide("mods_hover_info"), Show("mod_settings", Dissolve(0.25))]
             null width 10
@@ -367,7 +367,7 @@ screen mods():
                 imagebutton:
                     idle Transform("ddmd_restart_icon", size=(int(48 * res_scale), int(48 * res_scale)))
                     hover Transform("ddmd_restart_icon_hover", size=(int(48 * res_scale), int(48 * res_scale)))
-                    hovered Show("mods_hover_info", about="Quit DDMD")
+                    hovered Show("mods_hover_info", about=_("Quit DDMD"))
                     unhovered Hide("mods_hover_info")
                     action Quit()
 
@@ -387,9 +387,9 @@ screen mods():
                     ypos int(50 * res_scale)
                     xsize int(700 * res_scale)
                     if selectedMod == "DDLC" and renpy.version_tuple > (6, 99, 12, 4, 2187):
-                        label "Stock Mode"
+                        label _("Stock Mode")
                     elif selectedMod == "DDLC" and renpy.version_tuple == (6, 99, 12, 4, 2187):
-                        label "DDLC Mode"
+                        label _("DDLC Mode")
                     else:
                         label "[selectedMod]"
 
@@ -400,19 +400,19 @@ screen mods():
             vbox:
                 xpos 0.2
                 yoffset -20
-                textbutton "Open Save Directory" action Function(open_save_dir)
+                textbutton _("Open Save Directory") action Function(open_save_dir)
                 if loadedMod != "DDLC":
-                    textbutton "Open Selected Mod's Game Directory" action Function(open_dir, config.gamedir)
-                textbutton "Open Mod Docker's Game Directory" action Function(open_dir, persistent.ddml_basedir + "/game")
+                    textbutton _("Open Running Mods' Game Directory") action Function(open_dir, config.gamedir)
+                textbutton _("Open Mod Docker's Game Directory") action Function(open_dir, persistent.ddml_basedir + "/game")
                 if selectedMod != loadedMod and selectedMod != "DDLC":
-                    textbutton "Delete Mod" action Show("ddmd_confirm", message="Are you sure you want to remove %s?" % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_mod, selectedMod)], no_action=Hide("ddmd_confirm"))
+                    textbutton _("Delete Mod") action Show("ddmd_confirm", message=_("Are you sure you want to remove %s?") % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_mod, selectedMod)], no_action=Hide("ddmd_confirm"))
                 if selectedMod != loadedMod:
-                    textbutton "Delete Saves" action Show("ddmd_confirm", message="Are you sure you want to remove %s save files?" % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_saves, selectedMod)], no_action=Hide("ddmd_confirm"))
+                    textbutton _("Delete Saves") action Show("ddmd_confirm", message=_("Are you sure you want to remove %s save files?") % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_saves, selectedMod)], no_action=Hide("ddmd_confirm"))
 
         vbox:
             xpos 0.9
             ypos 0.9
-            textbutton "Select" action If(selectedMod == "DDLC", Function(clearMod), Function(loadMod, persistent.ddml_basedir + "/game/mods/" + selectedMod, selectedMod))
+            textbutton _("Select") action If(selectedMod == "DDLC", Function(clearMod), Function(loadMod, persistent.ddml_basedir + "/game/mods/" + selectedMod, selectedMod))
 
     key "K_ESCAPE" action Hide("mods")
 
@@ -465,6 +465,6 @@ screen mods_hover_info(about):
     frame at windows_like_effect:
         xpos currentpos[0]
         ypos currentpos[1] + 15
-        xsize 150
+        xsize int(150 * res_scale)
 
         text _(about)

@@ -20,7 +20,7 @@ init -100 python:
 
     if config.window_title != "Doki Doki Mod Docker (Alpha)":
         container_name = config.name or config.basedir.replace("\\", "/").split("/")[-1]
-        config.window_title = "Doki Doki Mod Docker (Alpha) - Mod Container: " + container_name
+        config.window_title = _("Doki Doki Mod Docker (Alpha) - Mod Container: ") + container_name
 
 init python:
     if not os.path.exists(config.basedir + "/characters"):

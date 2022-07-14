@@ -16,7 +16,7 @@ screen ddmd_confirm(message, yes_action, no_action, message2=None, xs=480, ys=22
         vbox:
             xalign .5
             yalign .5
-            spacing 8
+            spacing int(8 * res_scale)
 
             label _(message):
                 text_size int(20 * res_scale)
