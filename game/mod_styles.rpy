@@ -74,7 +74,8 @@ style modList_frame is mods_frame
 ## Mod List Info
 style modInfo_text is renpy_generic_text
 style modInfo_button_text is mods_button_text
-style modInfo_frame is mods_frame
+style modInfo_frame is mods_frame:
+    background Frame("sdc_system/ddmd_app/ddmd_frame.png", left=4, top=23, bottom=4, right=4, tile=False)
 
 ## Mod Confirm/Dialog
 style ddmd_confirm_frame:
