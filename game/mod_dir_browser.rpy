@@ -65,7 +65,7 @@ screen pc_directory(loc=None, ml=False, mac=False):
                     imagebutton:
                         idle Transform("sdc_system/file_app/OSBack.png", size=(int(18 * res_scale), int(18 * res_scale)))
                         hover Composite((int(18 * res_scale), int(18 * res_scale)), (0, 0), Frame("#dbdbdd"), (0, 0), Transform("sdc_system/file_app/OSBack.png", size=(int(18 * res_scale), int(18 * res_scale))))
-                        action [Hide("pc_directory"), Show("pc_directory", loc=If(current_dir != prev_dir, prev_dir, "drive"))]
+                        action [Hide("pc_directory"), Show("pc_directory", loc=If(current_dir != prev_dir, prev_dir, "drive"), ml=ml, mac=mac)]
 
             hbox:
                 ypos 0.005
@@ -102,13 +102,13 @@ screen pc_directory(loc=None, ml=False, mac=False):
                                 imagebutton:
                                     idle Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Transform("ddmd_file_physical_drive", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), int(2 * res_scale)), Text(x + ":/", substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
                                     hover Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Frame("#dbdbdd"), (0, 0), Transform("ddmd_file_physical_drive", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), int(2 * res_scale)), Text(x + ":/", substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
-                                    action If(can_access(x + ":", True), [Hide("pc_directory"), Show("pc_directory", loc=x + ":/")], Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
+                                    action If(can_access(x + ":", True), [Show("pc_directory", loc=x + ":/", ml=ml, mac=mac)], Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                         for x in net_drives:
                             hbox:
                                 imagebutton:
                                     idle Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Transform("ddmd_file_network_drive", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), 2), Text(x + ":/", substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
                                     hover Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Frame("#dbdbdd"), (0, 0), Transform("ddmd_file_network_drive", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), int(2 * res_scale)), Text(x + ":/", substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
-                                    action If(can_access(x + ":"), [Hide("pc_directory"), Show("pc_directory", loc=x + ":/")], Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
+                                    action If(can_access(x + ":"), [Show("pc_directory", loc=x + ":/", ml=ml, mac=mac)], Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                     else:
                         for x in os.listdir(current_dir):
                             if os.path.isdir(os.path.join(current_dir, x)):
@@ -116,7 +116,7 @@ screen pc_directory(loc=None, ml=False, mac=False):
                                     imagebutton:
                                         idle Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Transform("ddmd_file_folder", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), 2), Text(x, substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
                                         hover Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Frame("#dbdbdd"), (0, 0), Transform("ddmd_file_folder", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), int(2 * res_scale)), Text(x, substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
-                                        action If(can_access(os.path.join(current_dir, x)), [Hide("pc_directory"), Show("pc_directory", loc=os.path.join(current_dir, x))], Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x).replace("\\", "/")))
+                                        action If(can_access(os.path.join(current_dir, x)), [Show("pc_directory", loc=os.path.join(current_dir, x), ml=ml, mac=mac)], Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x).replace("\\", "/")))
                             elif not mac and not ml:
                                 if os.path.join(current_dir, x).endswith(".zip"):
                                     hbox:
