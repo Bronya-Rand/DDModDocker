@@ -71,7 +71,7 @@ init python:
 
     def transfer_ddml_data():
         renpy.transition(Dissolve(0.25))
-        renpy.show_screen("install_folder_directory")
+        renpy.show_screen("pc_directory", Dissolve(0.25), ml=True)
 
 screen mod_settings():
     zorder 101
