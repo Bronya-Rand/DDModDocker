@@ -127,7 +127,7 @@ screen pc_directory(loc=None, ml=False, mac=False):
             
                 vbar value YScrollValue("fe") xoffset 20 yoffset 10 ysize int(240 * res_scale)
 
-            if mac:
+            if mac or ml:
                 if (renpy.windows and loc != "drive") or (not renpy.windows and loc != "/"):
                     textbutton _("Select Current Folder"):
                         text_style "mods_button_text"
