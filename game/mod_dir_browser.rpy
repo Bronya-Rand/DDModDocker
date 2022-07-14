@@ -127,10 +127,10 @@ screen pc_directory(loc=None, ml=False, mac=False):
             
                 vbar value YScrollValue("fe") xoffset 20 yoffset 10 ysize int(240 * res_scale)
 
-            if mac or ml:
+            if mac:
                 if (renpy.windows and loc != "drive") or (not renpy.windows and loc != "/"):
                     textbutton _("Select Current Folder"):
                         text_style "mods_button_text"
-                        action If(mac, [Hide("pc_directory", Dissolve(0.25)), Function(transfer_data, ddmm_path=current_dir)], [Hide("pc_directory", Dissolve(0.25)), Show("mod_name_input", zipPath=current_dir, copy=True)])
+                        action If(mac, [Hide("pc_directory", Dissolve(0.25)), Show("mod_name_input", zipPath=current_dir, copy=True)], [Hide("pc_directory", Dissolve(0.25)), Function(transfer_data, ddmm_path=current_dir)])
                         text_size int(16 * res_scale)
                         xalign 0.95 yalign 0.98
