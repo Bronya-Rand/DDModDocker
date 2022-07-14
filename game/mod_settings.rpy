@@ -69,10 +69,6 @@ init python:
         else:
             renpy.show_screen("ddmd_dialog", message="Error: We were unable to locate a Doki Doki Manager folder in your AppData folder.", message2="If this is in error, please report it on Github.")
 
-    def transfer_ddml_data():
-        renpy.transition(Dissolve(0.25))
-        renpy.show_screen("pc_directory", Dissolve(0.25), ml=True)
-
 screen mod_settings():
     zorder 101
     style_prefix "modSettings"
@@ -159,5 +155,5 @@ screen mod_settings():
                             Text(_("[Beta] Transfer DDML Mods to DDMD"), style="modSettings_text", substitute=False, size=int(18 * res_scale)))
                         action If(not persistent.transfer_warning, Show("ddmd_confirm", message=_("Transfer Warning"), 
                             message2=_("Transferring mods is in beta and some mods may not work due to Ren'Py version differences. By accepting this disclaimer, transferring will proceed."), 
-                            yes_action=[SetField(persistent, "transfer_warning", True), Hide("ddmd_confirm"), Function(transfer_ddml_data)], 
-                            no_action=Hide("ddmd_confirm")), Function(transfer_ddml_data))
+                            yes_action=[SetField(persistent, "transfer_warning", True), Hide("ddmd_confirm"), Show("pc_directory", Dissolve(0.25), ml=True)], 
+                            no_action=Hide("ddmd_confirm")), Show("pc_directory", Dissolve(0.25), ml=True))
