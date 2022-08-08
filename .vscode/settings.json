@@ -1,8 +1,11 @@
 {
     "files.exclude": {
         "**/*.rpyc": true,
-        "**/*.rpa": true,
+        "**/audio.rpa": true,
+        "**/fonts.rpa": true,
+        "**/images.rpa": true,
         "**/*.rpymc": true,
         "**/cache/": true
-    }
+    },
+    "python.formatting.provider": "black"
 }
