@@ -7,7 +7,7 @@ python early:
         for src, dirs, files in os.walk(renpy.config.basedir + "/game/MLSaves"):
             for d in dirs:
                 src_dir = os.path.join(src, d)
-                dst_dir= src_dir.replace(src, renpy.config.savedir)
+                dst_dir = src_dir.replace(src, renpy.config.savedir)
                 shutil.move(src_dir, dst_dir)
     
     try:
