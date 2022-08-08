@@ -154,8 +154,8 @@ init python:
     # IPG compliant. Do not mess with these variables whatsoever.
     # build.package("DDMD6",'zip','mod',description="Ren'Py 6 DDMD Build (Alpha)")
     # build.package("full",'zip','windows linux mac renpy mod all',description="Ren'Py 7 DDMD Build: All")
-    build.package("ddmd-win",'zip','windows linux renpy mod all',description="Ren'Py 7 DDMD Build: Windows/Linux")
-    build.package("ddmd-mac",'app-zip','mac renpy mod all',description="Ren'Py 7 DDMD Build: macOS")
+    build.package("ddmd8-win",'zip','windows linux renpy mod all',description="Ren'Py 8 DDMD Build: Windows/Linux")
+    build.package("ddmd8-mac",'app-zip','mac renpy mod all',description="Ren'Py 8 DDMD Build: macOS")
 
     # These variables declare the archives that will be made to your packaged mod.
     # To add another archive, make a build.archive variable like in this example:
