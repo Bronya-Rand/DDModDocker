@@ -40,8 +40,8 @@ init python:
             thread.start()
         
         def show_notif(self):
-            renpy.display.screen.show_screen("steam_like_overlay", "Access the Mod Docker menu while playing.", 
-                "Press: " + config.keymap['mod_overlay'][0].replace("K_", ""))
+            renpy.display.screen.show_screen("steam_like_overlay", _("Access the Mod Docker menu while playing."), 
+                _("Press: ") + config.keymap['mod_overlay'][0].replace("K_", ""))
         
         def run(self):
             sleep(1.5)
@@ -266,6 +266,12 @@ init python:
         else:
             return Text(datetime.datetime.now().strftime("%I:%M %p"), style="time_text"), 1.0
 
+    # For > 720p resolutions
+    def get_dsr_scale():
+        return (config.screen_width / 1280.0)
+
+    res_scale = get_dsr_scale()
+
 screen mods():
     zorder 100
     modal True
@@ -273,33 +279,37 @@ screen mods():
     fixed at ml_overlay_effect:
         style_prefix "mods"
 
+        
         if os.path.exists(persistent.ddml_basedir + "/game/docker_custom_image.png"):
-            add persistent.ddml_basedir + "/game/docker_custom_image.png" xsize 1280 ysize 720
+            add persistent.ddml_basedir + "/game/docker_custom_image.png" xsize config.screen_width ysize config.screen_height
+        elif os.path.exists(persistent.ddml_basedir + "/game/docker_custom_image.jpg"):
+            add persistent.ddml_basedir + "/game/docker_custom_image.jpg" xsize config.screen_width ysize config.screen_height
         else:
-            add "game_menu_bg"
-        add Transform("#000", alpha=0.8) xsize 365
+            add "game_menu_bg" 
+
+        add Transform("#000", alpha=0.8) xsize int(365 * res_scale)
         add Transform("#202020", alpha=0.5) xpos 0.28
 
         vbox:
             label _("Select a Mod")
 
             side "c":
-                xpos 50
-                xsize 250
-                ysize 450
+                xpos int(50 * res_scale)
+                xsize int(250 * res_scale)
+                ysize int(450 * res_scale)
 
                 viewport id "mlvp":
                     mousewheel True
                     has vbox
-                    spacing 10
+                    spacing int(9 * res_scale)
 
                     button:
                         action [SetVariable("selectedMod", "DDLC"), SensitiveIf(selectedMod != "DDLC")]
 
-                        add If(loadedMod == "DDLC", Composite((310, 50), (0, 1), "ddmd_selectedmod_icon", 
-                            (38, 0), Text(If(renpy.version_tuple == (6, 99, 12, 4, 2187), "DDLC Mode", 
-                            "Stock Mode"), style="mods_button_text")), Text(If(renpy.version_tuple == (6, 99, 12, 4, 2187), 
-                            "DDLC Mode", "Stock Mode"), style="mods_button_text"))
+                        add If(loadedMod == "DDLC", Composite((int(310 * res_scale), int(50 * res_scale)), (0, int(1 * res_scale)), Transform("ddmd_selectedmod_icon", size=(int(36 * res_scale), int(36 * res_scale))), 
+                            (int(38 * res_scale), 0), Text(If(renpy.version_tuple == (6, 99, 12, 4, 2187), "DDLC Mode", 
+                            _("Stock Mode")), style="mods_button_text")), Text(If(renpy.version_tuple == (6, 99, 12, 4, 2187), 
+                            _("DDLC Mode"), _("Stock Mode")), style="mods_button_text"))
 
                     python:
                         global current_mod_list
@@ -309,37 +319,37 @@ screen mods():
                         button:
                             action [SetVariable("selectedMod", x.modFolderName), SensitiveIf(x.modFolderName != selectedMod)]
                             
-                            add If(loadedMod == x.modFolderName, Composite((210, 50), (0, 1), "ddmd_selectedmod_icon", 
-                                (38, 0), Text(x.modFolderName, style="mods_button_text", substitute=False)), 
+                            add If(loadedMod == x.modFolderName, Composite((int(190 * res_scale), int(50 * res_scale)), (0, int(1 * res_scale)), Transform("ddmd_selectedmod_icon", size=(int(36 * res_scale), int(36 * res_scale))), 
+                                (int(38 * res_scale), 0), Text(x.modFolderName, style="mods_button_text", substitute=False)), 
                                 Text(x.modFolderName, style="mods_button_text", substitute=False))
 
         hbox:
             style "mods_return_button"
             vbox:
                 imagebutton:
-                    idle "ddmd_return_icon"
-                    hover "ddmd_return_icon_hover"
-                    hovered Show("mods_hover_info", about="Exit the DDMD Menu")
+                    idle Transform("ddmd_return_icon", size=(int(48 * res_scale), int(48 * res_scale)))
+                    hover Transform("ddmd_return_icon_hover", size=(int(48 * res_scale), int(48 * res_scale)))
+                    hovered Show("mods_hover_info", about=_("Exit the DDMD Menu"))
                     unhovered Hide("mods_hover_info")
                     action [Hide("mods_hover_info"), Hide("mods"), With(Dissolve(0.5))]
             null width 10
             vbox:
                 imagebutton:
-                    idle "ddmd_install_icon"
-                    hover "ddmd_install_icon_hover"
-                    hovered Show("mods_hover_info", about="Install a Mod")
+                    idle Transform("ddmd_install_icon", size=(int(48 * res_scale), int(48 * res_scale)))
+                    hover Transform("ddmd_install_icon_hover", size=(int(48 * res_scale), int(48 * res_scale)))
+                    hovered Show("mods_hover_info", about=_("Install a Mod"))
                     unhovered Hide("mods_hover_info")
                     action [Hide("mods_hover_info"), If(renpy.macintosh and persistent.self_extract is None, 
                         Show("ddmd_confirm", message="ZIP Extraction On?", message2="Does your version of macOS extract ZIP files after downloading?", 
-                        yes_action=[SetField(persistent, "self_extract", True), Hide("ddmd_confirm"), Show("pc_folder_directory", Dissolve(0.25))], 
-                        no_action=[SetField(persistent, "self_extract", False), Hide("ddmd_confirm"), Show("pc_folder_directory", Dissolve(0.25))]), 
-                        If(renpy.macintosh and persistent.self_extract, Show("pc_folder_directory", Dissolve(0.25)), Show("pc_directory", Dissolve(0.25))))]
+                        yes_action=[SetField(persistent, "self_extract", True), Hide("ddmd_confirm"), Show("pc_directory", Dissolve(0.25), mac=True)], 
+                        no_action=[SetField(persistent, "self_extract", False), Hide("ddmd_confirm"), Show("pc_directory", Dissolve(0.25))]), 
+                        If(renpy.macintosh and persistent.self_extract, Show("pc_directory", Dissolve(0.25), mac=True), Show("pc_directory", Dissolve(0.25))))]
             null width 10
             vbox:
                 imagebutton:
-                    idle "ddmd_search_icon"
-                    hover "ddmd_search_icon_hover"
-                    hovered Show("mods_hover_info", about="Browse the Mod List!")
+                    idle Transform("ddmd_search_icon", size=(int(48 * res_scale), int(48 * res_scale)))
+                    hover Transform("ddmd_search_icon_hover", size=(int(48 * res_scale), int(48 * res_scale)))
+                    hovered Show("mods_hover_info", about=_("Browse the Mod List!"))
                     unhovered Hide("mods_hover_info")
                     action [Hide("mods_hover_info"), If(not persistent.mod_list_disclaimer_accepted, 
                         Show("ddmd_confirm", message="Disclaimer", message2="This mod list source is provided by the defunct Doki Doki Mod Club site. Not all mods may be on here while others may be out-of-date. By accepting this prompt, you acknowledge to the following disclaimer above.", 
@@ -348,62 +358,62 @@ screen mods():
             null width 10
             vbox:
                 imagebutton:
-                    idle "ddmd_settings_icon"
-                    hover "ddmd_settings_icon_hover"
-                    hovered Show("mods_hover_info", about="View DDMD's Settings")
+                    idle Transform("ddmd_settings_icon", size=(int(48 * res_scale), int(48 * res_scale)))
+                    hover Transform("ddmd_settings_icon_hover", size=(int(48 * res_scale), int(48 * res_scale)))
+                    hovered Show("mods_hover_info", about=_("View DDMD's Settings"))
                     unhovered Hide("mods_hover_info")
                     action [Hide("mods_hover_info"), Show("mod_settings", Dissolve(0.25))]
             null width 10
             vbox:
                 imagebutton:
-                    idle "ddmd_restart_icon"
-                    hover "ddmd_restart_icon_hover"
-                    hovered Show("mods_hover_info", about="Quit DDMD")
+                    idle Transform("ddmd_restart_icon", size=(int(48 * res_scale), int(48 * res_scale)))
+                    hover Transform("ddmd_restart_icon_hover", size=(int(48 * res_scale), int(48 * res_scale)))
+                    hovered Show("mods_hover_info", about=_("Quit DDMD"))
                     unhovered Hide("mods_hover_info")
                     action Quit()
 
         vbox:
             hbox:
                 if persistent.military_time:
-                    xpos 1175
+                    xpos config.screen_width - int(105 * res_scale)
                 else:
-                    xpos 1150
-                ypos 25
+                    xpos config.screen_width - int(130 * res_scale)
+                ypos int(25 * res_scale)
                 add "ddmd_time_clock"
 
             hbox:
                 viewport id "modinfoname":
-                    xpos 450
-                    ypos 50
-                    xsize 700
+                    mousewheel True
+                    xpos int(450 * res_scale)
+                    ypos int(50 * res_scale)
+                    xsize int(700 * res_scale)
                     if selectedMod == "DDLC" and renpy.version_tuple > (6, 99, 12, 4, 2187):
-                        label "Stock Mode"
+                        label _("Stock Mode")
                     elif selectedMod == "DDLC" and renpy.version_tuple == (6, 99, 12, 4, 2187):
-                        label "DDLC Mode"
+                        label _("DDLC Mode")
                     else:
                         label "[selectedMod]"
-                bar value XScrollValue("modinfoname")
 
         vbox:
-            xpos 0.31
-            ypos 0.25
+            xpos 0.31 
+            ypos 0.25 
             label "Options"
             vbox:
                 xpos 0.2
                 yoffset -20
-                textbutton "Open Save Directory" action Function(open_save_dir)
+                textbutton _("Open Save Directory") action Function(open_save_dir)
                 if loadedMod != "DDLC":
-                    textbutton "Open Selected Mod's Game Directory" action Function(open_dir, config.gamedir)
-                textbutton "Open Mod Docker's Game Directory" action Function(open_dir, persistent.ddml_basedir + "/game")
+                    textbutton _("Open Running Mods' Game Directory") action Function(open_dir, config.gamedir)
+                textbutton _("Open Mod Docker's Game Directory") action Function(open_dir, persistent.ddml_basedir + "/game")
                 if selectedMod != loadedMod and selectedMod != "DDLC":
-                    textbutton "Delete Mod" action Show("ddmd_confirm", message="Are you sure you want to remove %s?" % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_mod, selectedMod)], no_action=Hide("ddmd_confirm"))
+                    textbutton _("Delete Mod") action Show("ddmd_confirm", message=_("Are you sure you want to remove %s?") % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_mod, selectedMod)], no_action=Hide("ddmd_confirm"))
                 if selectedMod != loadedMod:
-                    textbutton "Delete Saves" action Show("ddmd_confirm", message="Are you sure you want to remove %s save files?" % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_saves, selectedMod)], no_action=Hide("ddmd_confirm"))
+                    textbutton _("Delete Saves") action Show("ddmd_confirm", message=_("Are you sure you want to remove %s save files?") % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_saves, selectedMod)], no_action=Hide("ddmd_confirm"))
 
         vbox:
             xpos 0.9
             ypos 0.9
-            textbutton "Select" action If(selectedMod == "DDLC", Function(clearMod), Function(loadMod, persistent.ddml_basedir + "/game/mods/" + selectedMod, selectedMod))
+            textbutton _("Select") action If(selectedMod == "DDLC", Function(clearMod), Function(loadMod, persistent.ddml_basedir + "/game/mods/" + selectedMod, selectedMod))
 
     key "K_ESCAPE" action Hide("mods")
 
@@ -414,19 +424,19 @@ init -1:
         style_prefix "steam"
 
         frame at steam_effect:
-            xsize 200
-            ysize 100
+            xsize int(200 * res_scale)
+            ysize int(100 * res_scale)
             xalign 1.0
             yalign 1.0
             
             vbox:
                 xalign 0.5
                 yalign 0.15
-                text message size 16
+                text message size int(16 * res_scale)
             vbox:
                 xalign 0.5
                 yalign 0.9
-                text message2 size 16
+                text message2 size int(16 * res_scale)
                 
 
         timer 3.25 action Hide('steam_like_overlay')
@@ -441,10 +451,10 @@ init -1:
     transform steam_effect:
         subpixel True
         on show:
-            ycenter 800 yanchor 1.0 alpha 1.00 nearest True
-            easein .45 ycenter 670
+            ycenter config.screen_height + int(80 * res_scale) yanchor 1.0 alpha 1.00 nearest True
+            easein .45 ycenter config.screen_height - int(50 * res_scale)
         on hide:
-            easein .45 ycenter 800 nearest True
+            easein .45 ycenter config.screen_height + int(80 * res_scale) nearest True
 
 screen mods_hover_info(about):
     zorder 101
@@ -456,6 +466,6 @@ screen mods_hover_info(about):
     frame at windows_like_effect:
         xpos currentpos[0]
         ypos currentpos[1] + 15
-        xsize 150
+        xsize int(150 * res_scale)
 
         text _(about)

@@ -7,8 +7,8 @@ screen mod_list(search=None):
     drag:
         drag_name "mlist"
         drag_handle (0, 0, 1.0, 40)
-        xsize 500
-        ysize 300
+        xsize int(500 * res_scale)
+        ysize int(300 * res_scale)
         xpos 0.2
         ypos 0.3
         
@@ -16,25 +16,25 @@ screen mod_list(search=None):
             hbox:
                 ypos 0.005
                 xalign 0.52 
-                text "DDMC Mod List"
+                text _("DDMC Mod List")
 
             hbox:
                 ypos -0.005
                 xalign 0.96
                 imagebutton:
-                    idle "ddmd_search_window_icon"
-                    hover "ddmd_search_window_icon_hover"
+                    idle Transform("ddmd_search_window_icon", size=(int(36 * res_scale), int(36 * res_scale)))
+                    hover Transform("ddmd_search_window_icon_hover", size=(int(36 * res_scale), int(36 * res_scale)))
                     action Show("mod_search", Dissolve(0.25))
                 imagebutton:
-                    idle "ddmd_close_icon"
-                    hover "ddmd_close_icon_hover"
+                    idle Transform("ddmd_close_icon", size=(int(36 * res_scale), int(36 * res_scale)))
+                    hover Transform("ddmd_close_icon_hover", size=(int(36 * res_scale), int(36 * res_scale)))
                     action Hide("mod_list", Dissolve(0.25))
 
             side "c":
                 xpos 0.05
                 ypos 0.15
-                xsize 450
-                ysize 250
+                xsize int(450 * res_scale)
+                ysize int(250 * res_scale)
                 spacing 10
 
                 python:
@@ -70,12 +70,12 @@ screen mod_search(xs=480, ys=220):
 
     style_prefix "ddmd_confirm"
 
-    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay)
+    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay) xsize config.screen_width ysize config.screen_height
     key "K_RETURN" action NullAction()
 
     frame at android_like_frame:
-        xsize xs
-        ysize ys
+        xsize int(xs * res_scale)
+        ysize int(ys * res_scale)
 
         vbox:
             xalign .5
@@ -100,8 +100,8 @@ screen mod_list_info(mod):
     drag:
         drag_name "mlistinfo"
         drag_handle (0, 0, 1.0, 40)
-        xsize 800
-        ysize 550
+        xsize int(800 * res_scale)
+        ysize int(550 * res_scale)
         xpos 0.2
         ypos 0.3
         
@@ -109,21 +109,21 @@ screen mod_list_info(mod):
             hbox:
                 ypos 0.005
                 xalign 0.52 
-                text "Mod Info"
+                text _("Mod Info")
 
             hbox:
                 ypos 0.005
                 xalign 0.98
                 imagebutton:
-                    idle "ddmd_close_icon"
-                    hover "ddmd_close_icon_hover"
+                    idle Transform("ddmd_close_icon", size=(int(36 * res_scale), int(36 * res_scale)))
+                    hover Transform("ddmd_close_icon_hover", size=(int(36 * res_scale), int(36 * res_scale)))
                     action Hide("mod_list_info", Dissolve(0.25))
 
             side "c":
                 xpos 0.05
-                ypos 0.1
-                xsize 740
-                ysize 420
+                ypos 0.11
+                xsize int(740 * res_scale)
+                ysize int(420 * res_scale)
 
                 viewport id "mlv":
                     mousewheel True
@@ -132,25 +132,25 @@ screen mod_list_info(mod):
 
                     text mod["modName"].replace("[", "[["):
                         style "mods_label_text"
-                        size 22
+                        size int(22 * res_scale)
                     
                     python:
                         mod_release_date = datetime.datetime.strptime(mod['modDate'].replace(" ", "T"), "%Y-%m-%dT%H:%M:%S.%f")
                         mrd = mod_release_date.strftime("%d %B %Y")
 
                     if mod["modNSFW"]:
-                        text "{b}This mod is marked as Not Safe For Work{/b}" size 20
-                    text "Released: " + mrd size 20
-                    text "Status: " + mod["modStatus"] size 20
+                        text _("{b}This mod is marked as Not Safe For Work{/b}") size int(20 * res_scale)
+                    text _("Released: ") + mrd size int(20 * res_scale)
+                    text _("Status: ") + mod["modStatus"] size int(20 * res_scale)
                     
                     python:
-                        playTime = "Playtime: {u}"
+                        playTime = _("Playtime: {u}")
 
                         if not mod["modPlayTimeHours"] and not mod["modPlayTimeMinutes"]:
-                            playTime += "Unknown"
+                            playTime += _("Unknown")
 
                         if mod["modPlayTimeHours"]:
-                            playTime += str(mod["modPlayTimeHours"]) + " hour"
+                            playTime += str(mod["modPlayTimeHours"]) + _(" hour")
 
                             if mod["modPlayTimeHours"] > 1:
                                 playTime += "s"
@@ -159,20 +159,21 @@ screen mod_list_info(mod):
 
                             if mod["modPlayTimeHours"] > 1:
                                 playTime += " "
-                            playTime += str(mod["modPlayTimeMinutes"]) + " minute"
+                            playTime += str(mod["modPlayTimeMinutes"]) + _(" minute")
 
                             if mod["modPlayTimeMinutes"] > 1:
                                 playTime += "s"
 
-                    text playTime + "{/u}" size 20
+                    text playTime + "{/u}" size int(20 * res_scale)
 
                     null height 20
 
-                    text "{b}Description{/b}" size 20
-                    text mod["modDescription"].replace("[", "[[") size 20
+                    text _("{b}Description{/b}") size int(20 * res_scale)
+                    text mod["modDescription"].replace("[", "[[") size int(20 * res_scale)
             
             imagebutton:
-                idle Composite((250, 50), (0, 0), "ddmd_openinbrowser_icon", (40, 0), Text("Download Page", style="mods_text"))
+                idle Composite((int(250 * res_scale), int(50 * res_scale)), (0, 0), Transform("ddmd_openinbrowser_icon", size=(int(36 * res_scale), int(36 * res_scale))), (int(40 * res_scale), 0), Text(_("Download Page"), style="mods_text"))
+                hover Composite((int(250 * res_scale), int(50 * res_scale)), (0, 0), Transform("ddmd_openinbrowser_icon_hover", size=(int(36 * res_scale), int(36 * res_scale))), (int(40 * res_scale), 0), Text(_("Download Page"), style="mods_button_text"))
                 xalign 0.95
                 yalign 0.98
                 action OpenURL(mod['modUploadURL'])

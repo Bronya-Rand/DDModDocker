@@ -4,6 +4,7 @@
 style renpy_generic_text:
     font "sdc_system/ddmd_app/Lato-Light.ttf"
     color "#fff"
+    size int(24 * res_scale)
     outlines []
 
 ## Main UI (Folder List)
@@ -15,8 +16,8 @@ style mods_label is gui_label
 style mods_label_text is gui_label_text
 
 style mods_label:
-    xpos 50
-    ysize 120
+    xpos int(50 * res_scale)
+    ysize int(120 * res_scale)
 
 style mods_button:
     ysize None
@@ -25,13 +26,13 @@ style mods_button:
 
 style mods_label_text:
     font "sdc_system/ddmd_app/Raleway-Bold.ttf"
-    size 38
+    size int(38 * res_scale)
     color "#fff"
     outlines [(6, "#803366", 0, 0), (3, "#803366", 2, 2)]
     yalign 0.5
 
 style mods_text:
-    size 24
+    size int(24 * res_scale)
     font "sdc_system/ddmd_app/Raleway-Bold.ttf"
     outlines [(2, "#803366", 0, 0), (1, "#803366", 1, 1)]
 
@@ -45,7 +46,7 @@ style mods_info_label:
 style mods_button_text:
     font "sdc_system/ddmd_app/Raleway-Bold.ttf"
     color "#fff"
-    size 24
+    size int(24 * res_scale)
     outlines [(4, "#803366", 0, 0), (2, "#803366", 2, 2)]
     hover_outlines [(4, "#bb4c96", 0, 0), (2, "#bb4c96", 2, 2)]
     insensitive_outlines [(4, "#f374c9", 0, 0), (2, "#f374c9", 2, 2)]
@@ -54,27 +55,27 @@ style mods_button_text:
 style mods_return_button is gui_button
 
 style mods_return_button:
-    xpos 45
+    xpos int(45 * res_scale)
     yalign 1.0
     yoffset -30
 
 style mods_frame:
     padding gui.frame_borders.padding
-    background Frame("sdc_system/ddmd_app/ddmd_frame.png", left=4, top=27, bottom=4, right=4, tile=False)
+    background Frame("sdc_system/ddmd_app/ddmd_frame.png", left=4, top=3, bottom=4, right=4, tile=False)
 
 ## Mod List
 style modList_text is renpy_generic_text
 style modList_button:
     ysize None
 style modList_button_text is mods_button_text:
-    size 18
-style modList_frame is mods_frame:
-    background Frame("sdc_system/ddmd_app/ddmd_frame.png", left=4, top=3, bottom=4, right=4, tile=False)
+    size int(18 * res_scale)
+style modList_frame is mods_frame
 
 ## Mod List Info
 style modInfo_text is renpy_generic_text
 style modInfo_button_text is mods_button_text
-style modInfo_frame is mods_frame
+style modInfo_frame is mods_frame:
+    background Frame("sdc_system/ddmd_app/ddmd_frame.png", left=4, top=23, bottom=4, right=4, tile=False)
 
 ## Mod Confirm/Dialog
 style ddmd_confirm_frame:
@@ -109,7 +110,7 @@ style mods_hover_text:
     font "sdc_system/ddmd_app/Lato-Regular.ttf"
     color "#000"
     outlines []
-    size 12
+    size int(12 * res_scale)
 
 ## File Explorer
 style pc_dir_frame is mods_frame
@@ -117,14 +118,14 @@ style pc_dir_button_text is renpy_generic_text:
     text_align 0.0
 
 style pc_dir_scrollbar:
-    xsize 8
-    ysize 96
+    xsize int(8 * res_scale)
+    ysize int(96 * res_scale)
     base_bar Frame("#222222")
     thumb Frame("sdc_system/file_app/FileExplorerHBar.png", tile=False)
 
 style pc_dir_vscrollbar:
-    xsize 8
-    ysize 96
+    xsize int(8 * res_scale)
+    ysize int(96 * res_scale)
     base_bar Frame("#222222")
     thumb Frame("sdc_system/file_app/FileExplorerVBar.png", tile=False)
 
@@ -142,6 +143,6 @@ style modSettings_frame is modList_frame
 ## Time
 style time_text:
     color "#fff"
-    size 24
+    size int(24 * res_scale)
     font "sdc_system/ddmd_app/Quicksand-Light.ttf"
     outlines []
