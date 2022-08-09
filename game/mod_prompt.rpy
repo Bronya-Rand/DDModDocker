@@ -96,13 +96,44 @@ screen mod_name_input(zipPath, copy=False, xs=480, ys=220):
                 text_size int(18 * res_scale)
                 xalign 0.5
 
-            input default "" value VariableInputValue("tempFolderName") length 24 allow "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz "
+            input default "" value VariableInputValue("tempFolderName") length 24 allow "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 0123456789:-"
 
             hbox:
                 xalign 0.5
                 spacing 100
 
                 textbutton _("OK") action [Hide("mod_name_input"), Function(install_mod, zipPath=zipPath, copy=copy)]
+
+screen ddmd_input(message, ok_action, xs=480, ys=220):
+    modal True
+
+    zorder 200
+
+    style_prefix "ddmd_confirm"
+
+    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay) xsize config.screen_width ysize config.screen_height
+    key "K_RETURN" action NullAction()
+
+    frame at android_like_frame:
+        xsize int(xs * res_scale)
+        ysize int(ys * res_scale)
+
+        vbox:
+            xalign .5
+            yalign .5
+            spacing 8
+
+            label message:
+                text_size int(18 * res_scale)
+                xalign 0.5
+
+            input default "" value VariableInputValue("tempUsername") length 24 allow "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 0123456789"
+
+            hbox:
+                xalign 0.5
+                spacing 100
+
+                textbutton _("OK") action ok_action
 
 screen ddmd_progress(message, xs=480, ys=220):
     modal True

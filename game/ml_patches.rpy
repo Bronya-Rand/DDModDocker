@@ -15,8 +15,6 @@ init -100 python:
         os.makedirs(persistent.ddml_basedir + "/characters")
     if not os.path.exists(persistent.ddml_basedir + "/game/mods"):
         os.makedirs(persistent.ddml_basedir + "/game/mods")
-    if not os.path.exists(persistent.ddml_basedir + "/game/MLSaves"):
-        os.makedirs(persistent.ddml_basedir + "/game/MLSaves")
 
     if config.window_title != "Doki Doki Mod Docker (Alpha)":
         container_name = config.name or config.basedir.replace("\\", "/").split("/")[-1]
