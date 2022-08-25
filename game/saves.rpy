@@ -18,5 +18,5 @@ python early:
         selectedMod = "DDLC"
 
     renpy.config.savedir = renpy.main.__main__.path_to_saves(
-            renpy.config.gamedir
+            renpy.config.savedir
         ) + "/" + selectedMod

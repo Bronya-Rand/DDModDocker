@@ -167,6 +167,7 @@ init python:
     # to build your mod on Android like in this example.
     #   Example: build.classify("game/**.pdf", "scripts all")
     
+    build.classify("game/scripts.rpa", "mod") # Modded Scripts for R8
     build.classify("game/**.rpyc", "ddml")
     build.classify("game/sdc_system/**", "ddml")
     build.classify("game/python-packages/**", "mod")

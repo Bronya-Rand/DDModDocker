@@ -17,14 +17,3 @@ init -1 python:
     ## Fixes a issue where some transitions (menu bg) reset themselves
     if renpy.version_tuple >= (7, 4, 7, 1862):
         config.atl_start_on_show = False 
-
-init 1 python:
-    def patched_screenshot():
-        if renpy.version_tuple > (7, 3, 5, 606):
-            srf = renpy.display.draw.screenshot(None)
-        else:
-            srf = renpy.display.draw.screenshot(None, False)
-        
-        return srf
-
-    screenshot_srf = patched_screenshot
