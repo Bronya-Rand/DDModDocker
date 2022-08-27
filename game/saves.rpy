@@ -9,5 +9,14 @@ python early:
             selectedMod = temp['modName']
     except IOError:
         selectedMod = "DDLC"
+        
+    renpy.config.savedir = renpy.main.__main__.path_to_saves(
+            renpy.config.savedir
+        ) + "/" + selectedMod
 
-    renpy.config.savedir = renpy.config.basedir + "/game/MLSaves/" + selectedMod
+    if os.path.exists(renpy.config.basedir + "/game/MLSaves"):
+        for src, dirs, files in os.walk(renpy.config.basedir + "/game/MLSaves"):
+            for d in dirs:
+                src_dir = os.path.join(src, d)
+                dst_dir = src_dir.replace(src, renpy.config.savedir)
+                shutil.move(src_dir, dst_dir)
