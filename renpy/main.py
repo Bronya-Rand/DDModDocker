@@ -624,7 +624,7 @@ def main():
                 if "mods/" + temp["modName"] + "/" in x[0]:
                     mods_list.append(x)
 
-                elif x[1] and "renpy" in x[1]:
+                elif x[1] and "renpy/" in x[1].replace("\\", "/"):
                     mods_list.append(x)
 
                 # Check if file in RPA
