@@ -16,10 +16,6 @@ init -100 python:
         os.makedirs(persistent.ddml_basedir + "/characters")
     if not os.path.exists(persistent.ddml_basedir + "/game/mods"):
         os.makedirs(persistent.ddml_basedir + "/game/mods")
-    if not os.path.exists(persistent.ddml_basedir + "/game/MLSaves"):
-        os.makedirs(persistent.ddml_basedir + "/game/MLSaves")
-    if not os.path.exists(config.basedir + "/characters"):
-        os.makedirs(config.basedir + "/characters")
 
     if config.window_title != "Doki Doki Mod Docker: SE (Alpha)":
         config.window_title = "Doki Doki Mod Docker: SE (Alpha) - R6 Mod Container"
@@ -47,3 +43,5 @@ init -100 python:
         return renpy.loader.load(fn)
 
     renpy.file = patched_file
+
+    Composite = LiveComposite

@@ -18,10 +18,10 @@ transform android_like_overlay:
 transform android_like_frame:
     subpixel True
     on show:
-        ycenter 900 yanchor 1.0 alpha 1.00 nearest True
-        easein 0.3 ycenter 620
+        ycenter config.screen_height + int(180 * res_scale) yanchor 1.0 alpha 1.00 nearest True
+        easein 0.3 ycenter config.screen_height - int(100 * res_scale)
     on hide:
-        easein .75 ycenter 900 nearest True
+        easein .75 ycenter config.screen_height + int(180 * res_scale) nearest True
 
 ## Mod Hover Transition
 transform windows_like_effect:
