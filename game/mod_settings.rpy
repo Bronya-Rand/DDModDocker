@@ -69,94 +69,71 @@ init python:
         else:
             renpy.show_screen("ddmd_dialog", message="Error: We were unable to locate a Doki Doki Manager folder in your AppData folder.", message2="If this is in error, please report it on Github.")
 
-    def transfer_ddml_data():
-        renpy.transition(Dissolve(0.25))
-        renpy.show_screen("install_folder_directory")
-
 screen mod_settings():
     zorder 101
     style_prefix "modSettings"
 
-    drag:
-        drag_name "msettings"
-        drag_handle (0, 0, 1.0, 40)
-        xsize 500
-        ysize 300
-        xpos 0.3
-        ypos 0.3
-        
-        frame:
-            hbox:
-                ypos 0.005
-                xalign 0.52 
-                text "Settings"
+    use ddmd_generic_window("Settings"):
 
-            hbox:
-                ypos -0.005
-                xalign 0.98
+        side "c":
+            xpos 0.05
+            ypos 0.15
+            xsize int(450 * res_scale)
+            ysize int(250 * res_scale)
+            spacing 5
+
+            viewport id "msw":
+                mousewheel True
+                draggable True
+                has vbox
+                spacing 1
+
                 imagebutton:
-                    idle "ddmd_close_icon"
-                    hover "ddmd_close_icon_hover"
-                    action Hide("mod_settings", Dissolve(0.25))
+                    idle ConditionSwitch("config.gl2", Composite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_on", size=(int(48 * res_scale), int(48 * res_scale))),
+                        (int(55 * res_scale), int(13 * res_scale)), Text(_("Enable OpenGL 2 Globally"), style="modSettings_text", size=int(18 * res_scale))), "True",
+                        Composite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_off", size=(int(48 * res_scale), int(48 * res_scale))), (int(55 * res_scale), int(13 * res_scale)), 
+                        Text(_("Enable OpenGL 2 Globally"), style="modSettings_text", size=int(18 * res_scale))))
+                    hover ConditionSwitch("config.gl2", Composite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_on_hover", size=(int(48 * res_scale), int(48 * res_scale))),
+                        (int(55 * res_scale), 14), Text(_("Enable OpenGL 2 Globally"), style="modSettings_text", size=int(18 * res_scale))), "True", 
+                        Composite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_off_hover", size=(int(48 * res_scale), int(48 * res_scale))), (int(55 * res_scale), int(13 * res_scale)), Text(_("Enable OpenGL 2 Globally"), 
+                        style="modSettings_text", size=int(18 * res_scale))))
+                    action If(config.gl2, Show("ddmd_confirm", Dissolve(0.25), message=_("Disable OpenGL 2?"), 
+                        message2=_("Some mods may not have certain effects display if this setting is turned off. {b}A restart is required to load OpenGL 2{/b}."), 
+                        yes_action=[SetField(config, "gl2", False), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
+                        Dissolve(0.25))), Show("ddmd_confirm", Dissolve(0.25), message=_("Enable OpenGL 2?"), 
+                        message2=_("Some mods may suffer from broken affects if this setting is turned on. {b}A restart is required to load OpenGL 2{/b}."), 
+                        yes_action=[SetField(config, "gl2", True), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
+                        Dissolve(0.25))))
 
-            side "c":
-                xpos 0.05
-                ypos 0.15
-                xsize 450
-                ysize 250
-                spacing 5
-
-                viewport id "msw":
-                    mousewheel True
-                    draggable True
-                    has vbox
-                    spacing 1
-
+                imagebutton:
+                    idle ConditionSwitch("persistent.military_time", Composite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_on", size=(int(48 * res_scale), int(48 * res_scale))),
+                        (int(55 * res_scale), 13), Text(_("Use 24-Hour Format"), style="modSettings_text", size=int(18 * res_scale))), "True",
+                        Composite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_off", size=(int(48 * res_scale), int(48 * res_scale))), (int(55 * res_scale), int(13 * res_scale)), 
+                        Text(_("Use 24-Hour Format"), style="modSettings_text", size=int(18 * res_scale))))
+                    hover ConditionSwitch("persistent.military_time", Composite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_on_hover", size=(int(48 * res_scale), int(48 * res_scale))),
+                        (int(55 * res_scale), 14), Text(_("Use 24-Hour Format"), style="modSettings_text", size=int(18 * res_scale))), "True", 
+                        Composite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_off_hover", size=(int(48 * res_scale), int(48 * res_scale))), (int(55 * res_scale), int(13 * res_scale)), Text(_("Use 24-Hour Format"), 
+                        style="modSettings_text", size=int(18 * res_scale))))
+                    action [If(persistent.military_time, SetField(persistent, "military_time", False),
+                        SetField(persistent, "military_time", True))]
+                
+                if renpy.windows:
                     imagebutton:
-                        idle ConditionSwitch("config.gl2", Composite((250, 40), (0, 0), "ddmd_toggle_on",
-                            (55, 13), Text("Enable OpenGL 2 Globally", style="modSettings_text", size=18)), "True",
-                            Composite((250, 40), (0, 0), "ddmd_toggle_off", (55, 13), 
-                            Text("Enable OpenGL 2 Globally", style="modSettings_text", size=18)))
-                        hover ConditionSwitch("config.gl2", Composite((250, 40), (0, 0), "ddmd_toggle_on_hover",
-                            (55, 14), Text("Enable OpenGL 2 Globally", style="modSettings_text", size=18)), "True", 
-                            Composite((250, 40), (0, 0), "ddmd_toggle_off_hover", (55, 13), Text("Enable OpenGL 2 Globally", 
-                            style="modSettings_text", size=18)))
-                        action If(config.gl2, Show("ddmd_confirm", Dissolve(0.25), message="Disable OpenGL 2?", 
-                            message2="Some mods may not have certain effects display if this setting is turned off. {b}A restart is required to load OpenGL 2{/b}.", 
-                            yes_action=[SetField(config, "gl2", False), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
-                            Dissolve(0.25))), Show("ddmd_confirm", Dissolve(0.25), message="Enable OpenGL 2?", 
-                            message2="Some mods may suffer from broken affects if this setting is turned on. {b}A restart is required to load OpenGL 2{/b}.", 
-                            yes_action=[SetField(config, "gl2", True), Function(set_settings_json), Quit()], no_action=Hide("ddmd_confirm", 
-                            Dissolve(0.25))))
-
-                    imagebutton:
-                        idle ConditionSwitch("persistent.military_time", Composite((250, 40), (0, 0), "ddmd_toggle_on",
-                            (55, 13), Text("Use 24-Hour Format", style="modSettings_text", size=18)), "True",
-                            Composite((250, 40), (0, 0), "ddmd_toggle_off", (55, 13), 
-                            Text("Use 24-Hour Format", style="modSettings_text", size=18)))
-                        hover ConditionSwitch("persistent.military_time", Composite((250, 40), (0, 0), "ddmd_toggle_on_hover",
-                            (55, 14), Text("Use 24-Hour Format", style="modSettings_text", size=18)), "True", 
-                            Composite((250, 40), (0, 0), "ddmd_toggle_off_hover", (55, 13), Text("Use 24-Hour Format", 
-                            style="modSettings_text", size=18)))
-                        action [If(persistent.military_time, SetField(persistent, "military_time", False),
-                            SetField(persistent, "military_time", True))]
-
-                    imagebutton:
-                        idle Composite((410, 40), (0, 0), "ddmd_transfer_icon", (55, 7), 
-                            Text("[Beta] Transfer DDMM Mods to DDMD", style="modSettings_text", substitute=False, size=18))
-                        hover Composite((410, 40), (0, 0), "ddmd_transfer_icon_hover", (55, 7), 
-                            Text("[Beta] Transfer DDMM Mods to DDMD", style="modSettings_text", substitute=False, size=18))
-                        action If(not persistent.transfer_warning, Show("ddmd_confirm", message="Transfer Warning", 
-                            message2="Transferring mods is in beta and some mods may not work due to Ren'Py version differences. By accepting this disclaimer, transferring will proceed.", 
+                        idle Composite((int(410 * res_scale), int(40 * res_scale)), (10, 0), Transform("ddmd_transfer_icon", size=(int(36 * res_scale), int(36 * res_scale))), (int(55 * res_scale), int(7 * res_scale)), 
+                            Text(_("[Beta] Transfer DDMM Mods to DDMD"), style="modSettings_text", substitute=False, size=int(18 * res_scale)))
+                        hover Composite((int(410 * res_scale), int(40 * res_scale)), (10, 0), Transform("ddmd_transfer_icon_hover", size=(int(36 * res_scale), int(36 * res_scale))), (int(55 * res_scale), int(7 * res_scale)), 
+                            Text(_("[Beta] Transfer DDMM Mods to DDMD"), style="modSettings_text", substitute=False, size=int(18 * res_scale)))
+                        action If(not persistent.transfer_warning, Show("ddmd_confirm", message=_("Transfer Warning"), 
+                            message2=_("Transferring mods is in beta and some mods may not work due to Ren'Py version differences. By accepting this disclaimer, transferring will proceed."), 
                             yes_action=[SetField(persistent, "transfer_warning", True), Hide("ddmd_confirm"), Function(transfer_ddmm_data)], 
                             no_action=Hide("ddmd_confirm")), Function(transfer_ddmm_data))
 
-                    imagebutton:
-                        idle Composite((410, 40), (0, 0), "ddmd_transfer_icon", (55, 7), 
-                            Text("[Beta] Transfer DDML Mods to DDMD", style="modSettings_text", substitute=False, size=18))
-                        hover Composite((410, 40), (0, 0), "ddmd_transfer_icon_hover", (55, 7), 
-                            Text("[Beta] Transfer DDML Mods to DDMD", style="modSettings_text", substitute=False, size=18))
-                        action If(not persistent.transfer_warning, Show("ddmd_confirm", message="Transfer Warning", 
-                            message2="Transferring mods is in beta and some mods may not work due to Ren'Py version differences. By accepting this disclaimer, transferring will proceed.", 
-                            yes_action=[SetField(persistent, "transfer_warning", True), Hide("ddmd_confirm"), Function(transfer_ddml_data)], 
-                            no_action=Hide("ddmd_confirm")), Function(transfer_ddml_data))
+                imagebutton:
+                    idle Composite((int(410 * res_scale), int(40 * res_scale)), (10, 0), Transform("ddmd_transfer_icon", size=(int(36 * res_scale), int(36 * res_scale))), (int(55 * res_scale), int(7 * res_scale)), 
+                        Text(_("[Beta] Transfer DDML Mods to DDMD"), style="modSettings_text", substitute=False, size=int(18 * res_scale)))
+                    hover Composite((int(410 * res_scale), int(40 * res_scale)), (10, 0), Transform("ddmd_transfer_icon_hover", size=(int(36 * res_scale), int(36 * res_scale))), (int(55 * res_scale), int(7 * res_scale)), 
+                        Text(_("[Beta] Transfer DDML Mods to DDMD"), style="modSettings_text", substitute=False, size=int(18 * res_scale)))
+                    action If(not persistent.transfer_warning, Show("ddmd_confirm", message=_("Transfer Warning"), 
+                        message2=_("Transferring mods is in beta and some mods may not work due to Ren'Py version differences. By accepting this disclaimer, transferring will proceed."), 
+                        yes_action=[SetField(persistent, "transfer_warning", True), Hide("ddmd_confirm"), Show("pc_directory", Dissolve(0.25), ml=True)], 
+                        no_action=Hide("ddmd_confirm")), Show("pc_directory", Dissolve(0.25), ml=True))
