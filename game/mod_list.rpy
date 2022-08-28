@@ -64,7 +64,6 @@ screen mod_search(xs=480, ys=220):
                 value VariableInputValue("modSearchCriteria") 
                 length 24 
                 allow "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[[]] "
-                copypaste True
 
             hbox:
                 xalign 0.5

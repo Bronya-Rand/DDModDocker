@@ -106,7 +106,7 @@ screen ddmd_progress(message, xs=480, ys=220):
                 substitute False
 
 screen ddmd_generic_notif(xs, ys):
-    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay) xsize config.screen_width ysize config.screen_height
+    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay) size(config.screen_width, config.screen_height)
     key "K_RETURN" action NullAction()
 
     frame at android_like_frame:
