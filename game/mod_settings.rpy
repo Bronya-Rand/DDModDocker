@@ -73,40 +73,20 @@ screen mod_settings():
     zorder 101
     style_prefix "modSettings"
 
-    drag:
-        drag_name "msettings"
-        drag_handle (0, 0, 1.0, 40)
-        xsize int(500 * res_scale)
-        ysize int(300 * res_scale)
-        xpos 0.3
-        ypos 0.3
-        
-        frame:
-            hbox:
-                ypos 0.005
-                xalign 0.52 
-                text _("Settings")
+    use ddmd_generic_window("Settings"):
 
-            hbox:
-                ypos -0.005
-                xalign 0.98
-                imagebutton:
-                    idle Transform("ddmd_close_icon", size=(int(36 * res_scale), int(36 * res_scale)))
-                    hover Transform("ddmd_close_icon_hover", size=(int(36 * res_scale), int(36 * res_scale)))
-                    action Hide("mod_settings", Dissolve(0.25))
+        side "c":
+            xpos 0.05
+            ypos 0.15
+            xsize int(450 * res_scale)
+            ysize int(250 * res_scale)
+            spacing 5
 
-            side "c":
-                xpos 0.05
-                ypos 0.15
-                xsize int(450 * res_scale)
-                ysize int(250 * res_scale)
-                spacing 5
-
-                viewport id "msw":
-                    mousewheel True
-                    draggable True
-                    has vbox
-                    spacing 1
+            viewport id "msw":
+                mousewheel True
+                draggable True
+                has vbox
+                spacing 1
 
                     imagebutton:
                         idle ConditionSwitch("persistent.military_time", LiveComposite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_on", size=(int(48 * res_scale), int(48 * res_scale))),
