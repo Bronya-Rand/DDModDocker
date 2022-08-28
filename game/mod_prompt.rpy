@@ -2,16 +2,11 @@
 
 screen ddmd_confirm(message, yes_action, no_action, message2=None, xs=480, ys=220):
     modal True
-
     zorder 200
 
     style_prefix "ddmd_confirm"
     
-    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay) xsize config.screen_width ysize config.screen_height
-
-    frame at android_like_frame:
-        xsize int(xs * res_scale)
-        ysize int(ys * res_scale)
+    use ddmd_generic_notif(xs, ys):
 
         vbox:
             xalign .5
@@ -43,12 +38,8 @@ screen ddmd_dialog(message, message2=None, xs=480, ys=220):
     zorder 200
 
     style_prefix "ddmd_confirm"
-
-    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay) xsize config.screen_width ysize config.screen_height
-
-    frame at android_like_frame:
-        xsize int(xs * res_scale)
-        ysize int(ys * res_scale)
+    
+    use ddmd_generic_notif(xs, ys):
 
         vbox:
             xalign .5
@@ -75,17 +66,11 @@ screen ddmd_dialog(message, message2=None, xs=480, ys=220):
 
 screen mod_name_input(zipPath, copy=False, xs=480, ys=220):
     modal True
-
     zorder 200
 
     style_prefix "ddmd_confirm"
-
-    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay) xsize config.screen_width ysize config.screen_height
-    key "K_RETURN" action NullAction()
-
-    frame at android_like_frame:
-        xsize int(xs * res_scale)
-        ysize int(ys * res_scale)
+    
+    use ddmd_generic_notif(xs, ys):
 
         vbox:
             xalign .5
@@ -106,17 +91,11 @@ screen mod_name_input(zipPath, copy=False, xs=480, ys=220):
 
 screen ddmd_input(message, ok_action, xs=480, ys=220):
     modal True
-
     zorder 200
 
     style_prefix "ddmd_confirm"
-
-    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay) xsize config.screen_width ysize config.screen_height
-    key "K_RETURN" action NullAction()
-
-    frame at android_like_frame:
-        xsize int(xs * res_scale)
-        ysize int(ys * res_scale)
+    
+    use ddmd_generic_notif(xs, ys):
 
         vbox:
             xalign .5
@@ -137,17 +116,11 @@ screen ddmd_input(message, ok_action, xs=480, ys=220):
 
 screen ddmd_progress(message, xs=480, ys=220):
     modal True
-
     zorder 200
 
     style_prefix "ddmd_confirm"
-
-    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay) xsize config.screen_width ysize config.screen_height
-    key "K_RETURN" action NullAction()
-
-    frame at android_like_frame:
-        xsize int(xs * res_scale)
-        ysize int(ys * res_scale)
+    
+    use ddmd_generic_notif(xs, ys):
 
         vbox:
             xalign .5
@@ -158,3 +131,44 @@ screen ddmd_progress(message, xs=480, ys=220):
                 size 18
                 xalign 0.5
                 substitute False
+
+screen ddmd_generic_notif(xs, ys):
+    add At("sdc_system/ddmd_app/ddmd_confirm_overlay.png", android_like_overlay) xsize config.screen_width ysize config.screen_height
+    key "K_RETURN" action NullAction()
+
+    frame at android_like_frame:
+        xsize int(xs * res_scale)
+        ysize int(ys * res_scale)
+
+        transclude
+
+screen ddmd_generic_window(title, xsize=500, ysize=300, allow_search=False):
+    drag:
+        drag_handle (0, 0, 1.0, 40)
+        xsize int(xsize * res_scale)
+        ysize int(ysize * res_scale)
+        xpos 0.3
+        ypos 0.3
+        
+        frame:
+            hbox:
+                ypos 0.005
+                xalign 0.52 
+                text _(title)
+
+            hbox:
+                ypos -0.005
+                if allow_search:
+                    xalign 0.96
+                    imagebutton:
+                        idle Transform("ddmd_search_window_icon", size=(int(36 * res_scale), int(36 * res_scale)))
+                        hover Transform("ddmd_search_window_icon_hover", size=(int(36 * res_scale), int(36 * res_scale)))
+                        action Show("mod_search", Dissolve(0.25))
+                else:
+                    xalign 0.98
+                imagebutton:
+                    idle Transform("ddmd_close_icon", size=(int(36 * res_scale), int(36 * res_scale)))
+                    hover Transform("ddmd_close_icon_hover", size=(int(36 * res_scale), int(36 * res_scale)))
+                    action Hide(transition=Dissolve(0.25))
+            
+            transclude
