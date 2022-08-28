@@ -86,7 +86,7 @@ While Mod Docker has some similarities to Doki Doki Mod Launcher/Mod Manager, Mo
 
 ### Mod Docker
 
-> Mod Docker uses a custom Ren'Py 6 (SE) and 7 build that runs any selected mod as it's own mod (no matter if the mod is the same in two copies). It requires no external EXEs or the base game to work (except for the base game RPAs) to load the mods' own assets. It does not share save data of one mod throughout multiple copies.
+> Mod Docker uses a custom Ren'Py 6 (SE) 7 and 8 build that runs any selected mod as it's own mod (no matter if the mod is the same in two copies). It requires no external EXEs or the base game to work (except for the base game RPAs) to load the mods' own assets. It does not share save data of one mod throughout multiple copies.
 
 ### Doki Doki Mod Launcher/Doki Doki Mod Manager
 
