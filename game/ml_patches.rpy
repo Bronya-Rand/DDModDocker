@@ -43,3 +43,5 @@ init -100 python:
         return renpy.loader.load(fn)
 
     renpy.file = patched_file
+
+    Composite = LiveComposite
