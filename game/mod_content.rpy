@@ -47,3 +47,4 @@ define tempFolderName = ""
 default persistent.transfer_warning = False
 
 default persistent.military_time = False
+default persistent.disable_renpy_warning = False

@@ -106,6 +106,18 @@ screen mod_settings():
                         Dissolve(0.25))))
 
                 imagebutton:
+                    idle ConditionSwitch("persistent.disable_renpy_warning", Composite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_off", size=(int(48 * res_scale), int(48 * res_scale))),
+                        (int(55 * res_scale), 13), Text(_("Disable Ren'Py 8 Warning"), style="modSettings_text", size=int(18 * res_scale))), "True",
+                        Composite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_on", size=(int(48 * res_scale), int(48 * res_scale))), (int(55 * res_scale), int(13 * res_scale)), 
+                        Text(_("Disable Ren'Py 8 Warning"), style="modSettings_text", size=int(18 * res_scale))))
+                    hover ConditionSwitch("persistent.disable_renpy_warning", Composite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_off_hover", size=(int(48 * res_scale), int(48 * res_scale))),
+                        (int(55 * res_scale), 14), Text(_("Disable Ren'Py 8 Warning"), style="modSettings_text", size=int(18 * res_scale))), "True", 
+                        Composite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_on_hover", size=(int(48 * res_scale), int(48 * res_scale))), (int(55 * res_scale), int(13 * res_scale)), Text(_("Disable Ren'Py 8 Warning"), 
+                        style="modSettings_text", size=int(18 * res_scale))))
+                    action [If(persistent.disable_renpy_warning, SetField(persistent, "disable_renpy_warning", False),
+                        SetField(persistent, "disable_renpy_warning", True))]
+
+                imagebutton:
                     idle ConditionSwitch("persistent.military_time", Composite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_on", size=(int(48 * res_scale), int(48 * res_scale))),
                         (int(55 * res_scale), 13), Text(_("Use 24-Hour Format"), style="modSettings_text", size=int(18 * res_scale))), "True",
                         Composite((int(250 * res_scale), int(40 * res_scale)), (0, 0), Transform("ddmd_toggle_off", size=(int(48 * res_scale), int(48 * res_scale))), (int(55 * res_scale), int(13 * res_scale)), 

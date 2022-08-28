@@ -12,8 +12,13 @@ python early:
     import datetime
 
 init -1000 python:
+    alerted = False
 
     def _mod_overlay():
+        global alerted
+        if persistent.disable_renpy_warning and not alerted:
+            renpy.show_screen("ddmd_dialog", message="WARNING", message2="Only install {b}Ren'Py 8{/b} mods on this build of Doki Doki Mod Docker. Ren'Py 7 and 6 mods are not compatible with DDMD.")
+            alerted = True
         renpy.show_screen("mods")
         renpy.restart_interaction()
 
