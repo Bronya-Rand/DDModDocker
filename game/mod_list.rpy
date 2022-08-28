@@ -1,6 +1,6 @@
 ## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
 
-screen mod_list(search):
+screen mod_list(search=""):
     zorder 101
     style_prefix "modList"
 
