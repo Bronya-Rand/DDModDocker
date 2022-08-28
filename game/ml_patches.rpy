@@ -7,7 +7,7 @@ init -100 python:
         if archive + ".rpa" not in os.listdir(persistent.ddml_basedir + "/game"):
             raise Exception("'%s.rpa' was not found in the Mod Docker game folder. Check your installation and try again." % archive)
 
-    if hashlib.sha256(open(os.path.join(persistent.ddml_basedir, "game/scripts.rpa"), "rb").read()).hexdigest() != "4bfb6fd390b5c82cf9d814be5b6f32f896ca2a1d1b5d1a50a04385c25cdff4ae":
+    if hashlib.sha256(open(os.path.join(persistent.ddml_basedir, "game/scripts.rpa"), "rb").read()).hexdigest() != "a4833c4b8a611e8ea8c0f5e168a33aa13dafe2eed183593f12293497b121d339":
         raise Exception("Hash mismatch between the current 'scripts.rpa' file and DDMD's patched 'scripts.rpa'.\nPlease add DDMD's patched 'scripts.rpa' into DDMD's game directory.")
 
     if not os.path.exists(persistent.ddml_basedir + "/characters"):
