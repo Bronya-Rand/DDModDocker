@@ -351,10 +351,12 @@ screen mods():
                     hover Transform("ddmd_search_icon_hover", size=(int(48 * res_scale), int(48 * res_scale)))
                     hovered Show("mods_hover_info", about=_("Browse the Mod List!"))
                     unhovered Hide("mods_hover_info")
-                    action [Hide("mods_hover_info"), If(not persistent.mod_list_disclaimer_accepted, 
-                        Show("ddmd_confirm", message="Disclaimer", message2="This mod list source is provided by the defunct Doki Doki Mod Club site. Not all mods may be on here while others may be out-of-date. By accepting this prompt, you acknowledge to the following disclaimer above.", 
-                        yes_action=[SetField(persistent, "mod_list_disclaimer_accepted", True), Hide("ddmd_confirm"), Show("mod_list", Dissolve(0.25))], 
-                        no_action=Hide("ddmd_confirm")), Show("mod_list", Dissolve(0.25)))]
+                    action Show("ddmd_dialog", message="Mod List Unavailable", message2="The mod list is unavailable in the Ren'Py 8 mode of Mod Docker due to no mod lists for Ren'Py 8 mods. This feature will return when one exists.", 
+                        ok_action=Hide("ddmd_dialog"))
+                    # action [Hide("mods_hover_info"), If(not persistent.mod_list_disclaimer_accepted, 
+                    #     Show("ddmd_confirm", message="Disclaimer", message2="This mod list source is provided by the defunct Doki Doki Mod Club site. Not all mods may be on here while others may be out-of-date. By accepting this prompt, you acknowledge to the following disclaimer above.", 
+                    #     yes_action=[SetField(persistent, "mod_list_disclaimer_accepted", True), Hide("ddmd_confirm"), Show("mod_list", Dissolve(0.25))], 
+                    #     no_action=Hide("ddmd_confirm")), Show("mod_list", Dissolve(0.25)))]
             null width 10
             vbox:
                 imagebutton:
