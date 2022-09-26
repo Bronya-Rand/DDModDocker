@@ -284,8 +284,6 @@ screen mods():
             add persistent.ddml_basedir + "/game/docker_custom_image.png" xsize config.screen_width ysize config.screen_height
         elif os.path.exists(persistent.ddml_basedir + "/game/docker_custom_image.jpg"):
             add persistent.ddml_basedir + "/game/docker_custom_image.jpg" xsize config.screen_width ysize config.screen_height
-        else:
-            add "game_menu_bg" 
 
         add Transform("#000", alpha=0.8) xsize int(365 * res_scale)
         add Transform("#202020", alpha=0.5) xpos 0.28
