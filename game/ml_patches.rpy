@@ -23,6 +23,11 @@ init -100 python:
 init python:
     if not os.path.exists(config.basedir + "/characters"):
         os.makedirs(config.basedir + "/characters")
+
+init 1 python:
+    # Addresses the MAS Updater Issue
+    store.updater.DEFERRED_UPDATE_FILE = os.path.join(config.basedir, "update", "deferred.txt")
+    store.updater.DEFERRED_UPDATE_LOG = os.path.join(config.basedir, "update", "log.txt")
         
 init 1 python:
     import ddmd_api
