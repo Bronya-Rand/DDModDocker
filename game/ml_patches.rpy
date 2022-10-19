@@ -25,6 +25,11 @@ init python:
         os.makedirs(config.basedir + "/characters")
 
 init 1 python:
+    # Addresses the Ren'Py/MAS Updater Issue
+    store.updater.DEFERRED_UPDATE_FILE = os.path.join(config.basedir, "update", "deferred.txt")
+    store.updater.DEFERRED_UPDATE_LOG = os.path.join(config.basedir, "update", "log.txt")
+
+init 1 python:
     import ddmd_api
     
     modDocker_api = ddmd_api.ModDocker_API()
