@@ -1,6 +1,5 @@
 *.rpyc
 *.bak
-*.chr
 poemwords.txt
 cache
 MLSaves

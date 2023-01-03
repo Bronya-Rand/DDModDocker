@@ -11,7 +11,7 @@ define config.window_title = config.name
 define gui.show_name = False
 
 # This controls the version number of your mod.
-define config.version = "1.0.6"
+define config.version = "1.0.7"
 
 # This adds information about your mod in the About screen.
 # DDLC does not have a 'About' screen so you can leave this blank.
@@ -24,56 +24,6 @@ define gui.about = _("")
 #   Example: Doki Doki Yuri Time to DokiDokiYuriTime
 define build.name = "DokiDokiModDocker"
 
-# This configures whether your mod has sound effects.
-define config.has_sound = True
-
-# This configures whether your mod has music.
-define config.has_music = True
-
-# This configures whether your mod has voices.
-define config.has_voice = False
-
-# This configures what music will play when you launch your mod and in the 
-# main menu.
-define config.main_menu_music = audio.t1
-
-# These variables control the transition effects of DDLC when entering and exiting
-# a menu.
-#   config.enter_transition controls the effect seen when entering the game menu.
-#   config.exit_transition controls the effect when returning to the game.
-#   Dissolve(X) dissolves the menu or last screen by X seconds.
-define config.enter_transition = Dissolve(.2)
-define config.exit_transition = Dissolve(.2)
-
-# This controls the transition effect of DDLC after loading the game.
-define config.after_load_transition = None
-
-# This controls the transition effect when your mod has reached the end of its' story.
-define config.end_game_transition = Dissolve(.5)
-
-# This controls the textbox that the characters use to speak.
-#   "auto" sets the textbox to hide during scenes and show when a character speaks
-#   "show" sets the textbox to show at all times
-#   "hide" only shows dialogue when a character speaks.
-define config.window = "auto"
-
-# This controls the transition effects of the textbox.
-#   config.window_show_transition controls the effect when the textbox is shown.
-#   config.window_hide_transition controls the effect when the textbox is hidden.
-#   Dissolve(X) dissolves the menu or last screen by X seconds.
-define config.window_show_transition = Dissolve(.2)
-define config.window_hide_transition = Dissolve(.2)
-
-# This sets the text speed of your mod.
-default preferences.text_cps = 50
-
-# This controls the auto-text forward speed of your mod.
-default preferences.afm_time = 15
-
-# This controls the audio level of your mod.
-default preferences.music_volume = 0.75
-default preferences.sfx_volume = 0.75
-
 # This controls the save folder name of your mod.
 # Finding your Saves:
 #   Windows: %AppData%/RenPy/
@@ -84,29 +34,6 @@ define config.save_directory = "DD-ModDocker"
 
 # This controls the window logo of your mod.
 define config.window_icon = "sdc_system/DDMDLogo.png"
-
-# This controls whether your mod allows the player to skip dialogue.
-define config.allow_skipping = True
-
-# This controls whether your mod saves automatically.
-define config.has_autosave = False
-
-# This controls whether you mod saves automatically when quitting the game.
-define config.autosave_on_quit = False
-
-# This controls the number of slots auto-save can use for saving the game.
-define config.autosave_slots = 0
-
-# This controls whether the player can rollback to the previous dialogue in-game.
-define config.rollback_enabled = config.developer
-
-# These variables controls the layers placement of screens, images, and more. 
-# It is highly recommended to leave these variables alone.
-define config.layers = [ 'master', 'transient', 'screens', 'overlay', 'front' ]
-define config.image_cache_size = 64
-define config.predict_statements = 50
-define config.menu_clear_layers = ["front"]
-define config.gl_test_image = "white"
 
 init python:
     build.executable_name = "DDMD"
@@ -175,6 +102,7 @@ init python:
     build.classify("How to use DDMD (macOS).txt", "mod")
     build.classify("How to use DDMD (Windows, Linux).txt", "mod")
     build.classify("ddmd_settings.json", "mod")
+    build.classify("game/mod_patches/**", "mod_patches")
 
     build.classify("game/MLSaves/**", None)
     build.classify("game/mods/**", None)
