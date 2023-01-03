@@ -42,9 +42,15 @@ init 1 python:
 init -100 python:
 
     def patched_file(fn):
+        import re
+        basechrs = re.compile(r"^(monika|sayori|yuri|natsuki)\.chr")
+
         if ".." in fn:
             fn = fn.replace("..", config.basedir.replace("\\", "/"))
 
+        # Include CHRs if called from patch RPA
+        if basechrs.match(fn):
+            return renpy.loader.load('mod_patches/chrs/' + fn)
         return renpy.loader.load(fn)
 
     renpy.file = patched_file
