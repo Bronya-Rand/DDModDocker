@@ -342,8 +342,10 @@ def main():
                     base, ext = os.path.splitext(i)
 
                     # Check if the archive does not have any of the extensions in archive_extensions
-                    if not (ext in archive_extensions):
+                    if not i.endswith(".rpa"):
                         continue
+
+                    base = i[:-4]
 
                     if base in renpy.config.archives:
                         renpy.config.archives.remove(base)
