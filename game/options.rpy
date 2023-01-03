@@ -11,7 +11,7 @@ define config.window_title = config.name
 define gui.show_name = False
 
 # This controls the version number of your mod.
-define config.version = "1.0.6"
+define config.version = "1.0.7"
 
 # This adds information about your mod in the About screen.
 # DDLC does not have a 'About' screen so you can leave this blank.
@@ -30,7 +30,6 @@ define build.name = "DokiDokiModDocker"
 #   macOS: $HOME/Library/RenPy/ (Un-hide the Library Folder)
 #   Linux: $HOME/.renpy/
 define config.save_directory = "DD-ModDocker"
-# define config.save_directory = "DDMLIntegrated"
 
 # This controls the window logo of your mod.
 define config.window_icon = "sdc_system/DDMDLogo.png"
@@ -87,6 +86,7 @@ init python:
     # These variables declare the archives that will be made to your packaged mod.
     # To add another archive, make a build.archive variable like in this example:
     build.archive("ddml", 'mod')
+    build.archive("mod_patches", 'mod')
     
     #############################################################
     # These variables classify packages for PC and Android platforms.
@@ -101,6 +101,7 @@ init python:
     build.classify("How to use DDMD (macOS).txt", "mod")
     build.classify("How to use DDMD (Windows, Linux).txt", "mod")
     build.classify("ddmd_settings.json", "mod")
+    build.classify("game/mod_patches/**", "mod_patches")
 
     build.classify("game/MLSaves/**", None)
     build.classify("game/mods/**", None)

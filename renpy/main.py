@@ -404,40 +404,29 @@ def main():
         else:
             return None
 
-    if inRenpy:
-        temp = None
-    else:
-        temp = init_load_json()
+    temp = init_load_json()
 
     if temp:
         # Redefine game directory to mod directory
-        if os.path.exists(
+        if not os.path.exists(
             os.path.join(renpy.config.gamedir, "mods", temp["modName"], "game")
         ):
-            renpy.config.gamedir = os.path.join(
-                renpy.config.gamedir, "mods", temp["modName"], "game"
-            ).replace("\\", "/")
-        else:
             raise Exception(
                 "'game' folder could not be found in %s."
                 % os.path.join(renpy.config.gamedir, "mods", temp["modName"]).replace(
                     "\\", "/"
                 )
             )
-
-        # Get that advanced_scripts folder out of there! (if RPYC/RPY mode)
-        if os.path.exists(renpy.config.gamedir + "/advanced_scripts"):
-            for src, dirs, files in os.walk(renpy.config.gamedir + "/advanced_scripts"):
-                dst = src.replace(
-                    renpy.config.gamedir + "/advanced_scripts", renpy.config.gamedir
-                )
-                for f in files:
-                    os.rename(os.path.join(src, f), os.path.join(dst, f))
-            os.rmdir(renpy.config.gamedir + "/advanced_scripts")
+        renpy.config.gamedir = os.path.join(
+            renpy.config.gamedir, "mods", temp["modName"], "game"
+        ).replace("\\", "/")
 
     game.basepath = renpy.config.gamedir
     if renpy.config.gamedir != old_gamedir:
-        renpy.config.searchpath = [old_gamedir, renpy.config.gamedir] # Somehow this works now
+        renpy.config.searchpath = [
+            old_gamedir,
+            renpy.config.gamedir,
+        ]  # Somehow this works now
     else:
         renpy.config.searchpath = [renpy.config.gamedir]
 
@@ -474,20 +463,14 @@ def main():
             if not (ext in archive_extensions):
                 archive_extensions.append(ext)
 
-    def find_archives(temp, masTemplate=False):
-        # Find archives.
-        for i in sorted(os.listdir(old_gamedir)):
-            base, ext = os.path.splitext(i)
+    def find_archives(temp):
+        renpy.config.archives.append("audio")
+        renpy.config.archives.append("fonts")
+        renpy.config.archives.append("images")
+        if not temp:
+            renpy.config.archives.append("scripts")
 
-            # Check if the archive does not have any of the extensions in archive_extensions
-            if not (ext in archive_extensions):
-                continue
-
-            if not masTemplate or (masTemplate and base != "scripts"):
-                renpy.config.archives.append(base)
-
-        if temp:
-
+        else:
             if temp["isRPA"]:
                 for i in sorted(os.listdir(renpy.config.gamedir)):
                     base, ext = os.path.splitext(i)
@@ -496,29 +479,30 @@ def main():
                     if not (ext in archive_extensions):
                         continue
 
+                    if base in renpy.config.archives:
+                        renpy.config.archives.remove(base)
+
                     renpy.config.archives.append(
                         "mods/" + temp["modName"] + "/game/" + base
                     )
+            else:
+                renpy.config.archives.append("scripts")
 
-            if (
-                os.path.exists(renpy.config.gamedir + "/ddml.rpa")
-                and "ddml" not in renpy.config.archives
-            ):
-                renpy.config.archives.append("ddml")
+        if (
+            os.path.exists(renpy.config.basedir + "/game/ddml.rpa")
+            and "ddml" not in renpy.config.archives
+        ):
+            renpy.config.archives.append("ddml")
 
         renpy.config.archives.reverse()
 
         # Initialize archives.
         renpy.loader.index_archives()
 
-    find_archives(temp)
-
     if not inRenpy:
-        # The MAS fix (hopefully) (curse you advanced_scripts!)
-        for x in renpy.loader.listdirfiles():
-            if "advanced_scripts" in x:
-                renpy.config.archives = []
-                find_archives(temp, True)
+        find_archives(temp)
+
+    # raise Exception(renpy.config.archives)
 
     # Start auto-loading.
     renpy.loader.auto_init()
