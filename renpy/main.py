@@ -493,6 +493,11 @@ def main():
             and "ddml" not in renpy.config.archives
         ):
             renpy.config.archives.append("ddml")
+        if (
+            os.path.exists(renpy.config.basedir + "/game/mod_patches.rpa")
+            and "mod_patches" not in renpy.config.archives
+        ):
+            renpy.config.archives.append("mod_patches")
 
         renpy.config.archives.reverse()
 
