@@ -6,3 +6,4 @@ MLSaves
 *.rpa
 firstrun
 !scripts.rpa
+.DS_Store
