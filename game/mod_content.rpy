@@ -1,7 +1,4 @@
-## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
-
-# init 1 python:
-#     config.developer = True
+## Copyright 2023 Azariel Del Carmen (GanstaKingofSA)
 
 image ddmd_toggle_on = "sdc_system/ddmd_app/enabled.png"
 image ddmd_toggle_off = "sdc_system/ddmd_app/disabled.png"
@@ -36,7 +33,7 @@ image ddmd_file_folder = "sdc_system/file_app/OSFolder.png"
 image ddmd_transfer_icon = "sdc_system/settings_app/transfer.png"
 image ddmd_transfer_icon_hover = "sdc_system/settings_app/transferHover.png"
 
-image ddmd_time_clock = DynamicDisplayable(get_current_time)
+image ddmd_time_clock = DynamicDisplayable(ddmd_app.get_current_time)
 
 default persistent.mod_list_disclaimer_accepted = False
 define modSearchCriteria = ""
