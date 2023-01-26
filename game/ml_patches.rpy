@@ -16,8 +16,9 @@ init -100 python:
     if not os.path.exists(persistent.ddml_basedir + "/game/mods"):
         os.makedirs(persistent.ddml_basedir + "/game/mods")
 
+init 1 python:
     if config.window_title != "Doki Doki Mod Docker (Alpha)":
-        container_name = config.name or config.basedir.replace("\\", "/").split("/")[-1]
+        container_name = config.window_title or config.name or config.basedir.replace("\\", "/").split("/")[-1]
         config.window_title = _("Doki Doki Mod Docker (Alpha) - Mod Container: ") + container_name
 
 init python:
