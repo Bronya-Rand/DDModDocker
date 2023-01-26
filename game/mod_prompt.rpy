@@ -1,4 +1,7 @@
-## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
+## Copyright 2023 Azariel Del Carmen (GanstaKingofSA)
+
+init python:
+    from store import ddmd_mod_installer
 
 screen ddmd_confirm(message, yes_action, no_action, message2=None, xs=480, ys=220):
     modal True
@@ -79,13 +82,13 @@ screen mod_name_input(zipPath, copy=False, xs=480, ys=220):
                 text_size int(18 * res_scale)
                 xalign 0.5
 
-            input default "" value VariableInputValue("tempFolderName") length 24 allow "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 0123456789:-"
+            input default "" value FieldInputValue(ddmd_mod_installer, "tempFolderName") length 24 allow "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 0123456789:-"
 
             hbox:
                 xalign 0.5
                 spacing 100
 
-                textbutton _("OK") action [Hide("mod_name_input"), Function(install_mod, zipPath=zipPath, copy=copy)]
+                textbutton _("OK") action [Hide("mod_name_input"), Function(ddmd_mod_installer.install_mod, zipPath=zipPath, copy=copy)]
 
 screen ddmd_progress(message, xs=480, ys=220):
     modal True

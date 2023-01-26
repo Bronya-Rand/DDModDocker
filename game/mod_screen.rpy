@@ -1,15 +1,10 @@
-## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
+## Copyright 2023 Azariel Del Carmen (GanstaKingofSA)
 
 python early:
     import os
     import json
     import threading
     from time import sleep
-    import subprocess
-    import tempfile
-    from zipfile import ZipFile
-    import shutil
-    import datetime
 
 init -1000 python:
 
@@ -25,14 +20,6 @@ init -1000 python:
     )
 
 init python:
-    current_mod_list = []
-    selectedMod = None
-    loadedMod = None
-
-    class Mod:
-        def __init__(self, modFolderName, path):
-            self.modFolderName = modFolderName
-            self.path = path
 
     class SteamLikeOverlay():
         def __init__(self):
@@ -41,13 +28,86 @@ init python:
         
         def show_notif(self):
             renpy.display.screen.show_screen("steam_like_overlay", _("Access the Mod Docker menu while playing."), 
-                _("Press: ") + config.keymap['mod_overlay'][0].replace("K_", ""))
+                _("Press: %s" % config.keymap['mod_overlay'][0].replace("K_", "")))
         
         def run(self):
             sleep(1.5)
             self.show_notif()
 
-    start_overlay = SteamLikeOverlay()
+        def get_ddmc_modlist():
+        with renpy.file("ddmc.json") as mod_json:
+            return json.load(mod_json)
+
+    def set_settings_json():
+        temp = [
+            {
+            "config_gl2": config.gl2
+            }
+        ]
+        with open(persistent.ddml_basedir + "/ddmd_settings.json", "w") as ddmd_settings:
+            json.dump(temp, ddmd_settings)
+
+    # For > 720p resolutions
+    def get_dsr_scale():
+        return (config.screen_width / 1280.0)
+
+    res_scale = get_dsr_scale()
+
+init python in ddmd_app:
+    from store import Text, persistent
+    from datetime import datetime
+
+    def get_current_time(st, at):
+        if persistent.military_time:
+            return Text(datetime.now().strftime("%H:%M"), style="time_text"), 1.0
+        else:
+            return Text(datetime.now().strftime("%I:%M %p"), style="time_text"), 1.0
+    
+init python in ddmd_app_settings:
+    from store import persistent, config
+    import shutil
+    import os
+    import subprocess
+
+    def delete_mod(mod):
+        try:
+            shutil.rmtree(persistent.ddml_basedir + "/game/mods/" + mod)
+            renpy.show_screen("ddmd_dialog", message="Successfully removed %s from Mod Docker." % mod)
+        except Exception as err:
+            renpy.show_screen("ddmd_dialog", message="A error occured while removing %s." % mod, message2=str(err))
+
+    def delete_saves(mod):
+        try:
+            shutil.rmtree(os.path.join(os.path.dirname(config.savedir), mod))
+            renpy.show_screen("ddmd_dialog", message="Successfully removed %s save data from Mod Docker." % mod)
+        except OSError as err:
+            if err.errno == 2:
+                renpy.show_screen("ddmd_dialog", message="No save files were found. You might have deleted the saves already or not launched this mod yet.")
+            else:
+                renpy.show_screen("ddmd_dialog", message="A error occured while removing %s save data." % mod, message2=str(err))
+        except Exception as err:
+            renpy.show_screen("ddmd_dialog", message="A error occured while removing %s save data." % mod, message2=str(err))
+    
+    def open_save_dir():
+        if renpy.windows:
+            os.startfile(config.savedir)
+        elif renpy.macintosh:
+            subprocess.Popen([ "open", config.savedir ])
+        else:
+            subprocess.Popen([ "xdg-open", config.savedir ])
+
+    def open_dir(path):
+        if renpy.windows:
+            os.startfile(path)
+        elif renpy.macintosh:
+            subprocess.Popen([ "open", path ])
+        else:
+            subprocess.Popen([ "xdg-open", path ])
+
+init python in ddmd_app_functions:
+    from store import persistent, ddmd_app_functions
+    import os
+    import json
 
     def get_mod_json():
         try:
@@ -56,35 +116,12 @@ init python:
                 return temp['modName']
         except:
             return "DDLC"
-
+    
     selectedMod = get_mod_json()
     loadedMod = selectedMod
 
-    def get_ddmc_modlist():
-        with renpy.file("ddmc.json") as mod_json:
-            return json.load(mod_json)
-
-    def get_mod_list():
-        templist = []
-        for modfolder in os.listdir(persistent.ddml_basedir + "/game/mods"):
-            if not os.path.exists(persistent.ddml_basedir + "/game/mods/" + modfolder + "/game"):
-                continue
-                
-            modfolderpath = persistent.ddml_basedir + "/game/mods/" + modfolder + "/game"
-
-            ddlcMod = False
-            for x in os.listdir(modfolderpath):
-                if x.endswith((".rpa", ".rpyc", ".rpy")):
-                    ddlcMod = True
-            
-            if ddlcMod:
-                temp = Mod(modfolder, modfolderpath)
-                templist.append(temp)
-        
-        return templist
-
     def loadMod(x, folderName):
-        if loadedMod == folderName:
+        if ddmd_app_functions.loadedMod == folderName:
             renpy.show_screen("ddmd_dialog", message="Error: %s is already the selected mod." % folderName)
             return
         isRPA = False
@@ -118,159 +155,9 @@ init python:
             else:
                 renpy.show_screen("ddmd_dialog", message="Error: You are already in stock mode.")
 
-    def open_save_dir():
-        if renpy.windows:
-            os.startfile(persistent.ddml_basedir + "/game/MLSaves")
-        elif renpy.macintosh:
-            subprocess.Popen([ "open", persistent.ddml_basedir + "/game/MLSaves" ])
-        else:
-            subprocess.Popen([ "xdg-open", persistent.ddml_basedir + "/game/MLSaves" ])
-
-    def open_dir(path):
-        if renpy.windows:
-            os.startfile(path)
-        elif renpy.macintosh:
-            subprocess.Popen([ "open", path ])
-        else:
-            subprocess.Popen([ "xdg-open", path ])
-
-    def set_settings_json():
-        temp = [
-            {
-            "config_gl2": config.gl2
-            }
-        ]
-        with open(persistent.ddml_basedir + "/ddmd_settings.json", "w") as ddmd_settings:
-            json.dump(temp, ddmd_settings)
-
-    def valid_zip(filePath):
-        """
-        Returns whether the given ZIP file is a valid Ren'Py/DDLC mod ZIP file.
-
-            filePath - the direct path to the ZIP file.
-        """
-        zip_contents = []
-
-        with ZipFile(filePath, "r") as temp_zip:
-            zip_contents = temp_zip.namelist()
-
-        for x in zip_contents:
-            if x.endswith((".rpa", ".rpyc", ".rpy")):
-                del zip_contents
-                return True
-
-        return False
-
-    def inInvalidDir(path):
-        for x in ("lib", "renpy"):
-            if x + "/" in path.replace("\\", "/"):
-                return True
-        return False
-
-    def install_mod(zipPath, copy=False):
-        global tempFolderName
-        if not tempFolderName:
-            renpy.show_screen("ddmd_dialog", message="Error: The folder name cannot be blank.")
-            return
-        elif tempFolderName.lower() in ("ddlc mode", "stock mode", "ddlc", "stock"):
-            tempFolderName = ""
-            renpy.show_screen("ddmd_dialog", message="Error: %s is a reserved folder name. Please try another folder name." % tempFolderName)
-            return
-        elif os.path.exists(os.path.join(persistent.ddml_basedir, "game/mods/" + tempFolderName)):
-            tempFolderName = ""
-            renpy.show_screen("ddmd_dialog", message="Error: This mod folder already exists. Please try another folder name.")
-            return
-        else:
-            renpy.show_screen("ddmd_progress", message="Installing mod. Please wait.")
-            folderPath = os.path.join(persistent.ddml_basedir, "game/mods", tempFolderName)
-            try:
-                if not copy:
-                    if not valid_zip(zipPath):
-                        raise Exception("Given ZIP file is a invalid DDLC Mod ZIP Package. Please select a different ZIP file.")
-                        return
-                    
-                    mod_dir = tempfile.mkdtemp(prefix="NewDDML_", suffix="_TempArchive")
-
-                    with ZipFile(zipPath, "r") as tempzip:
-                        tempzip.extractall(mod_dir)
-                    
-                else:
-                    validMod = False
-                    for mod_src, dirs, files in os.walk(zipPath):
-                        for mod_f in files:
-                            if mod_f.endswith((".rpa", ".rpyc", ".rpy")):
-                                validMod = True
-                    if validMod:
-                        mod_dir = zipPath
-                    else:
-                        raise Exception("Given Mod Folder is a invalid DDLC Mod Folder Package. Please select a different mod folder.")
-                        return
-
-                os.makedirs(folderPath)
-                os.makedirs(os.path.join(folderPath, "game"))
-
-                for mod_src, dirs, files in os.walk(mod_dir):
-                    dst_dir = mod_src.replace(mod_dir, folderPath)
-                    for d in dirs:
-                        if d == "characters":
-                            shutil.move(os.path.join(mod_src, d), os.path.join(dst_dir, d))
-                    for f in files:
-                        if f.endswith((".rpa", ".rpyc", ".rpy")):
-                            if not inInvalidDir(mod_src):
-                                mod_dir = mod_src
-                                break
-
-                for mod_src, dirs, files in os.walk(mod_dir):
-                    dst_dir = mod_src.replace(mod_dir, folderPath + "/game")
-                    for mod_d in dirs:
-                        shutil.move(os.path.join(mod_src, mod_d), os.path.join(dst_dir, mod_d))
-                    for mod_f in files:
-                        shutil.move(os.path.join(mod_src, mod_f), os.path.join(dst_dir, mod_f))
-                
-                renpy.hide_screen("ddmd_progress")
-                renpy.show_screen("ddmd_dialog", message="%s has been installed successfully." % tempFolderName)
-                tempFolderName = ""
-            except OSError as err:
-                if os.path.exists(folderPath):
-                    shutil.rmtree(folderPath)
-                renpy.hide_screen("ddmd_progress")
-                renpy.show_screen("ddmd_dialog", message="A error has occured during installation.", message2=str(err))
-            except Exception as err:
-                if os.path.exists(folderPath):
-                    shutil.rmtree(folderPath)
-                renpy.hide_screen("ddmd_progress")
-                renpy.show_screen("ddmd_dialog", message="A error has occured during installation.", message2=str(err))
-    
-    def delete_mod(mod):
-        try:
-            shutil.rmtree(persistent.ddml_basedir + "/game/mods/" + mod)
-            renpy.show_screen("ddmd_dialog", message="Successfully removed %s from Mod Docker." % mod)
-        except Exception as err:
-            renpy.show_screen("ddmd_dialog", message="A error occured while removing %s." % mod, message2=str(err))
-
-    def delete_saves(mod):
-        try:
-            shutil.rmtree(persistent.ddml_basedir + "/game/MLSaves/" + mod)
-            renpy.show_screen("ddmd_dialog", message="Successfully removed %s save data from Mod Docker." % mod)
-        except OSError as err:
-            if err.errno == 2:
-                renpy.show_screen("ddmd_dialog", message="No save files were found. You might have deleted the saves already or not launched this mod yet.")
-            else:
-                renpy.show_screen("ddmd_dialog", message="A error occured while removing %s save data." % mod, message2=str(err))
-        except Exception as err:
-            renpy.show_screen("ddmd_dialog", message="A error occured while removing %s save data." % mod, message2=str(err))
-
-    def get_current_time(st, at):
-        if persistent.military_time:
-            return Text(datetime.datetime.now().strftime("%H:%M"), style="time_text"), 1.0
-        else:
-            return Text(datetime.datetime.now().strftime("%I:%M %p"), style="time_text"), 1.0
-
-    # For > 720p resolutions
-    def get_dsr_scale():
-        return (config.screen_width / 1280.0)
-
-    res_scale = get_dsr_scale()
+init python:
+    from store import ddmd_app_settings, ddmd_app_functions
+    from store.ddmd_services import ddmd_modlist_service
 
 screen mods():
     zorder 100
@@ -278,14 +165,11 @@ screen mods():
 
     fixed at ml_overlay_effect:
         style_prefix "mods"
-
         
         if os.path.exists(persistent.ddml_basedir + "/game/docker_custom_image.png"):
             add persistent.ddml_basedir + "/game/docker_custom_image.png" size(config.screen_width, config.screen_height)
         elif os.path.exists(persistent.ddml_basedir + "/game/docker_custom_image.jpg"):
-            add persistent.ddml_basedir + "/game/docker_custom_image.jpg" size(config.screen_width, config.screen_height)
-        else:
-            add "game_menu_bg" 
+            add persistent.ddml_basedir + "/game/docker_custom_image.jpg" size(config.screen_width, config.screen_height) 
 
         add Transform("#000", alpha=0.8) size(int(365 * res_scale), config.screen_height)
         add Transform("#202020", alpha=0.5) xpos 0.28
@@ -304,24 +188,20 @@ screen mods():
                     spacing int(9 * res_scale)
 
                     button:
-                        action [SetVariable("selectedMod", "DDLC"), SensitiveIf(selectedMod != "DDLC")]
+                        action [SetField(ddmd_app_functions, "selectedMod", "DDLC"), SensitiveIf(ddmd_app_functions.selectedMod != "DDLC")]
 
-                        add If(loadedMod == "DDLC", LiveComposite((int(310 * res_scale), int(50 * res_scale)), (0, int(1 * res_scale)), Transform("ddmd_selectedmod_icon", size=(int(36 * res_scale), int(36 * res_scale))), 
+                        add If(ddmd_app_functions.loadedMod == "DDLC", Composite((int(310 * res_scale), int(50 * res_scale)), (0, int(1 * res_scale)), Transform("ddmd_selectedmod_icon", size=(int(36 * res_scale), int(36 * res_scale))), 
                             (int(38 * res_scale), 0), Text(If(renpy.version_tuple == (6, 99, 12, 4, 2187), "DDLC Mode", 
                             _("Stock Mode")), style="mods_button_text")), Text(If(renpy.version_tuple == (6, 99, 12, 4, 2187), 
                             _("DDLC Mode"), _("Stock Mode")), style="mods_button_text"))
 
-                    python:
-                        global current_mod_list
-                        current_mod_list = get_mod_list()
-
-                    for x in current_mod_list:
+                    for mod in ddmd_modlist_service.mods.keys():
                         button:
-                            action [SetVariable("selectedMod", x.modFolderName), SensitiveIf(x.modFolderName != selectedMod)]
+                            action [SetField(ddmd_app_functions, "selectedMod", mod), SensitiveIf(mod != ddmd_app_functions.selectedMod)]
                             
-                            add If(loadedMod == x.modFolderName, LiveComposite((int(190 * res_scale), int(50 * res_scale)), (0, int(1 * res_scale)), Transform("ddmd_selectedmod_icon", size=(int(36 * res_scale), int(36 * res_scale))), 
-                                (int(38 * res_scale), 0), Text(x.modFolderName, style="mods_button_text", substitute=False)), 
-                                Text(x.modFolderName, style="mods_button_text", substitute=False))
+                            add If(ddmd_app_functions.loadedMod == mod, Composite((int(190 * res_scale), int(50 * res_scale)), (0, int(1 * res_scale)), Transform("ddmd_selectedmod_icon", size=(int(36 * res_scale), int(36 * res_scale))), 
+                                (int(38 * res_scale), 0), Text(mod, style="mods_button_text", substitute=False)), 
+                                Text(mod, style="mods_button_text", substitute=False))
 
         hbox:
             style "mods_return_button"
@@ -392,7 +272,7 @@ screen mods():
                     elif selectedMod == "DDLC" and renpy.version_tuple == (6, 99, 12, 4, 2187):
                         label _("DDLC Mode")
                     else:
-                        label "[selectedMod]"
+                        label "[ddmd_app_functions.selectedMod]"
 
         vbox:
             xpos 0.31 
@@ -402,18 +282,18 @@ screen mods():
                 xpos 0.2
                 yoffset -20
                 textbutton _("Open Save Directory") action Function(open_save_dir)
-                if loadedMod != "DDLC":
+                if ddmd_app_functions.loadedMod != "DDLC":
                     textbutton _("Open Running Mods' Game Directory") action Function(open_dir, config.gamedir)
                 textbutton _("Open Mod Docker's Game Directory") action Function(open_dir, persistent.ddml_basedir + "/game")
-                if selectedMod != loadedMod and selectedMod != "DDLC":
-                    textbutton _("Delete Mod") action Show("ddmd_confirm", message=_("Are you sure you want to remove %s?") % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_mod, selectedMod)], no_action=Hide("ddmd_confirm"))
-                if selectedMod != loadedMod:
-                    textbutton _("Delete Saves") action Show("ddmd_confirm", message=_("Are you sure you want to remove %s save files?") % selectedMod, yes_action=[Hide("ddmd_confirm"), Function(delete_saves, selectedMod)], no_action=Hide("ddmd_confirm"))
+                if ddmd_app_functions.selectedMod != ddmd_app_functions.loadedMod:
+                    textbutton _("Delete Saves") action Show("ddmd_confirm", message=_("Are you sure you want to remove %s save files?") % ddmd_app_functions.selectedMod, yes_action=[Hide("ddmd_confirm"), Function(ddmd_app_settings.delete_saves, ddmd_app_functions.selectedMod)], no_action=Hide("ddmd_confirm"))
+                    if ddmd_app_functions.selectedMod != "DDLC":
+                        textbutton _("Delete Mod") action Show("ddmd_confirm", message=_("Are you sure you want to remove %s?") % ddmd_app_functions.selectedMod, yes_action=[Hide("ddmd_confirm"), Function(ddmd_app_settings.delete_mod, ddmd_app_functions.selectedMod)], no_action=Hide("ddmd_confirm"))
 
         vbox:
             xpos 0.9
             ypos 0.9
-            textbutton _("Select") action If(selectedMod == "DDLC", Function(clearMod), Function(loadMod, persistent.ddml_basedir + "/game/mods/" + selectedMod, selectedMod))
+            textbutton _("Select") action If(ddmd_app_functions.selectedMod == "DDLC", Function(ddmd_app_functions.clearMod), Function(ddmd_app_functions.loadMod, persistent.ddml_basedir + "/game/mods/" + ddmd_app_functions.selectedMod, ddmd_app_functions.selectedMod))
 
     key "K_ESCAPE" action Hide("mods")
 

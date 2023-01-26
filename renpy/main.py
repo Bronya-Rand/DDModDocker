@@ -330,6 +330,12 @@ def main():
                 load_rpe(dir + "/" + fn)
 
     def find_archives(temp):
+        if (
+            os.path.exists(renpy.config.basedir + "/game/ddml.rpa")
+            and "ddml" not in renpy.config.archives
+        ):
+            renpy.config.archives.append("ddml")
+            
         renpy.config.archives.append("audio")
         renpy.config.archives.append("fonts")
         renpy.config.archives.append("images")
@@ -356,11 +362,6 @@ def main():
             else:
                 renpy.config.archives.append("scripts")
 
-        if (
-            os.path.exists(renpy.config.basedir + "/game/ddml.rpa")
-            and "ddml" not in renpy.config.archives
-        ):
-            renpy.config.archives.append("ddml")
         if (
             os.path.exists(renpy.config.basedir + "/game/mod_patches.rpa")
             and "mod_patches" not in renpy.config.archives

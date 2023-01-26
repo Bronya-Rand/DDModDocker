@@ -1,9 +1,9 @@
-﻿## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
+﻿## Copyright 2023 Azariel Del Carmen (GanstaKingofSA)
 
 # This file customizes what your mod is and and how it starts and builds!
 
 # This controls what your mod is called.
-define config.name = "Doki Doki Mod Docker: SE (Alpha)"
+define config.name = "Doki Doki Mod Docker SE (Alpha)"
 define config.window_title = config.name
 
 # This controls whether you want your mod name to show in the main menu.
@@ -11,7 +11,7 @@ define config.window_title = config.name
 define gui.show_name = False
 
 # This controls the version number of your mod.
-define config.version = "1.0.8"
+define config.version = "1.0.9"
 
 # This adds information about your mod in the About screen.
 # DDLC does not have a 'About' screen so you can leave this blank.

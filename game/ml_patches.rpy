@@ -1,4 +1,4 @@
-## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
+## Copyright 2023 Azariel Del Carmen (GanstaKingofSA)
 
 init -100 python:
     import os
@@ -17,8 +17,10 @@ init -100 python:
     if not os.path.exists(persistent.ddml_basedir + "/game/mods"):
         os.makedirs(persistent.ddml_basedir + "/game/mods")
 
-    if config.window_title != "Doki Doki Mod Docker: SE (Alpha)":
-        config.window_title = "Doki Doki Mod Docker: SE (Alpha) - R6 Mod Container"
+init 1 python:
+    if config.window_title != "Doki Doki Mod Docker SE (Alpha)":
+        container_name = config.window_title or config.name or config.basedir.replace("\\", "/").split("/")[-1]
+        config.window_title = _("Doki Doki Mod Docker SE (Alpha) - Mod Container: ") + container_name  
 
 init python:
     if not os.path.exists(config.basedir + "/characters"):
