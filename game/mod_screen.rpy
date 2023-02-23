@@ -35,8 +35,8 @@ init python:
             self.show_notif()
 
         def get_ddmc_modlist():
-        with renpy.file("ddmc.json") as mod_json:
-            return json.load(mod_json)
+            with renpy.file("ddmc.json") as mod_json:
+                return json.load(mod_json)
 
     def set_settings_json():
         temp = [
