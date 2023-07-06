@@ -1,23 +1,32 @@
 ## Copyright 2023 Azariel Del Carmen (GanstaKingofSA)
 
 init python:
+    import tempfile
+    import errno
+
     def can_access(path, drive=False):
-        try:
-            if not renpy.windows or drive:
-                return os.access(path, os.R_OK)
-            else:
-                for x in os.listdir(path):
-                    break
-        except OSError as e:
-            if e.errno == 13 or e.errno == 2 or e.errno == 22:
-                return False
-            raise
-        return True
+        if drive:
+            if os.name == "nt" and len(path) == 2 and path[1] == ":":
+                return os.path.isdir(path)
+            return False
+
+        if os.name == "nt":
+            try:
+                with os.scandir(path) as it:
+                    print("Aloha!")
+                return True
+            except OSError as e:
+                if e.errno == errno.EACCES or 'WinError 59' in str(e):
+                    return False
+                raise
+        else:
+            return os.access(path, os.R_OK)
     
     def get_network_drives():
-        temp = subprocess.run("powershell (Get-WmiObject -ClassName Win32_MappedLogicalDisk).Name", check=True, shell=True, stdout=subprocess.PIPE).stdout.decode("utf-8").replace("\r\n", "").split(":")
-        temp.pop(-1)
-        return temp
+        result = subprocess.run("net use", check=True, shell=True, capture_output=True, text=True)
+        output_lines = result.stdout.strip().split('\n')[1:]
+        drives = [line.split()[1].rstrip(':') for line in output_lines if line.startswith('OK')]
+        return drives
 
     def get_physical_drives(net_drives):
         temp = subprocess.run("powershell (Get-PSDrive -PSProvider FileSystem).Name", check=True, shell=True, stdout=subprocess.PIPE).stdout.decode("utf-8").split("\r\n")
@@ -93,20 +102,20 @@ screen pc_directory(loc=None, ml=False, mac=False):
                                 hover Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Frame("#dbdbdd"), (0, 0), Transform("ddmd_file_network_drive", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), int(2 * res_scale)), Text(x + ":/", substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
                                 action If(can_access(x + ":"), [Show("pc_directory", loc=x + ":/", ml=ml, mac=mac)], Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                 else:
-                    for x in os.listdir(current_dir):
-                        if os.path.isdir(os.path.join(current_dir, x)):
+                    for x in os.scandir(current_dir):
+                        if x.is_dir():
                             hbox:
                                 imagebutton:
-                                    idle Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Transform("ddmd_file_folder", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), 2), Text(x, substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
-                                    hover Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Frame("#dbdbdd"), (0, 0), Transform("ddmd_file_folder", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), int(2 * res_scale)), Text(x, substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
-                                    action If(can_access(os.path.join(current_dir, x)), [Show("pc_directory", loc=os.path.join(current_dir, x), ml=ml, mac=mac)], Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x).replace("\\", "/")))
+                                    idle Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Transform("ddmd_file_folder", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), 2), Text(x.name, substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
+                                    hover Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Frame("#dbdbdd"), (0, 0), Transform("ddmd_file_folder", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), int(2 * res_scale)), Text(x.name, substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
+                                    action If(can_access(os.path.join(current_dir, x.path)), [Show("pc_directory", loc=os.path.join(current_dir, x.path), ml=ml, mac=mac)], Show("ddmd_dialog", message="You do not have permission to access %s." % os.path.join(current_dir, x.path).replace("\\", "/")))
                         elif not mac and not ml:
-                            if os.path.join(current_dir, x).endswith(".zip"):
+                            if os.path.join(current_dir, x.path).endswith(".zip"):
                                 hbox:
                                     imagebutton:
-                                        idle Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Transform("ddmd_file_file", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), 2), Text(x, substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
-                                        hover Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Frame("#dbdbdd"), (0, 0), Transform("ddmd_file_file", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), int(2 * res_scale)), Text(x, substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
-                                        action [Hide("pc_directory"), Show("mod_name_input", zipPath=os.path.join(current_dir, x))]
+                                        idle Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Transform("ddmd_file_file", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), 2), Text(x.name, substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
+                                        hover Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Frame("#dbdbdd"), (0, 0), Transform("ddmd_file_file", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), int(2 * res_scale)), Text(x.name, substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
+                                        action [Hide("pc_directory"), Show("mod_name_input", zipPath=os.path.join(current_dir, x.path))]
         
             vbar value YScrollValue("fe") xoffset 20 yoffset 10 ysize int(240 * res_scale)
 
