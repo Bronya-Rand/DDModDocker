@@ -15,5 +15,4 @@ init -100 python:
 
 init -1 python:
     ## Fixes a issue where some transitions (menu bg) reset themselves
-    if renpy.version_tuple >= (7, 4, 7, 1862):
-        config.atl_start_on_show = False 
+    config.atl_start_on_show = False 
