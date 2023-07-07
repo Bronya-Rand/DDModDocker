@@ -40,11 +40,9 @@ init python:
             return json.load(mod_json)
 
     def set_settings_json():
-        temp = [
-            {
+        temp = {
             "config_gl2": config.gl2
-            }
-        ]
+        }
         with open(persistent.ddml_basedir + "/ddmd_settings.json", "w") as ddmd_settings:
             json.dump(temp, ddmd_settings)
 
