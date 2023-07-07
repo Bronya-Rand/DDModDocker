@@ -516,14 +516,6 @@ def main():
     else:
         log_clock("Loader init")
 
-    if not inRenpy:
-        if temp and temp["isRPA"]:
-            log_clock("Loading %s needed RPAs" % temp["modName"])
-        else:
-            log_clock("Loading Stock/DDLC RPAs")
-    else:
-        log_clock("Loader init")
-
     # Initialize the log.
     game.log = renpy.python.RollbackLog()
 

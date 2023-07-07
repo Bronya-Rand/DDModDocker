@@ -135,23 +135,19 @@ init python in ddmd_mod_installer:
                 elif os.path.isdir(entry_path):
                     shutil.move(entry_path, os.path.join(game_folder_path, entry))
 
-    def install_mod(zipPath, copy=False):
-        global tempFolderName
-
-        if not tempFolderName:
+    def install_mod(zipPath, modFolderName, copy=False):
+        if not modFolderName:
             renpy.show_screen("ddmd_dialog", message="Error: The folder name cannot be blank.")
             return
-        elif tempFolderName.lower() in ("ddlc mode", "stock mode", "ddlc", "stock"):
-            tempFolderName = ""
-            renpy.show_screen("ddmd_dialog", message="Error: %s is a reserved folder name. Please try another folder name." % tempFolderName)
+        elif modFolderName.lower() in ("ddlc mode", "stock mode", "ddlc", "stock"):
+            renpy.show_screen("ddmd_dialog", message="Error: %s is a reserved folder name. Please try another folder name." % modFolderName)
             return
-        elif os.path.exists(os.path.join(persistent.ddml_basedir, "game/mods/" + tempFolderName)):
-            tempFolderName = ""
+        elif os.path.exists(os.path.join(persistent.ddml_basedir, "game/mods/" + modFolderName)):
             renpy.show_screen("ddmd_dialog", message="Error: This mod folder already exists. Please try another folder name.")
             return
         else:
             renpy.show_screen("ddmd_progress", message="Installing mod. Please wait.")
-            folderPath = os.path.join(persistent.ddml_basedir, "game/mods", tempFolderName)
+            folderPath = os.path.join(persistent.ddml_basedir, "game/mods", modFolderName)
             try:
                 if not check_mod_validity(zipPath, copy):
                     raise Exception("Given file/folder is an invalid DDLC Mod Package. Please select a different file/folder.")
@@ -178,8 +174,8 @@ init python in ddmd_mod_installer:
                     move_mod_files(folderPath, mod_dir, mod_format_id, copy)
                 
                 renpy.hide_screen("ddmd_progress")
-                renpy.show_screen("ddmd_dialog", message="%s has been installed successfully." % tempFolderName)
-                tempFolderName = ""
+                renpy.show_screen("ddmd_dialog", message="%s has been installed successfully." % modFolderName)
+                modFolderName = ""
             except BadZipfile:
                 renpy.hide_screen("ddmd_progress")
                 renpy.show_screen("ddmd_dialog", message="Error: Invalid ZIP file. Please select a different ZIP file.")
