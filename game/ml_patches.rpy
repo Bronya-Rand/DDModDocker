@@ -29,6 +29,16 @@ init 1 python:
     store.updater.DEFERRED_UPDATE_FILE = os.path.join(config.basedir, "update", "deferred.txt")
     store.updater.DEFERRED_UPDATE_LOG = os.path.join(config.basedir, "update", "log.txt")
 
+init 1 python:
+    import ddmd_api
+    
+    modDocker_api = ddmd_api.ModDocker_API()
+    modDocker_api.get_mod_info()
+    
+    # Re-write in case of new API updates
+    if modDocker_api.get_current_container_save_folder().split("/")[-1] != "DDLC":
+        modDocker_api.write_mod_data()
+
 init -100 python:
 
     def patched_file(fn):

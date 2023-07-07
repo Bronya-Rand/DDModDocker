@@ -13,7 +13,7 @@ init -1 python in ddmd_services:
             thread.start()
 
         def run(self):
-            for modfolder in os.scandir(self.modpath):
+            for entry in os.scandir(self.modpath):
                 if entry.is_dir() and os.path.exists(os.path.join(entry.path, "game")):
                     self.mods[entry.name] = os.path.join(entry.path, "game")
 

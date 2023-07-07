@@ -13,7 +13,7 @@ init python:
         if os.name == "nt":
             try:
                 with os.scandir(path) as it:
-                    print("Aloha!")
+                    break
                 return True
             except OSError as e:
                 if e.errno == errno.EACCES or 'WinError 59' in str(e):

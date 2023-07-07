@@ -501,7 +501,7 @@ def main():
                 if base in renpy.config.archives:
                     renpy.config.archives.remove(base)
 
-                renpy.config.archives.append("mods/{}/{}/game/{}".format(mod_name, base))
+                renpy.config.archives.append("mods/{}/game/{}".format(mod_name, base))
 
         if os.path.exists(os.path.join(renpy.config.basedir, "game", "mod_patches.rpa")) and "mod_patches" not in renpy.config.archives:
             renpy.config.archives.append("mod_patches")
@@ -590,7 +590,7 @@ def main():
         if not is_ddlc_mode:
 
             # Make sure we add the needed DDMD files
-            ddmd_files = {"mod_screen", "mod_settings", "ml_patches", "mod_content", "mod_dir_browser", "mod_list",
+            ddmd_files = {"mod_installer", "mod_services", "mod_screen", "mod_settings", "ml_patches", "mod_content", "mod_dir_browser", "mod_list",
                       "mod_prompt", "mod_styles", "mod_transforms", "saves"}
             
             for x in renpy.game.script.script_files:
