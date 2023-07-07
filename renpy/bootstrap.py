@@ -339,13 +339,13 @@ You may be using a system install of python. Please run {0}.sh,
 
         from json import load as load_json
 
-        if os.path.exists(basedir + "/selectedMod.json"):
-            with open(basedir + "/selectedMod.json", "r") as sm:
+        try:
+            json_path = os.path.join(basedir, "selectedMod.json")
+            with open(json_path, "r") as sm:
                 mod = load_json(sm)
-            renpy.display.presplash.start(
-                basedir, gamedir + "/mods/" + mod["modName"] + "/game"
-            )
-        else:
+            mod_game_path = os.path.join(gamedir, "mods", mod["modName"], "game")
+            renpy.display.presplash.start(basedir, mod_game_path)
+        except IOError:
             renpy.display.presplash.start(basedir, gamedir)
 
     # Ditto for the Ren'Py module.

@@ -1,31 +1,40 @@
 ## Copyright 2023 Azariel Del Carmen (GanstaKingofSA)
 
 init python:
+    import errno
+    
     def can_access(path, drive=False):
-        try:
-            if not renpy.windows or drive:
-                return os.access(path, os.R_OK)
-            else:
-                for x in os.listdir(path):
+        if drive:
+            if os.name == "nt" and len(path) == 2 and path[1] == ":":
+                return os.path.isdir(path)
+            return False
+
+        if os.name == "nt":
+            try:
+                for entry in os.listdir(path):
                     break
-        except OSError as e:
-            if e.errno == 13 or e.errno == 2 or e.errno == 22:
-                return False
-            raise
-        return True
+                return True
+            except WindowsError as e:
+                if e.errno == errno.EACCES or e.winerror == 59:
+                    return False
+                raise
+        else:
+            return os.access(path, os.R_OK)
     
     def get_network_drives():
-        temp = subprocess.run("powershell (Get-WmiObject -ClassName Win32_MappedLogicalDisk).Name", check=True, shell=True, stdout=subprocess.PIPE).stdout.decode("utf-8").replace("\r\n", "").split(":")
-        temp.pop(-1)
-        return temp
+        result = subprocess.check_output("net use", shell=True)
+        output_lines = result.strip().split('\r\n')[1:]
+        drives = [line.split()[1].rstrip(':') for line in output_lines if line.startswith('OK')]
+        return drives
 
     def get_physical_drives(net_drives):
-        temp = subprocess.run("powershell (Get-PSDrive -PSProvider FileSystem).Name", check=True, shell=True, stdout=subprocess.PIPE).stdout.decode("utf-8").split("\r\n")
-        temp.pop(-1)
+        temp = subprocess.check_output("powershell (Get-PSDrive -PSProvider FileSystem).Name", shell=True)
+        temp = temp.decode("utf-8").strip().split("\r\n")
 
-        for x in temp:
+        for x in temp[:]:
             if x in net_drives:
                 temp.remove(x)
+
         return temp
 
 screen pc_directory(loc=None, ml=False, mac=False):
