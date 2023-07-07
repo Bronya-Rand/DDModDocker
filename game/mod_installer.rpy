@@ -53,12 +53,13 @@ init python in ddmd_mod_installer:
         Returns: A string indicating the format of the mod package.
         """
         top_level_folder = get_top_level_folder(mod_dir)
-                    
-        if os.path.isdir(os.path.join(mod_dir, top_level_folder, "characters")) and os.path.isdir(os.path.join(mod_dir, top_level_folder, "game")):
-            return 1  # Standard Format
-        elif os.path.isdir(os.path.join(mod_dir, top_level_folder, "game")):
-            return 2  # Standard Format (No Characters Folder)
-        elif os.path.isdir(os.path.join(mod_dir, "characters")) and os.path.isdir(os.path.join(mod_dir, "game")):
+
+        if top_level_folder is not None:      
+            if os.path.isdir(os.path.join(mod_dir, top_level_folder, "characters")) and os.path.isdir(os.path.join(mod_dir, top_level_folder, "game")):
+                return 1  # Standard Format
+            elif os.path.isdir(os.path.join(mod_dir, top_level_folder, "game")):
+                return 2  # Standard Format (No Characters Folder)
+        if os.path.isdir(os.path.join(mod_dir, "characters")) and os.path.isdir(os.path.join(mod_dir, "game")):
             return 3 # Standard Format without top folder
         elif os.path.isdir(os.path.join(mod_dir, "game")):
             if any(f.endswith((".rpa", ".rpyc", ".rpy")) for f in os.listdir(os.path.join(mod_dir, "game"))):
