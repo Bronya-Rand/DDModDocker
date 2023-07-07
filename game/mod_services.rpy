@@ -15,14 +15,21 @@ init -1 python in ddmd_services:
 
         def run(self):
             for modfolder in os.listdir(self.modpath):
-                if os.path.exists(os.path.join(self.modpath, modfolder, "game")):
+                if os.path.isdir(os.path.join(self.modpath, modfolder, "game")):
                     self.mods[modfolder] = os.path.join(self.modpath, modfolder, "game")
 
             while True:
-                modFolders = []
+                modFolders = {}
+                for entry in os.listdir(self.modpath):
+                    entry_path = os.path.join(self.modpath, entry)
+                    if os.path.isdir(entry_path) and os.path.exists(os.path.join(entry_path, "game")):
+                        modFolders[entry] = entry_path
+
                 for modfolder in os.listdir(self.modpath):
-                    if os.path.exists(os.path.join(self.modpath, modfolder, "game")):
-                        modFolders.append(modfolder)
+                    modfolder_path = os.path.join(self.modpath, modfolder)
+                    if os.path.exists(os.path.join(modfolder_path, "game")):
+                        if modfolder not in modFolders:
+                            modFolders[modfolder] = modfolder_path
 
                 if len(modFolders) < len(self.mods):
                     for mod in self.mods.keys():
@@ -30,7 +37,7 @@ init -1 python in ddmd_services:
                             self.mods.pop(mod)
                 elif len(modFolders) > len(self.mods):
                     for mod in modFolders:
-                        if not self.mods.get(mod):
+                        if mod not in self.mods:
                             self.mods[mod] = os.path.join(self.modpath, mod, "game")
 
                 sleep(5)

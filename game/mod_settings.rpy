@@ -14,47 +14,33 @@ init python:
             return hashlib.sha256(open(path, "rb").read()).hexdigest() == 'da7ba6d3cf9ec1ae666ec29ae07995a65d24cca400cd266e470deb55e03a51d4'
 
     def transfer_data(ddmm_path):
-        modsTransferred = []
         try:
-            for dirs in os.listdir(ddmm_path):
-                if not os.path.exists(os.path.join(persistent.ddml_basedir, "game/mods", dirs)):
-                    modsTransferred.append(dirs)
-                    os.makedirs(os.path.join(persistent.ddml_basedir, "game/mods", dirs))
-                    os.makedirs(os.path.join(persistent.ddml_basedir, "game/mods", dirs, "game"))
+            for mod_dir in os.listdir(ddmm_path):
+                mod_path = os.path.join(persistent.ddml_basedir, "game/mods", mod_dir)
 
-                    for ddmm_src, mod_dirs, mod_files in os.walk(ddmm_path + "/" + dirs):
-                        dst_dir = ddmm_src.replace(ddmm_path + "/" + dirs, os.path.join(persistent.ddml_basedir, "game/mods", dirs))
-                        for d in mod_dirs:
-                            if d == "characters":
-                                shutil.copytree(os.path.join(ddmm_src, d), os.path.join(dst_dir, d))
-                        for f in mod_files:
-                            if f.endswith((".rpa", ".rpyc", ".rpy")):
-                                if not f.startswith("00"):
-                                    mod_dir = ddmm_src
-                                    break
+                if not os.path.exists(mod_path):
+                    os.makedirs(mod_path)
 
-                    for ddmm_src, mod_dirs, mod_files in os.walk(mod_dir):
-                        dst_dir = ddmm_src.replace(mod_dir, os.path.join(persistent.ddml_basedir, "game/mods", dirs, "game"))
-                        for mod_d in mod_dirs:
-                            shutil.copytree(os.path.join(ddmm_src, mod_d), os.path.join(dst_dir, mod_d))
-                        for mod_f in mod_files:
-                            if mod_f.endswith(".rpa"):
-                                if is_original_file(os.path.join(ddmm_src, mod_f)):
-                                    continue
-                            shutil.copy2(os.path.join(ddmm_src, mod_f), os.path.join(dst_dir, mod_f))
+                for ddmm_src, mod_dirs, _ in os.walk(os.path.join(ddmm_path, mod_dir)):
+                    dst_dir = ddmm_src.replace(os.path.join(ddmm_path, mod_dir), mod_path)
+                    for d in mod_dirs:
+                        if d in ("characters", "game"):
+                            shutil.copytree(os.path.join(ddmm_src, d), os.path.join(dst_dir, d))
 
             renpy.hide_screen("ddmd_progress")
             renpy.show_screen("ddmd_dialog", message="Transferred all data sucessfully.")
         except OSError as err:
-            if modsTransferred and os.path.exists(os.path.join(persistent.ddml_basedir, "game/mods", modsTransferred[-1])):
-                shutil.rmtree(os.path.join(persistent.ddml_basedir, "game/mods", modsTransferred[-1]))
+            mod_path = os.path.join(persistent.ddml_basedir, "game/mods", mod_dir)
+            if os.path.exists(mod_path):
+                shutil.rmtree(mod_path)
             renpy.hide_screen("ddmd_progress")
-            renpy.show_screen("ddmd_dialog", message="A error has occured while transferring.", message2=str(err))
+            renpy.show_screen("ddmd_dialog", message="A error has occured while transferring %s." % mod_dir, message2=str(err))
         except Exception as err:
-            if modsTransferred and os.path.exists(os.path.join(persistent.ddml_basedir, "game/mods", modsTransferred[-1])):
-                shutil.rmtree(os.path.join(persistent.ddml_basedir, "game/mods", modsTransferred[-1]))
+            mod_path = os.path.join(persistent.ddml_basedir, "game/mods", mod_dir)
+            if os.path.exists(mod_path):
+                shutil.rmtree(mod_path)
             renpy.hide_screen("ddmd_progress")
-            renpy.show_screen("ddmd_dialog", message="A unknown error has occured while transferring.", message2=str(err))
+            renpy.show_screen("ddmd_dialog", message="A unknown error has occured while transferring %s." % mod_dir, message2=str(err))
 
     def transfer_ddmm_data():
         if not renpy.windows:

@@ -33,17 +33,17 @@ init python:
         def run(self):
             sleep(1.5)
             self.show_notif()
+    
+    start_overlay = SteamLikeOverlay()
 
-        def get_ddmc_modlist():
-            with renpy.file("ddmc.json") as mod_json:
-                return json.load(mod_json)
+    def get_ddmc_modlist():
+        with renpy.file("ddmc.json") as mod_json:
+            return json.load(mod_json)
 
     def set_settings_json():
-        temp = [
-            {
+        temp = {
             "config_gl2": config.gl2
-            }
-        ]
+        }
         with open(persistent.ddml_basedir + "/ddmd_settings.json", "w") as ddmd_settings:
             json.dump(temp, ddmd_settings)
 
@@ -267,9 +267,9 @@ screen mods():
                     xpos int(450 * res_scale)
                     ypos int(50 * res_scale)
                     xsize int(700 * res_scale)
-                    if selectedMod == "DDLC" and renpy.version_tuple > (6, 99, 12, 4, 2187):
+                    if ddmd_app_functions.selectedMod == "DDLC" and renpy.version_tuple > (6, 99, 12, 4, 2187):
                         label _("Stock Mode")
-                    elif selectedMod == "DDLC" and renpy.version_tuple == (6, 99, 12, 4, 2187):
+                    elif ddmd_app_functions.selectedMod == "DDLC" and renpy.version_tuple == (6, 99, 12, 4, 2187):
                         label _("DDLC Mode")
                     else:
                         label "[ddmd_app_functions.selectedMod]"
@@ -281,10 +281,10 @@ screen mods():
             vbox:
                 xpos 0.2
                 yoffset -20
-                textbutton _("Open Save Directory") action Function(open_save_dir)
+                textbutton _("Open Save Directory") action Function(ddmd_app_settings.open_save_dir)
                 if ddmd_app_functions.loadedMod != "DDLC":
-                    textbutton _("Open Running Mods' Game Directory") action Function(open_dir, config.gamedir)
-                textbutton _("Open Mod Docker's Game Directory") action Function(open_dir, persistent.ddml_basedir + "/game")
+                    textbutton _("Open Running Mods' Game Directory") action Function(ddmd_app_settings.open_dir, config.gamedir)
+                textbutton _("Open Mod Docker's Game Directory") action Function(ddmd_app_settings.open_dir, persistent.ddml_basedir + "/game")
                 if ddmd_app_functions.selectedMod != ddmd_app_functions.loadedMod:
                     textbutton _("Delete Saves") action Show("ddmd_confirm", message=_("Are you sure you want to remove %s save files?") % ddmd_app_functions.selectedMod, yes_action=[Hide("ddmd_confirm"), Function(ddmd_app_settings.delete_saves, ddmd_app_functions.selectedMod)], no_action=Hide("ddmd_confirm"))
                     if ddmd_app_functions.selectedMod != "DDLC":
