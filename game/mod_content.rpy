@@ -39,10 +39,8 @@ image ddmd_transfer_icon_hover = "sdc_system/settings_app/transferHover.png"
 image ddmd_time_clock = DynamicDisplayable(ddmd_app.get_current_time)
 
 default persistent.mod_list_disclaimer_accepted = False
-define modSearchCriteria = ""
 
 default persistent.self_extract = None
-define tempFolderName = ""
 
 default persistent.transfer_warning = False
 

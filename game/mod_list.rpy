@@ -55,13 +55,14 @@ screen mod_search(xs=480, ys=220):
             xalign .5
             yalign .5
             spacing 8
+            default modSearchCriteria = ""
 
             label _("Search For?"):
                 text_size 20
                 xalign 0.5
 
             input:
-                value VariableInputValue("modSearchCriteria") 
+                value ScreenVariableInputValue("modSearchCriteria") 
                 length 24 
                 allow "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[[]] "
                 copypaste True
