@@ -15,6 +15,12 @@ init python in ddmd_mod_installer:
         return False
 
     def check_mod_validity(zipPath, copy):
+        """
+        Checks mod validity for mod packages and ZIP files.
+
+        filePath: The direct path to the ZIP file.
+        Returns: A boolean indicating a valid mod ZIP file.
+        """
         if not copy:
             # ZIP file check
             with ZipFile(zipPath, "r") as temp_zip:
@@ -35,6 +41,12 @@ init python in ddmd_mod_installer:
         return False
 
     def get_top_level_folder(mod_dir):
+        """
+        Get's the top level folder of a mod archive if available.
+
+        mod_dir: The path to the ZIP temp folder or mod folder package.
+        Returns: A string of the top level folder or NoneType.
+        """
         top_level_folder = None
 
         for entry in os.listdir(mod_dir):
@@ -44,30 +56,12 @@ init python in ddmd_mod_installer:
 
         return top_level_folder
 
-    def valid_zip(filePath):
-        """
-        Returns whether the given ZIP file is a valid Ren'Py/DDLC mod ZIP file.
-
-            filePath - the direct path to the ZIP file.
-        """
-        zip_contents = []
-
-        with ZipFile(filePath, "r") as temp_zip:
-            zip_contents = temp_zip.namelist()
-
-        for x in zip_contents:
-            if x.endswith((".rpa", ".rpyc", ".rpy")):
-                del zip_contents
-                return True
-
-        return False
-
     def identify_mod_format(mod_dir):
         """
         Identifies the format of the mod package based on its content and structure.
 
         mod_dir: The path to the mod package directory.
-        Returns: A string indicating the format of the mod package.
+        Returns: A integer indicating the format of the mod package.
         """
         top_level_folder = get_top_level_folder(mod_dir)
         
@@ -90,6 +84,12 @@ init python in ddmd_mod_installer:
         return -1  # Unknown Format
 
     def extract_mod_from_zip(zipPath):
+        """
+        Extracts a Mod ZIP package to a temporary folder
+
+        mod_dir: The path to the mod package directory.
+        Returns: A string path to the temp folder or NoneType
+        """
         mod_dir = tempfile.mkdtemp(prefix="NewDDML_", suffix="_TempArchive")
 
         try:
