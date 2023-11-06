@@ -644,6 +644,11 @@ def main():
                 if "mods/" in x[0]:
                     renpy.game.script.script_files.remove(x)
 
+    # Hand back a 'normal' formatted archive list for some mods
+    # that check literally for RPAs
+    for index, rpa in enumerate(renpy.config.archives):
+        renpy.config.archives[index] = rpa.split("/")[-1]
+        
     # Load all .rpy files.
     renpy.game.script.load_script()  # sets renpy.game.script.
 
