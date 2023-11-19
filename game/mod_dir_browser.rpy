@@ -11,11 +11,10 @@ init python:
 
         if os.name == "nt":
             try:
-                for entry in os.listdir(path):
-                    break
+                os.listdir(path)
                 return True
-            except WindowsError as e:
-                if e.errno == errno.EACCES or e.winerror == 59:
+            except OSError as e:
+                if e.errno in (errno.EACCES, errno.EPERM) or e.winerror == 59:
                     return False
                 raise
         else:

@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,27 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import (
-    division,
-    absolute_import,
-    with_statement,
-    print_function,
-    unicode_literals,
-)
-from renpy.compat import (
-    PY2,
-    basestring,
-    bchr,
-    bord,
-    chr,
-    open,
-    pystr,
-    range,
-    round,
-    str,
-    tobytes,
-    unicode,
-)  # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 from typing import Optional
 
@@ -47,8 +28,6 @@ import os
 import sys
 import subprocess
 import io
-
-import __main__
 
 # Encoding and sys.stderr/stdout handling ######################################
 
@@ -60,10 +39,9 @@ old_stderr = sys.stderr
 
 if PY2:
     sys_executable = sys.executable
-    reload(sys)  # type: ignore
-    sys.setdefaultencoding("utf-8")  # type: ignore
+    reload(sys) # type: ignore
+    sys.setdefaultencoding("utf-8") # type: ignore
     sys.executable = sys_executable
-
 
 def _setdefaultencoding(name):
     """
@@ -71,8 +49,7 @@ def _setdefaultencoding(name):
     encoding.
     """
 
-
-sys.setdefaultencoding = _setdefaultencoding  # type: ignore
+sys.setdefaultencoding = _setdefaultencoding # type: ignore
 
 
 sys.stdout = old_stdout
@@ -117,7 +94,7 @@ trace_local = None
 
 def trace_function(frame, event, arg):
     fn = os.path.basename(frame.f_code.co_filename)
-    trace_file.write("{} {} {} {}\n".format(fn, frame.f_lineno, frame.f_code.co_name, event))  # type: ignore
+    trace_file.write("{} {} {} {}\n".format(fn, frame.f_lineno, frame.f_code.co_name, event)) # type: ignore
     return trace_local
 
 
@@ -140,8 +117,7 @@ def mac_start(fn):
     os.start compatibility for mac.
     """
 
-    os.system("open " + fn)  # type: ignore
-
+    os.system("open " + fn) # type: ignore
 
 def popen_del(self, *args, **kwargs):
     """
@@ -149,7 +125,6 @@ def popen_del(self, *args, **kwargs):
     """
 
     return
-
 
 def bootstrap(renpy_base):
 
@@ -167,9 +142,9 @@ def bootstrap(renpy_base):
 
     # If environment.txt exists, load it into the os.environ dictionary.
     if os.path.exists(renpy_base + "/environment.txt"):
-        evars = {}
+        evars = { }
         with open(renpy_base + "/environment.txt", "r") as f:
-            code = compile(f.read(), renpy_base + "/environment.txt", "exec")
+            code = compile(f.read(), renpy_base + "/environment.txt", 'exec')
             exec(code, evars)
         for k, v in evars.items():
             if k not in os.environ:
@@ -179,12 +154,12 @@ def bootstrap(renpy_base):
     # .app file.), if on a mac.
     alt_path = os.path.abspath("renpy_base")
     if ".app" in alt_path:
-        alt_path = alt_path[: alt_path.find(".app") + 4]
+        alt_path = alt_path[:alt_path.find(".app") + 4]
 
         if os.path.exists(alt_path + "/environment.txt"):
-            evars = {}
+            evars = { }
             with open(alt_path + "/environment.txt", "rb") as f:
-                code = compile(f.read(), alt_path + "/environment.txt", "exec")
+                code = compile(f.read(), alt_path + "/environment.txt", 'exec')
                 exec(code, evars)
             for k, v in evars.items():
                 if k not in os.environ:
@@ -194,11 +169,10 @@ def bootstrap(renpy_base):
     name = os.path.basename(sys.argv[0])
 
     if name.find(".") != -1:
-        name = name[: name.find(".")]
+        name = name[:name.find(".")]
 
     # Parse the arguments.
     import renpy.arguments
-
     args = renpy.arguments.bootstrap()
 
     if args.trace:
@@ -220,13 +194,13 @@ def bootstrap(renpy_base):
         if not os.path.exists(basedir + "/game"):
             os.mkdir(basedir + "/game", 0o777)
 
-    gamedir = __main__.path_to_gamedir(basedir, name)
+    gamedir = renpy.__main__.path_to_gamedir(basedir, name)
 
     sys.path.insert(0, basedir)
 
     if renpy.macintosh:
         # If we're on a mac, install our own os.start.
-        os.startfile = mac_start  # type: ignore
+        os.startfile = mac_start # type: ignore
 
         # Are we starting from inside a mac app resources directory?
         if basedir.endswith("Contents/Resources/autorun"):
@@ -239,30 +213,23 @@ def bootstrap(renpy_base):
     # won't import.)
     try:
         import pygame_sdl2
-
         if not ("pygame" in sys.modules):
             pygame_sdl2.import_as_pygame()
     except Exception:
-        print(
-            """\
+        print("""\
 Could not import pygame_sdl2. Please ensure that this program has been built
 and unpacked properly. Also, make sure that the directories containing
 this program do not contain : or ; in their names.
 
 You may be using a system install of python. Please run {0}.sh,
 {0}.exe, or {0}.app instead.
-""".format(
-                name
-            ),
-            file=sys.stderr,
-        )
+""".format(name), file=sys.stderr)
 
         raise
 
     # If we're not given a command, show the presplash.
     if args.command == "run" and not renpy.mobile:
-        import renpy.display.presplash  # @Reimport
-
+        import renpy.display.presplash # @Reimport
         from json import load as load_json
 
         try:
@@ -278,23 +245,17 @@ You may be using a system install of python. Please run {0}.sh,
     try:
         import _renpy
     except Exception:
-        print(
-            """\
+        print("""\
 Could not import _renpy. Please ensure that this program has been built
 and unpacked properly.
 
 You may be using a system install of python. Please run {0}.sh,
 {0}.exe, or {0}.app instead.
-""".format(
-                name
-            ),
-            file=sys.stderr,
-        )
+""".format(name), file=sys.stderr)
         raise
 
     # Load the rest of Ren'Py.
     import renpy
-
     renpy.import_all()
 
     renpy.loader.init_importer()
@@ -310,10 +271,10 @@ You may be using a system install of python. Please run {0}.sh,
                 renpy.config.renpy_base = renpy_base
                 renpy.config.basedir = basedir
                 renpy.config.gamedir = gamedir
-                renpy.config.args = []  # type: ignore
+                renpy.config.args = [ ] # type: ignore
 
                 if renpy.android:
-                    renpy.config.logdir = os.environ["ANDROID_PUBLIC"]
+                    renpy.config.logdir = os.environ['ANDROID_PUBLIC']
                 else:
                     renpy.config.logdir = basedir
 
@@ -339,7 +300,7 @@ You may be using a system install of python. Please run {0}.sh,
 
                 if e.relaunch:
                     if hasattr(sys, "renpy_executable"):
-                        subprocess.Popen([sys.renpy_executable] + sys.argv[1:])  # type: ignore
+                        subprocess.Popen([sys.renpy_executable] + sys.argv[1:]) # type: ignore
                     else:
                         if PY2:
                             subprocess.Popen([sys.executable, "-EO"] + sys.argv)
@@ -351,7 +312,6 @@ You may be using a system install of python. Please run {0}.sh,
 
             except Exception as e:
                 renpy.error.report_exception(e)
-                pass
 
         sys.exit(exit_status)
 
@@ -360,16 +320,16 @@ You may be using a system install of python. Please run {0}.sh,
         if "RENPY_SHUTDOWN_TRACE" in os.environ:
             enable_trace(int(os.environ["RENPY_SHUTDOWN_TRACE"]))
 
-        renpy.display.tts.tts(None)
+        renpy.display.tts.tts(None) # type: ignore
 
-        renpy.display.im.cache.quit()
+        renpy.display.im.cache.quit() # type: ignore
 
-        if renpy.display.draw:
-            renpy.display.draw.quit()
+        if renpy.display.draw: # type: ignore
+            renpy.display.draw.quit() # type: ignore
 
         renpy.audio.audio.quit()
 
         # Prevent subprocess from throwing errors while trying to run it's
         # __del__ method during shutdown.
         if not renpy.emscripten:
-            subprocess.Popen.__del__ = popen_del  # type: ignore
+            subprocess.Popen.__del__ = popen_del # type: ignore

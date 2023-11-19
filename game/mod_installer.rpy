@@ -61,27 +61,42 @@ init python in ddmd_mod_installer:
         Identifies the format of the mod package based on its content and structure.
 
         mod_dir: The path to the mod package directory.
-        Returns: A integer indicating the format of the mod package.
+        Returns: An integer indicating the format of the mod package.
         """
+
+        # Check for top-level folder
         top_level_folder = get_top_level_folder(mod_dir)
-        
-        if top_level_folder is not None:  
+
+        # Standard Format
+        if top_level_folder is not None:
             if os.path.isdir(os.path.join(mod_dir, top_level_folder, "characters")) and os.path.isdir(os.path.join(mod_dir, top_level_folder, "game")):
-                return 1  # Standard Format
+                return 1
             elif os.path.isdir(os.path.join(mod_dir, top_level_folder, "game")):
-                return 2  # Standard Format (No Characters Folder)
+                return 2
+
+        # Standard Format without top folder
         if os.path.isdir(os.path.join(mod_dir, "characters")) and os.path.isdir(os.path.join(mod_dir, "game")):
-            return 3 # Standard Format without top folder
-        elif os.path.isdir(os.path.join(mod_dir, "game")):
-            if any(f.endswith((".rpa", ".rpyc", ".rpy")) for f in os.listdir(os.path.join(mod_dir, "game"))):
-                return 5  # Possible Format 2 or 4 (game folder with RPAs or RPYC/RPY files)
+            return 3
+
+        # Check for game folder and RPAs/RPYC/RPY files
+        game_dir = os.path.join(mod_dir, "game")
+        if os.path.isdir(game_dir):
+            if any(f.endswith((".rpa", ".rpyc", ".rpy")) for f in os.listdir(game_dir)):
+                return 5
             else:
-                return 4  # Standard Format without top folder (No Characters Folder)
-        elif any(f.endswith(".rpa") for f in os.listdir(mod_dir)):
-            return 6  # Possible Format 1 (RPAs without game folder)
-        elif os.path.isdir(os.path.join(mod_dir, "mod_assets")) or any(f.endswith((".rpyc", ".rpy")) for f in os.listdir(mod_dir)):
-            return 7  # Possible Format 3 (RPYC/RPY files without game folder)
-        return -1  # Unknown Format
+                return 4
+
+        # Check for RPAs without game folder
+        if any(f.endswith(".rpa") for f in os.listdir(mod_dir)):
+            return 6
+
+        # Check for RPYC/RPY files without game folder
+        mod_assets_dir = os.path.join(mod_dir, "mod_assets")
+        if os.path.isdir(mod_assets_dir) or any(f.endswith((".rpyc", ".rpy")) for f in os.listdir(mod_dir)):
+            return 7
+
+        # Unknown Format
+        return -1
 
     def extract_mod_from_zip(zipPath):
         """
@@ -109,28 +124,35 @@ init python in ddmd_mod_installer:
         mod_format_id: Integer value indicating the mod format ID.
         copy: Boolean value indicating whether to copy the files (macOS only).
         """
+
         if mod_format_id in (1, 2, 3, 4, 5):
             characters_dir = os.path.join(mod_dir_path, "characters")
             game_dir = os.path.join(mod_dir_path, "game")
-            if copy:
-                # Copy characters folder (if applicable)
-                if os.path.isdir(characters_dir):
+
+            # Copy or move characters folder (if applicable)
+            if os.path.isdir(characters_dir):
+                if copy:
                     shutil.copytree(characters_dir, mod_folder_path)
-                # Copy game folder to mod_folder_path
+                else:
+                    shutil.move(characters_dir, mod_folder_path)
+
+            # Copy or move game folder to mod_folder_path
+            if copy:
                 shutil.copytree(game_dir, mod_folder_path)
             else:
-                # Move characters folder (if applicable)
-                if os.path.isdir(characters_dir):
-                    shutil.move(characters_dir, mod_folder_path)
-                # Move game folder to mod_folder_path
-                shutil.move(os.path.join(mod_dir_path, "game"), mod_folder_path)
+                shutil.move(game_dir, mod_folder_path)
+
         elif mod_format_id in (6, 7):
             game_folder_path = os.path.join(mod_folder_path, "game")
-            # Create game folder in mod_folder_path
-            os.makedirs(game_folder_path)
+
+            # Create game folder if it doesn't exist
+            if not os.path.exists(game_folder_path):
+                os.makedirs(game_folder_path)
+
             # Move all files from mod_dir_path to game folder in mod_folder_path
             for entry in os.listdir(mod_dir_path):
                 entry_path = os.path.join(mod_dir_path, entry)
+
                 if os.path.isfile(entry_path):
                     shutil.move(entry_path, game_folder_path)
                 elif os.path.isdir(entry_path):
