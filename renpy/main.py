@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -30,12 +30,14 @@ import time
 import zipfile
 import gc
 import linecache
+from renpy.mod_docker import ModDockerMain
+import json
 
 import renpy
 import renpy.game as game
 
 last_clock = time.time()
-
+docker_main = ModDockerMain()
 
 def log_clock(s):
     global last_clock
@@ -252,8 +254,9 @@ def choose_variants():
         renpy.config.variants.insert(0, 'web') # type: ignore
 
         # mobile
-        userAgent = emscripten.run_script_string(r'''navigator.userAgent''')
-        mobile = re.search('Mobile|Android|iPad|iPhone', userAgent)
+        mobile = emscripten.run_script_int(
+            r'''/Mobile|Android|iPad|iPhone/.test(navigator.userAgent)
+            || (navigator.userAgent.indexOf("Mac") != -1 && navigator.maxTouchPoints > 1)''')
         if mobile:
             renpy.config.variants.insert(0, 'mobile') # type: ignore
         # Reserve android/ios for when the OS API is exposed
@@ -299,48 +302,22 @@ def choose_variants():
         renpy.config.variants.insert(0, 'large') # type: ignore
 
 
-def android_searchpath():
+def load_build_info():
     """
-    Determines the searchpath on Android.
+    Loads cache/build_info.json, and uses it to initialize the
+    renpy.game.build_info dictionary.
     """
 
-    # The default gamedir, in private.
-    renpy.config.searchpath = [ renpy.config.gamedir ]
-
-    # The public android directory.
-    if "ANDROID_PUBLIC" in os.environ:
-        android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
-
-        if os.path.exists(android_game):
-            renpy.config.searchpath.insert(0, android_game)
-
-    # Asset packs.
-    packs = [
-        "ANDROID_PACK_FF1",
-        "ANDROID_PACK_FF2",
-        "ANDROID_PACK_FF3",
-        "ANDROID_PACK_FF4",
-    ]
-
-    for i in packs:
-        if i not in os.environ:
-            continue
-
-        assets = os.environ[i]
-
-        for i in [ "renpy/common", "game" ]:
-            dn = os.path.join(assets, i)
-            if os.path.isdir(dn):
-                renpy.config.searchpath.append(dn)
-
-    print("Android search paths:" , " ".join(renpy.config.searchpath))
+    try:
+        f = renpy.exports.open_file("cache/build_info.json", "utf-8")
+        renpy.game.build_info = json.load(f)
+    except Exception:
+        renpy.game.build_info = { "info" : { } }
 
 
 def main():
 
     gc.set_threshold(*renpy.config.gc_thresholds)
-
-    log_clock("Bootstrap to the start of init.init.")
 
     renpy.game.exception_info = 'Before loading the script.'
 
@@ -369,82 +346,21 @@ def main():
     if (renpy.android or renpy.ios) and not renpy.config.log_to_stdout:
         print("Version:", renpy.version)
 
-    renpy_sdk_folders = {"launcher", "gui", "doc", "module", "tutorial", "the_question"}
-    inRenpy = any(folder in renpy_sdk_folders for folder in os.listdir(renpy.config.basedir))
-
-    log_clock("Early init.")
-
     # Note the game directory.
     old_gamedir = renpy.config.gamedir
 
-    # Load the selected mod info or stock/DDLC
-    def init_load_json():
-        import json
-        mod_json_path = os.path.join(renpy.config.basedir, "selectedmod.json")
-        if not os.path.exists(mod_json_path):
-            return None
-
-        try:
-            with open(mod_json_path, "r") as mod_json:
-                return json.load(mod_json)
-        except (IOError, ValueError):
-            return None
-
-    temp = init_load_json()
-
-    is_ddlc_mode = False
-    if temp is None:
-        # Handle the case when no mod is selected (Load DDLC itself)
-        mod_name = None
-        is_rpa = None
-        is_ddlc_mode = True
-    else:
-        if "modName" in temp and "isRPA" in temp:
-            mod_name = temp["modName"]
-            is_rpa = temp["isRPA"]
-        else:
-            raise Exception("Mod JSON Data is corrupt or invalid. Remove 'selectedmod.json', run DDMD, select the mod you want to load again and try again.")
-
-    if not is_ddlc_mode:
-        # Redefine game directory to mod directory
-        mod_dir = os.path.join(renpy.config.gamedir, "mods", mod_name)
-        mod_game_path = os.path.join(mod_dir, "game")
-        mod_dir_normalized = os.path.normpath(mod_dir).replace("\\", "/")
-
-        if not os.path.exists(mod_game_path):
-            raise Exception("'game' folder could not be found in {}.".format(mod_dir_normalized))
-        
-        renpy.config.gamedir = os.path.normpath(mod_game_path).replace("\\", "/")
+    docker_main.initialize_docker()
 
     game.basepath = renpy.config.gamedir
-    if renpy.config.gamedir != old_gamedir:
-        renpy.config.searchpath = [
-            old_gamedir,
-            renpy.config.gamedir,
-        ]  # Somehow this works now
-    else:
-        renpy.config.searchpath = [renpy.config.gamedir]
-
-    # Find the common directory.
-    commondir = renpy.__main__.path_to_common(renpy.config.renpy_base) # E1101 @UndefinedVariable
-
-    if os.path.isdir(commondir):
-        renpy.config.searchpath.append(commondir)
-        renpy.config.commondir = commondir
-    else:
-        renpy.config.commondir = None
-
-    # Add path from env variable, if any
-    if "RENPY_SEARCHPATH" in os.environ:
-        renpy.config.searchpath.extend(os.environ["RENPY_SEARCHPATH"].split("::"))
-
-    if renpy.android:
-        renpy.config.commondir = None
-
-        android_searchpath()
+    renpy.config.commondir = renpy.__main__.path_to_common(renpy.config.renpy_base) # E1101 @UndefinedVariable
+    renpy.config.searchpath = renpy.__main__.predefined_searchpath(renpy.config.commondir, old_gamedir) # E1101 @UndefinedVariable
 
     # Load Ren'Py extensions.
     for dir in renpy.config.searchpath: # @ReservedAssignment
+
+        if not os.path.isdir(dir):
+            continue
+
         for fn in sorted(os.listdir(dir)):
             if fn.lower().endswith(".rpe"):
                 load_rpe(dir + "/" + fn)
@@ -457,52 +373,17 @@ def main():
                 archive_extensions.append(ext)
 
     # Find archives.
-    def find_archives(mod_name, is_rpa, is_ddlc_mode):
-        if os.path.exists(os.path.join(renpy.config.basedir, "game", "ddml.rpa")) and "ddml" not in renpy.config.archives:
-            renpy.config.archives.append("ddml")
-            
-        renpy.config.archives.append("audio")
-        renpy.config.archives.append("fonts")
-        renpy.config.archives.append("images")
-        if is_ddlc_mode:
-            renpy.config.archives.append("scripts")
-        elif not is_rpa:
-            renpy.config.archives.append("scripts")
+    renpy.config.archives = docker_main.find_mod_archives(archive_extensions)
 
-        if is_rpa:
-            for i in sorted(os.listdir(renpy.config.gamedir)):
-                base, ext = os.path.splitext(i)
-
-                # Check if the archive does not have any of the extensions in archive_extensions
-                if not (ext in archive_extensions):
-                    continue
-
-                if base in renpy.config.archives:
-                    renpy.config.archives.remove(base)
-
-                renpy.config.archives.append("mods/{}/game/{}".format(mod_name, base))
-
-        if os.path.exists(os.path.join(renpy.config.basedir, "game", "mod_patches.rpa")) and "mod_patches" not in renpy.config.archives:
-            renpy.config.archives.append("mod_patches")
-
-        renpy.config.archives.reverse()
-
-        # Initialize archives.
-        renpy.loader.index_archives()
-
-    if not inRenpy:
-        find_archives(mod_name, is_rpa, is_ddlc_mode)
+    # Initialize archives.
+    renpy.loader.index_archives()
 
     # Start auto-loading.
     renpy.loader.auto_init()
 
-    if not inRenpy:
-        if is_ddlc_mode:
-            log_clock("Loading Stock/DDLC RPAs")
-        else:
-            log_clock("Loading %s needed RPAs" % mod_name)
-    else:
-        log_clock("Loader init")
+    load_build_info()
+
+    log_clock("Early init")
 
     # Initialize the log.
     game.log = renpy.python.RollbackLog()
@@ -536,7 +417,7 @@ def main():
     renpy.config.init_system_styles()
     renpy.style.build_styles() # @UndefinedVariable
 
-    log_clock("Loading error handling.")
+    log_clock("Loading error handling")
 
     # If recompiling everything, remove orphan .rpyc files.
     # Otherwise, will fail in case orphan .rpyc have same
@@ -561,67 +442,14 @@ def main():
         renpy.loader.cleardirfiles()
         renpy.game.script.scan_script_files()
 
-    if not inRenpy:
-        mods_set = set()
-
-        if not is_ddlc_mode:
-
-            # Make sure we add the needed DDMD files
-            ddmd_files = {"mod_installer", "mod_services", "mod_screen", "mod_settings", "ml_patches", "mod_content", "mod_dir_browser", "mod_list",
-                      "mod_prompt", "mod_styles", "mod_transforms", "saves"}
-            
-            for x in renpy.game.script.script_files:
-
-                if x[0] in ddmd_files or (x[1] is not None and "renpy/" in x[1].replace("\\", "/")):
-                    mods_set.add(x)
-
-            for x in renpy.game.script.script_files:
-                if "mods/" + mod_name + "/" in x[0]:
-                    mods_set.add(x)
-                elif x[1] is None and x[0].split("/")[-1] not in [y[0].split("/")[-1] for y in mods_set]:
-                    mods_set.add(x)
-
-            renpy.game.script.script_files = list(mods_set)
-
-        else:
-
-            renpy.game.script.script_files = [x for x in renpy.game.script.script_files if "mods/" not in x[0]]
+    renpy.game.script.script_files = docker_main.assign_docker_files_to_script()
 
     # Load all .rpy files.
-    renpy.game.script.load_script()  # sets renpy.game.script.
+    renpy.game.script.load_script() # sets renpy.game.script.
 
-    if not inRenpy:
-        if not is_ddlc_mode:
-            log_clock("Loading %s needed RPYC/RPYs" % mod_name)
-        else:
-            log_clock("Loading Stock/DDLC RPYC/RPYs")
+    docker_main.verify_setting_integrity()
 
-        settings_path = os.path.join(renpy.config.basedir, "ddmd_settings.json")
-        if not os.path.isfile(settings_path):
-            with open(settings_path, "wb") as ddmd_settings:
-                ddmd_settings.write(
-                    renpy.exports.file("sdc_system/backups/settings.backup").read()
-                )
-
-        ddmc_json_path = os.path.join(renpy.config.basedir, "game", "ddmc.json")
-        if not os.path.isfile(ddmc_json_path):
-            with open(ddmc_json_path, "wb") as ddmc_json:
-                ddmc_json.write(
-                    renpy.exports.file("sdc_system/backups/ddmc.backup").read()
-                )
-
-        def init_load_settings():
-            import json
-
-            with open(settings_path, "r") as ddmd_settings:
-                ddmd_configuration = json.load(ddmd_settings)
-
-            renpy.config.gl2 = ddmd_configuration.get("config_gl2", False)
-
-        init_load_settings()
-        log_clock("Loading DDMD Settings")
-    else:
-        log_clock("Loading script")
+    log_clock("Loading script")
 
     if renpy.game.args.command == 'load-test': # type: ignore
         start = time.time()
@@ -661,16 +489,15 @@ def main():
     renpy.savelocation.init()
 
     try:
-
         # Init save slots and save tokens.
         renpy.loadsave.init()
         renpy.savetoken.upgrade_all_savefiles()
-        log_clock("Loading save slot metadata.")
+        log_clock("Loading save slot metadata")
 
         # Load persistent data from all save locations.
         renpy.persistent.update()
         game.preferences = game.persistent._preferences
-        log_clock("Loading persistent.")
+        log_clock("Loading persistent")
 
         # Clear the list of seen statements in this game.
         game.seen_session = { }
@@ -680,17 +507,7 @@ def main():
         renpy.store._preferences = game.preferences # type: ignore
         renpy.store._test = renpy.test.testast._test # type: ignore
 
-        if not inRenpy:
-            renpy.store.persistent.ddml_basedir = renpy.config.basedir.replace(
-                "\\", "/"
-            )
-            if temp:
-                mod_base_folder = os.path.join(renpy.config.basedir, "game/mods", mod_name)
-                renpy.config.basedir = os.path.normpath(mod_base_folder).replace("\\", "/")
-        
-        del temp
-        del mod_name
-        del is_rpa
+        docker_main.finalize()
 
         if renpy.parser.report_parse_errors():
             raise renpy.game.ParseErrorException()
@@ -734,19 +551,19 @@ def main():
 
         game.persistent._virtual_size = renpy.config.screen_width, renpy.config.screen_height # type: ignore
 
-        log_clock("Running init code.")
+        log_clock("Running init code")
 
         renpy.pyanalysis.load_cache()
-        log_clock("Loading analysis data.")
+        log_clock("Loading analysis data")
 
         # Analyze the script and compile ATL.
         renpy.game.script.analyze()
         renpy.atl.compile_all()
-        log_clock("Analyze and compile ATL.")
+        log_clock("Analyze and compile ATL")
 
         renpy.savelocation.init()
         renpy.loadsave.init()
-        log_clock("Reloading save slot metadata.")
+        log_clock("Reloading save slot metadata")
 
         # Index the archive files. We should not have loaded an image
         # before this point. (As pygame will not have been initialized.)
@@ -762,15 +579,18 @@ def main():
 
         renpy.dump.dump(False)
         renpy.game.script.make_backups()
-        log_clock("Dump and make backups.")
+        log_clock("Dump and make backups")
 
         # Initialize image cache.
         renpy.display.im.cache.init()
-        log_clock("Cleaning cache.")
+        log_clock("Cleaning cache")
 
         # Make a clean copy of the store.
         renpy.python.make_clean_stores()
-        log_clock("Making clean stores.")
+        log_clock("Making clean stores")
+
+        # Init the keymap.
+        renpy.display.behavior.init_keymap()
 
         gc.collect(2)
 
@@ -790,7 +610,7 @@ def main():
         else:
             gc.set_threshold(700, 10, 10)
 
-        log_clock("Initial gc.")
+        log_clock("Initial gc")
 
         # Start debugging file opens.
         renpy.debug.init_main_thread_open()
@@ -798,7 +618,7 @@ def main():
         # (Perhaps) Initialize graphics.
         if not game.interface:
             renpy.display.core.Interface()
-            log_clock("Creating interface object.")
+            log_clock("Creating interface object")
 
         # Start things running.
         restart = None

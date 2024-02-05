@@ -1,4 +1,4 @@
-## Copyright 2019-2022 Azariel Del Carmen (GanstaKingofSA). All rights reserved.
+## Copyright 2019-2022-2024 Azariel Del Carmen (bronya_rand). All rights reserved.
 
 ## Patches 'wmic' environment variables with 'powershell' instead.
 python early:

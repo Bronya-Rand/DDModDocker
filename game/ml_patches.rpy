@@ -1,4 +1,4 @@
-## Copyright 2022 Azariel Del Carmen (GanstaKingofSA)
+## Copyright 2022-2024 Azariel Del Carmen (bronya_rand)
 
 init -100 python:
     import hashlib

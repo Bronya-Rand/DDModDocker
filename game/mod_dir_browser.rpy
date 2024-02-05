@@ -1,4 +1,4 @@
-## Copyright 2023 Azariel Del Carmen (GanstaKingofSA)
+## Copyright 2023-2024 Azariel Del Carmen (bronya_rand)
 
 init python:
     import tempfile
@@ -21,19 +21,24 @@ init python:
         else:
             return os.access(path, os.R_OK)
     
-    def get_network_drives():
-        result = subprocess.run("net use", check=True, shell=True, capture_output=True, text=True)
-        output_lines = result.stdout.strip().split('\n')[1:]
-        drives = [line.split()[1].rstrip(':') for line in output_lines if line.startswith('OK')]
-        return drives
+    # def get_network_drives():
+    #     result = subprocess.run("net use", check=True, shell=True, capture_output=True, text=True)
+    #     output_lines = result.stdout.strip().split('\n')[1:]
+    #     drives = [line.split()[1].rstrip(':') for line in output_lines if line.startswith('OK')]
+    #     return drives
 
-    def get_physical_drives(net_drives):
+    # def get_physical_drives(net_drives):
+    #     temp = subprocess.run("powershell (Get-PSDrive -PSProvider FileSystem).Name", check=True, shell=True, stdout=subprocess.PIPE).stdout.decode("utf-8").split("\r\n")
+    #     temp.pop(-1)
+
+    #     for x in temp:
+    #         if x in net_drives:
+    #             temp.remove(x)
+    #     return temp
+
+    def get_physical_drives():
         temp = subprocess.run("powershell (Get-PSDrive -PSProvider FileSystem).Name", check=True, shell=True, stdout=subprocess.PIPE).stdout.decode("utf-8").split("\r\n")
         temp.pop(-1)
-
-        for x in temp:
-            if x in net_drives:
-                temp.remove(x)
         return temp
 
 screen pc_directory(loc=None, ml=False, mac=False):
@@ -65,8 +70,9 @@ screen pc_directory(loc=None, ml=False, mac=False):
                 prev_dir = os.path.dirname(current_dir)
                 dir_size = len(os.listdir(current_dir))
             else:
-                net_drives = get_network_drives()
-                drives = get_physical_drives(net_drives)
+                #net_drives = get_network_drives()
+                #drives = get_physical_drives(net_drives)
+                drives = get_physical_drives()
                         
         if (renpy.windows and loc != "drive") or (not renpy.windows and loc != "/"):
             hbox:
@@ -94,12 +100,12 @@ screen pc_directory(loc=None, ml=False, mac=False):
                                 idle Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Transform("ddmd_file_physical_drive", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), int(2 * res_scale)), Text(x + ":/", substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
                                 hover Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Frame("#dbdbdd"), (0, 0), Transform("ddmd_file_physical_drive", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), int(2 * res_scale)), Text(x + ":/", substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
                                 action If(can_access(x + ":", True), [Show("pc_directory", loc=x + ":/", ml=ml, mac=mac)], Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
-                    for x in net_drives:
-                        hbox:
-                            imagebutton:
-                                idle Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Transform("ddmd_file_network_drive", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), 2), Text(x + ":/", substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
-                                hover Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Frame("#dbdbdd"), (0, 0), Transform("ddmd_file_network_drive", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), int(2 * res_scale)), Text(x + ":/", substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
-                                action If(can_access(x + ":"), [Show("pc_directory", loc=x + ":/", ml=ml, mac=mac)], Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
+                    # for x in net_drives:
+                    #     hbox:
+                    #         imagebutton:
+                    #             idle Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Transform("ddmd_file_network_drive", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), 2), Text(x + ":/", substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
+                    #             hover Composite((int(460 * res_scale), int(18 * res_scale)), (0, 0), Frame("#dbdbdd"), (0, 0), Transform("ddmd_file_network_drive", size=(int(18 * res_scale), int(18 * res_scale))), (int(20 * res_scale), int(2 * res_scale)), Text(x + ":/", substitute=False, size=int(12 * res_scale), style="pc_dir_text"))
+                    #             action If(can_access(x + ":"), [Show("pc_directory", loc=x + ":/", ml=ml, mac=mac)], Show("ddmd_dialog", message="You do not have permission to access %s." % (x + ":/")))
                 else:
                     for x in os.scandir(current_dir):
                         if x.is_dir():
