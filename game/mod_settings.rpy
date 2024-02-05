@@ -2,6 +2,7 @@
 init python:
     import os
     import hashlib
+    import shutil
 
     def is_original_file(path):
         if path.endswith("audio.rpa"):
