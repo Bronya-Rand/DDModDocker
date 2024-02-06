@@ -76,7 +76,7 @@ class ModDockerMain(object):
         Locates and loads the necessary RPAs for DDLC + Mods
         """
         if self.running_renpy_sdk():
-            return
+            return []
         archives = []
 
         if os.path.exists(os.path.join(renpy.config.basedir, "game", "ddml.rpa")):
@@ -117,7 +117,7 @@ class ModDockerMain(object):
         Assigns only Ren'Py, DDMD and Mod Files to Ren'Py to load.
         """
         if self.running_renpy_sdk():
-            return
+            return renpy.game.script.script_files
 
         if self.ddlc_mode:
             return [x for x in renpy.game.script.script_files if "mods/" not in x[0]]
