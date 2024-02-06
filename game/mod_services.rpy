@@ -13,24 +13,22 @@ init -1 python in ddmd_services:
             thread.start()
 
         def run(self):
-            for modfolder in os.listdir(self.modpath):
-                if os.path.exists(os.path.join(self.modpath, modfolder, "game")):
-                    self.mods[modfolder] = os.path.join(self.modpath, modfolder, "game")
+            for entry in os.scandir(self.modpath):
+                if entry.is_dir() and os.path.exists(os.path.join(entry.path, "game")):
+                    self.mods[entry.name] = os.path.join(entry.path, "game")
 
             while True:
-                modFolders = []
-                for modfolder in os.listdir(self.modpath):
-                    if os.path.exists(os.path.join(self.modpath, modfolder, "game")):
-                        modFolders.append(modfolder)
+                modFolders = {
+                    entry.name: entry.path
+                    for entry in os.scandir(self.modpath)
+                    if entry.is_dir() and os.path.exists(os.path.join(entry.path, "game"))
+                }
+                
+                removed_mods = [mod for mod in self.mods if mod not in modFolders]
+                self.mods = {mod: path for mod, path in self.mods.items() if mod not in removed_mods}
 
-                if len(modFolders) < len(self.mods):
-                    for mod in self.mods.keys():
-                        if not os.path.exists(os.path.join(self.modpath, mod)):
-                            self.mods.pop(mod)
-                elif len(modFolders) > len(self.mods):
-                    for mod in modFolders:
-                        if not self.mods.get(mod):
-                            self.mods[mod] = os.path.join(self.modpath, mod, "game")
+                added_mods = [mod for mod in modFolders if mod not in self.mods]
+                self.mods.update({mod: path for mod, path in modFolders.items() if mod in added_mods})
 
                 sleep(5)
 

@@ -3,7 +3,7 @@ name: Mod Docker Bug Report
 about: Create a bug report to help us improve Mod Docker from errors.
 title: "[DDMD Bug]"
 labels: bug, docker bug
-assignees: GanstaKingofSA
+assignees: Bronya-Rand
 
 ---
 

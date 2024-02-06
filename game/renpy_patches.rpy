@@ -1,4 +1,4 @@
-## Copyright 2019-2022 Azariel Del Carmen (GanstaKingofSA). All rights reserved.
+## Copyright 2019-2022-2024 Azariel Del Carmen (bronya_rand). All rights reserved.
 
 ## Patches 'wmic' environment variables with 'powershell' instead.
 python early:
@@ -15,5 +15,4 @@ init -100 python:
 
 init -1 python:
     ## Fixes a issue where some transitions (menu bg) reset themselves
-    if renpy.version_tuple >= (7, 4, 7, 1862):
-        config.atl_start_on_show = False 
+    config.atl_start_on_show = False 

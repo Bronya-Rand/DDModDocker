@@ -1,4 +1,4 @@
-## Copyright 2023 Azariel Del Carmen (GanstaKingofSA)
+## Copyright 2023-2024 Azariel Del Carmen (bronya_rand)
 
 python early:
     import os
@@ -40,11 +40,9 @@ init python:
             return json.load(mod_json)
 
     def set_settings_json():
-        temp = [
-            {
+        temp = {
             "config_gl2": config.gl2
             }
-        ]
         with open(persistent.ddml_basedir + "/ddmd_settings.json", "w") as ddmd_settings:
             json.dump(temp, ddmd_settings)
 
@@ -172,8 +170,6 @@ screen mods():
             add persistent.ddml_basedir + "/game/docker_custom_image.png" xsize config.screen_width ysize config.screen_height
         elif os.path.exists(persistent.ddml_basedir + "/game/docker_custom_image.jpg"):
             add persistent.ddml_basedir + "/game/docker_custom_image.jpg" xsize config.screen_width ysize config.screen_height
-        else:
-            add "game_menu_bg" 
 
         add Transform("#000", alpha=0.8) xsize int(365 * res_scale)
         add Transform("#202020", alpha=0.5) xpos 0.28
