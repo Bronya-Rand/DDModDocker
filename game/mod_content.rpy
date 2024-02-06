@@ -1,4 +1,4 @@
-## Copyright 2023 Azariel Del Carmen (GanstaKingofSA)
+## Copyright 2023-2024 Azariel Del Carmen (bronya_rand)
 
 image ddmd_toggle_on = "sdc_system/ddmd_app/enabled.png"
 image ddmd_toggle_off = "sdc_system/ddmd_app/disabled.png"

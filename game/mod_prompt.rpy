@@ -1,4 +1,4 @@
-## Copyright 2023 Azariel Del Carmen (GanstaKingofSA)
+## Copyright 2023-2024 Azariel Del Carmen (bronya_rand)
 
 init python:
     from store import ddmd_mod_installer

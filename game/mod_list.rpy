@@ -1,4 +1,4 @@
-## Copyright 2023 Azariel Del Carmen (GanstaKingofSA)
+## Copyright 2023-2024 Azariel Del Carmen (bronya_rand)
 
 screen mod_list(search=""):
     zorder 101
