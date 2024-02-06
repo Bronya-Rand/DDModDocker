@@ -5,7 +5,7 @@
 </p>
 Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and runs multiple) Doki Doki Literature Club mods into one game.
 
-> This project is in alpha. Expect bugs or several mods to not work as compared to other mod launchers/managers. To report mod incompatibility, report it either in [Issues](https://github.com/GanstaKingofSA/DDModDocker/issues) or [here](https://docs.google.com/forms/d/e/1FAIpQLSflrNfAf3vbBcpafv-3CEqszlGb8-P90IZAvloKVhiO10JzTQ/viewform).
+> This project is in alpha. Expect bugs or several mods to not work as compared to other mod launchers/managers. To report mod incompatibility, report it either in [Issues](https://github.com/Bronya-Rand/DDModDocker/issues).
 
 > This project is unaffiliated with Team Salvato. See [BUILDING.md](BUILDING.md) on how to build Mod Docker with fixes for Pull Requests. Credits for DDMD can be seen by looking at [CREDITS.md](CREDITS.md).
 
@@ -25,7 +25,7 @@ Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and ru
 
 ### For Windows/Linux
 
-1. Download the latest version of Mod Docker [here](https://github.com/GanstaKingofSA/DDModDocker/releases).
+1. Download the latest version of Mod Docker [here](https://github.com/Bronya-Rand/DDModDocker/releases).
 2. Open the ZIP file and extract the _DokiDokiModDocker-X.X.X-ddmd-win_ somewhere on your PC.
    > Do not install Mod Docker over DDLC.
 3. Download DDLC's PC ZIP from [ddlc.moe](https://ddlc.moe), open the ZIP file, go to _DDLC-X.X.X-pc/game_ and copy `audio.rpa`, `fonts.rpa`, `images.rpa`, and `scripts.rpa` to Mod Docker's game folder.
@@ -43,7 +43,7 @@ Doki Doki Mod Docker is a Ren'Py application that 'containerizes' (stores and ru
 
 > In order to follow these steps, you must open DDMD by right-clicking the app, click "Show Package Contents" then go to "Contents/Resources/autorun".
 
-1. Download the latest version of Mod Docker [here](https://github.com/GanstaKingofSA/DDModDocker/releases).
+1. Download the latest version of Mod Docker [here](https://github.com/Bronya-Rand/DDModDocker/releases).
 2. Open the ZIP file and extract the _DokiDokiModDocker-X.X.X-ddmd-mac_ somewhere on your PC.
    > Do not install Mod Docker over DDLC.
 3. Download DDLC's PC ZIP from [ddlc.moe](https://ddlc.moe), open the ZIP file, go to _DDLC-X.X.X-pc/game_ and copy `audio.rpa`, `fonts.rpa`, `images.rpa`, and `scripts.rpa` to Mod Docker's game folder.
@@ -96,4 +96,4 @@ While Mod Docker has some similarities to Doki Doki Mod Launcher/Mod Manager, Mo
 
 > Standard Install is the manual installation of a DDLC mod. It require the base game (and sometimes the mods' own EXE for Ren'Py 7 mods) to load the mods' own assets.
 
-Copyright © 2022 Azariel Del Carmen (GanstaKingofSA). All rights reserved. Licensed under GNU AGPL-3.0. See [LICENSE](LICENSE) for more information.
+Copyright © 2022-2024 Azariel Del Carmen (Bronya-Rand). All rights reserved. Licensed under GNU AGPL-3.0. See [LICENSE](LICENSE) for more information.

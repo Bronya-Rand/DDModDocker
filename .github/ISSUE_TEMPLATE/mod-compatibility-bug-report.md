@@ -3,7 +3,7 @@ name: Mod Compatibility Bug Report
 about: Create a mod compatibility bug report for mods that don't work under Mod Docker.
 title: "[Mod Bug]"
 labels: bug, mod bug
-assignees: GanstaKingofSA
+assignees: Bronya-Rand
 
 ---
 

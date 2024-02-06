@@ -3,7 +3,7 @@ name: Mod Docker Feature Request
 about: Suggest an idea for the next version of Mod Docker!
 title: "[Feature]"
 labels: enhancement
-assignees: GanstaKingofSA
+assignees: Bronya-Rand
 
 ---
 

@@ -1,4 +1,4 @@
-## Copyright 2023 Azariel Del Carmen (GanstaKingofSA)
+## Copyright 2023-2024 Azariel Del Carmen (bronya_rand)
 
 python early:
     import os
@@ -11,7 +11,7 @@ python early:
 
         elif renpy.windows:
             if 'APPDATA' in os.environ:
-                return os.environ['APPDATA'] + "/RenPy/DD-ModDocker"
+                return os.path.join(os.environ['APPDATA'], "RenPy", "DD-ModDocker")
             else:
                 rv = "~/RenPy/DD-ModDocker"
                 return os.path.expanduser(rv)
@@ -21,19 +21,10 @@ python early:
             return os.path.expanduser(rv)
     
     try:
-        with open(renpy.config.basedir + "/selectedmod.json", "r") as mod_json:
+        with open(os.path.join(renpy.config.basedir, "selectedmod.json"), "r") as mod_json:
             temp = json.load(mod_json)
             selectedMod = temp['modName']
     except IOError:
         selectedMod = "DDLC"
 
-    renpy.config.savedir = save_path()
-
-    if os.path.exists(renpy.config.basedir + "/game/MLSaves"):
-        for src, dirs, files in os.walk(renpy.config.basedir + "/game/MLSaves"):
-            for d in dirs:
-                src_dir = os.path.join(src, d)
-                dst_dir = src_dir.replace(src, renpy.config.savedir)
-                shutil.move(src_dir, dst_dir)
-    
-    renpy.config.savedir = renpy.config.savedir + "/" + selectedMod
+    renpy.config.savedir = os.path.join(save_path(), selectedMod)

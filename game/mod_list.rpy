@@ -1,4 +1,4 @@
-## Copyright 2023 Azariel Del Carmen (GanstaKingofSA)
+## Copyright 2023-2024 Azariel Del Carmen (bronya_rand)
 
 screen mod_list(search=""):
     zorder 101
@@ -55,13 +55,14 @@ screen mod_search(xs=480, ys=220):
             xalign .5
             yalign .5
             spacing 8
+            default modSearchCriteria = ""
 
             label _("Search For?"):
                 text_size 20
                 xalign 0.5
 
             input:
-                value VariableInputValue("modSearchCriteria") 
+                value ScreenVariableInputValue("modSearchCriteria") 
                 length 24 
                 allow "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[[]] "
                 copypaste True
@@ -71,7 +72,7 @@ screen mod_search(xs=480, ys=220):
                 spacing 100
 
                 textbutton _("OK") action [Hide("mod_search", Dissolve(0.25)), Function(search_script, modSearchCriteria)]
-                textbutton _("Clear") action SetVariable("modSearchCriteria", "")
+                textbutton _("Clear") action SetScreenVariable("modSearchCriteria", "")
 
 screen mod_list_info(mod):
     zorder 102
