@@ -7,6 +7,12 @@ init -100 python:
         if archive + ".rpa" not in os.listdir(persistent.ddml_basedir + "/game"):
             raise Exception("'%s.rpa' was not found in the Mod Docker game folder. Check your installation and try again." % archive)
 
+    ## Some older mods fail to load because for some reason, the checks don't associate `mods/X/game/Y` as True
+    ## To fix this, we hijack config.archives temporarily to "fake" that we have the right RPY files
+    ## whilst saving the true archives in another variable.
+    actual_mod_archive = renpy.config.archives
+    renpy.config.archives = ['audio','images','fonts','scripts']
+
     if hashlib.sha256(open(os.path.join(persistent.ddml_basedir, "game/scripts.rpa"), "rb").read()).hexdigest() != "a4833c4b8a611e8ea8c0f5e168a33aa13dafe2eed183593f12293497b121d339":
         raise Exception("Hash mismatch between the current 'scripts.rpa' file and DDMD's patched 'scripts.rpa'.\nPlease add DDMD's patched 'scripts.rpa' into DDMD's game directory.")
 
@@ -15,8 +21,12 @@ init -100 python:
     if not os.path.exists(persistent.ddml_basedir + "/game/mods"):
         os.makedirs(persistent.ddml_basedir + "/game/mods")
 
+## After splash checks finishes, we then revert the archive back to what is truly there.
+init -99 python:
+    renpy.config.archives = actual_mod_archive
+
 init 1 python:
-    if config.window_title != "Doki Doki Mod Docker (Alpha)":
+    if (config.window_title is None or "Doki Doki Mod Docker (Alpha)" not in config.window_title):
         container_name = config.window_title or config.name or config.basedir.replace("\\", "/").split("/")[-1]
         config.window_title = _("Doki Doki Mod Docker (Alpha) - Mod Container: ") + container_name
 
